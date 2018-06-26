@@ -84,7 +84,7 @@ export default class Talk extends wepy.component {
   background-color: #fff;
   padding: 0 27rpx;
 }
-.title {
+.talk .title {
   display: flex;
   align-items: center;
   justify-content: space-between;

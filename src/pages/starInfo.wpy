@@ -12,7 +12,7 @@ export default class starInfo extends wepy.page {
     issue,
     ask,
     photo,
-    store,
+    store
   };
 
   data = {
@@ -52,10 +52,15 @@ export default class starInfo extends wepy.page {
         <view class="title">
           <text>粉丝</text>
           <text>关注</text>
-          <text>店铺号</text>
         </view>
         <view class="prove">个人认证:儿童主播童话作家</view>
         <view class="info">欢迎关注星球：网红楠丫宝儿，在这里您可以在这里您可以在这里您可以</view>
+        <view class="attention">
+          <view class="add" wx:if="{{0}}">+关注</view>
+          <view class="yet_add" wx:else>
+            <text class="iconfont .icon-yiguanzhu"></text>
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -131,6 +136,7 @@ page {
       display: flex;
       flex-direction: column;
       margin-left: 32rpx;
+      position: relative;
       .title {
         text {
           color: #333;
@@ -166,6 +172,31 @@ page {
         display: -webkit-box;
         -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
+      }
+      .attention {
+        position: absolute;
+        top: 0;
+        right: 0;
+        .add {
+          width: 105rpx;
+          height: 45rpx;
+          background-color: #ff5750;
+          border-radius: 8rpx;
+          font-size: 22rpx;
+          color: #fffefe;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+        .icon-yiguanzhu{
+          display: inline-block;
+          padding: 5rpx;
+          font-size: 45rpx;
+          color: #f5f5f5;
+          border: 1px solid #f5f5f5;
+          border-radius: 50%;
+          overflow: hidden;
+        }
       }
     }
   }
@@ -269,6 +300,5 @@ page {
       justify-content: center;
     }
   }
-  
 }
 </style>

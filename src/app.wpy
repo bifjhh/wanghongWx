@@ -69,11 +69,11 @@ image {
 /* 字体图标 */
 @font-face {
   font-family: 'iconfont';  /* project id 716449 */
-  src: url('//at.alicdn.com/t/font_716449_c5p03icimae.eot');
-  src: url('//at.alicdn.com/t/font_716449_c5p03icimae.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_716449_c5p03icimae.woff') format('woff'),
-  url('//at.alicdn.com/t/font_716449_c5p03icimae.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_716449_c5p03icimae.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.eot');
+  src: url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.woff') format('woff'),
+  url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.svg#iconfont') format('svg');
 }
 
 .iconfont {
@@ -89,6 +89,8 @@ image {
 .icon-iconfontzhizuobiaozhun20:before { content: "\e613"; }
 
 .icon-zuanshi:before { content: "\e669"; }
+
+.icon-yiguanzhu:before { content: "\e612"; }
 
 .icon-guanzhu:before { content: "\e600"; }
 
