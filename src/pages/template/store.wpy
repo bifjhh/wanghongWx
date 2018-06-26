@@ -24,6 +24,9 @@
               <text>.00</text>
             </view>
           </view>
+          <view class="get_more">
+            <view>查看更多</view>
+          </view>
         </view>
       </scroll-view>
     </view>
@@ -137,9 +140,16 @@ export default class Store extends wepy.component {
       letter-spacing: 0px;
       color: #ff5750;
       margin-left: 17rpx;
-      .price{
+      .price {
         font-size: 36rpx;
       }
+    }
+  }
+  .get_more {
+    background-color: #fff7f7;
+    view {
+      width: 322rpx;
+      height: 500rpx;
     }
   }
 }
