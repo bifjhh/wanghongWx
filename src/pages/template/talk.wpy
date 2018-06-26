@@ -5,7 +5,7 @@
       <text>说说(62)</text>
       <text>更多></text>
     </view>
-    <view class="talk_list">
+    <view class="talk_list" wx:for="{{3}}" wx:key="{{index}}">
       <view class="thead">
         <view class="names">
           <view class="name_img"></view>
@@ -13,37 +13,40 @@
         </view>
         <view class="">28天前</view>
       </view>
-    <view class="talk_info">
-      "@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词，表达了自己的想法与见解。他把东西方元素十分自然的融合在歌曲中，突出却不突兀，独具匠心，形成了极具个人特色的新华语曲调"
-    </view>
-    <view class="music">
-      <view class="music_logo"></view>
-      <view class="m_info">
-        <view class="m_title">纸短情长</view>
-        <view class="m_name">烟把乐队</view>
+      <view class="talk_info">
+        "@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词，表达了自己的想法与见解。他把东西方元素十分自然的融合在歌曲中，突出却不突兀，独具匠心，形成了极具个人特色的新华语曲调"
+      </view>
+      <view class="music">
+        <view class="music_logo"></view>
+        <view class="m_info">
+          <view class="m_title">纸短情长</view>
+          <view class="m_name">烟把乐队</view>
+        </view>
+      </view>
+      <view class="img_list">
+        <view class="pic" wx:for="{{6}}" wx:key="{{index}}"></view>
+      </view>
+      <view class="location">
+        <view>
+          <text class="iconfont icon-weizhi"></text>
+        <text>杭州·杭州萧山国际机场</text>
+        </view>
+      </view>
+      <view class="bottom">
+        <view class="">
+          <text class="iconfont icon-iconfontzhizuobiaozhun20"></text>
+          <text class="iconf">分享</text>
+        </view>
+        <view class="">
+          <text class="iconfont icon-xiaoxi"></text>
+          <text class="iconf">88</text>
+        </view>
+        <view class="">
+          <text class="iconfont icon-guanzhu"></text>
+          <text class="iconf">99</text>
+        </view>
       </view>
     </view>
-    <view class="img_list">
-      <view class="pic" wx:for="{{6}}" wx:key="{{index}}"></view>
-    </view>
-    <view class="location">位置</view>
-    <view class="bottom">
-      <view class="">
-        <text class="iconfont icon-iconfontzhizuobiaozhun20"></text>
-        <text class="iconf">分享</text>
-      </view>
-      <view class="">
-        <text class="iconfont icon-guanzhu"></text>
-        <text class="iconf">99</text>
-      </view>
-      <view class="">
-        <text class="iconfont icon-xiaoxi"></text>
-        <text class="iconf">88</text>
-      </view>
-    </view>
-
-    </view>
-
    
     <view class=""></view>
   </view>
@@ -88,7 +91,9 @@ export default class Talk extends wepy.component {
   padding-top: 5rpx;
   padding-top: 42rpx;
 }
+
 .talk_list {
+  border-bottom: 1px solid #e5e5e5;
   .thead {
     display: flex;
     align-items: center;
@@ -138,14 +143,30 @@ export default class Talk extends wepy.component {
       margin-bottom: 10rpx;
     }
   }
+  .location {
+    margin-top: 18rpx;
+    view {
+      background-color: #ededed;
+      border-radius: 5rpx;
+      display: inline-block;
+      line-height: 39rpx;
+      padding: 7rpx 10rpx;
+      .icon-weizhi {
+        margin-right: 10rpx;
+      }
+    }
+  }
   .bottom {
     display: flex;
     justify-content: space-around;
-    padding-bottom: 40rpx;
+    padding: 40rpx 0;
     .iconf {
       padding-left: 15rpx;
     }
   }
+}
+.talk_list:nth-last-of-type(2) {
+  border: none;
 }
 </style>
 	
