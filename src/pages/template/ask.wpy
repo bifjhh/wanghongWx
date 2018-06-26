@@ -1,0 +1,80 @@
+<!--  -->
+<template>
+  <view class='ask' id="{{objs.id}}" data-rol="{{objs.id}}">
+     <view class="ask_title">
+      <text>提问(62)</text>
+      <text>更多></text>
+    </view>
+    <view class="ask_list">
+      <view class="ask_box">
+        <view class="headr">
+          <view class="names">
+            <text class="name">王大大</text><text>提问</text>
+          </view>
+          <view class="num"><text>266</text>人听过</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Ask extends wepy.component {
+  data = {};
+
+  props = {
+    objs: {
+      type: Object,
+      default: '{}'
+    }
+  };
+  components = {};
+
+  methods = {};
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {}
+
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+.ask {
+  background-color: #fff;
+  margin-top: 18rpx;
+  padding: 0 27rpx;
+}
+.ask_title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 42rpx 0;
+}
+.ask_box {
+  .headr {
+    display: flex;
+    justify-content: space-between;
+    font-size: 36rpx;
+    color: #666666;
+    .name {
+      font-size: 36prx;
+      color: #4779b8;
+    }
+    .num {
+      font-size: 32rpx;
+      color: #999999;
+      text {
+        font-size: 32rpx;
+      }
+    }
+  }
+}
+</style>
+	

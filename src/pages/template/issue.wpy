@@ -1,0 +1,110 @@
+<!--  -->
+<template>
+  <view class='issue' id="{{objs.id}}" data-rol="{{objs.id}}">
+    <view class="issue_title">
+      <text>问答</text>
+      <text>更多></text>
+    </view>
+    <view class="issue_box">
+      <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
+        <view class="scroll_box">
+          <view class="issue_info" wx:for="{{3}}" wx:key="{{index}}">
+            <view class="info_img"></view>
+            <view class="info_msg">
+              回顾2017年科幻佳作，哪些是你心中的口碑票房top3?
+            </view>
+            <view class="info_iconf">
+              <view class="">
+                <text class="iconfont icon-iconfontzhizuobiaozhun20"></text>
+                <text class="iconf">分享</text>
+              </view>
+              <view class="">
+                <text class="iconfont icon-guanzhu"></text>
+                <text class="iconf">回答</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Issue extends wepy.component {
+  data = {};
+
+  props = {
+    objs: {
+      type: Object,
+      default: '{}'
+    }
+  };
+  components = {};
+
+  methods = {};
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {}
+
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+.issue {
+  background-color: #fff;
+  margin-top: 18rpx;
+  padding: 0 27rpx;
+}
+.issue_title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 42rpx 0;
+}
+.scroll_box{
+  width: 100%;
+  display: flex;
+}
+.issue_info {
+  width: 664rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-right: 17rpx;
+  .info_img {
+    width: 664rpx;
+    height: 337rpx;
+    background-color: #ccc;
+  }
+  .info_msg {
+    padding: 35rpx 27rpx;
+    font-family: PingFangSC-Regular;
+    font-size: 32rpx;
+    line-height: 48rpx;
+    color: #333333;
+  }
+  .info_iconf{
+    display: flex;
+    height: 120rpx;
+    border-top: 1px solid #ccc;
+    align-items: center;
+    justify-content: space-around;
+  	font-family: PingFangSC-Regular;
+    font-size: 32rpx;
+    line-height: 48rpx;
+    color: #999999;  
+    .iconf{
+      padding-left: 15rpx;
+    }
+  }
+}
+</style>
+	

@@ -1,0 +1,222 @@
+<script>
+import wepy from 'wepy';
+
+export default class Search extends wepy.page {
+  config = {};
+  components = {};
+
+  data = {
+    delHeid: false,
+    msg: ''
+  };
+  methods = {
+    bindinput(e) {
+      if (e.detail.cursor >= 1) {
+        this.delHeid = true;
+      } else {
+        this.delHeid = false;
+      }
+      this.msg = e.detail.value;
+    },
+    del() {
+      console.log('清空');
+      this.msg = '';
+    },
+    cencel() {
+      this.$switch('./planet');
+    }
+  };
+
+  events = {};
+  onLoad() {}
+  // Other properties
+}
+</script>
+
+<template lang="wxml">
+  <view class="search">
+		<view class="s_info">
+        <view class="search_img">
+				  <image src="/images/search.png" />
+		  	</view>
+			  <input type="text" focus="true" value="{{msg}}" placeholder="搜索你喜欢的星球" @input="bindinput"/>
+				<view class="del" wx:if="{{delHeid}}" @tap="del">
+				  <image src="/images/del.png" />
+				</view>
+		</view>
+		<view class="cancel" @tap="cencel"> <text>取消</text> </view>
+	</view>
+	<view class="conten">
+		<view class="result">
+			<view class="title">
+				<text>已搜索到的星球</text>
+			</view>
+			<view class="banner">
+			</view>
+			<view class="info">
+				<view class="i_l">
+					<view class="i_tit"><text>晓说武装到牙齿的文艺青年</text></view>
+					<view class="l_b">
+						<view class="play"></view>
+						<view class="num">4.5万</view>
+						<view class="name">高晓松</view>
+					</view>
+					<view class="footer">
+						高晓松回归，喜马拉雅FM《晓说2018》
+					</view>
+				</view>
+				<view class="i_r">
+					关注
+				</view>
+			</view>
+		</view>
+		<view class="title">
+			<text>相关星球</text>
+		</view>
+		<view class="list">
+			<view class="info" wx:for="{{3}}" wx:key="index">
+				<view class="i_l">
+					<view class="i_tit"><text>晓说</text>武装到牙齿的文艺青年</view>
+					<view class="l_b">
+						<view class="play"></view>
+						<view class="num">4.5万</view>
+						<view class="name">高晓松</view>
+					</view>
+				</view>
+				<view class="i_r">
+					关注
+				</view>
+			</view>
+		</view>
+	
+	</view>
+</template>
+
+<style lang="scss">
+page {
+  padding: 0 28rpx;
+  box-sizing: border-box;
+}
+.search {
+  margin-top: 22rpx;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  height: 77rpx;
+  padding-bottom: 36rpx;
+  image {
+    display: inline;
+  }
+  .s_info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 66rpx;
+    line-height: 66rpx;
+    color: #666666;
+    background-color: #ebebeb;
+    border-radius: 33px;
+    padding-left: 26rpx;
+    padding-right: 31rpx;
+    .search_img {
+      width: 30rpx;
+      height: 33rpx;
+    }
+    input {
+      flex: 1;
+      height: 100%;
+      margin-left: 14rpx;
+      font-size: 30rpx;
+      line-height: 66rpx;
+    }
+    .del {
+      width: 28rpx;
+      height: 28rpx;
+    }
+  }
+  .cancel {
+    margin-left: 48rpx;
+    line-height: 66rpx;
+    text {
+      line-height: 66rpx;
+      font-size: 30rpx;
+      color: #333;
+    }
+  }
+}
+.info {
+  display: flex;
+  width: 100%;
+  height: 154rpx;
+  justify-content: space-between;
+  align-items: center;
+  .i_l {
+    display: flex;
+    flex-direction: column;
+    .i_tit {
+      font-size: 30rpx;
+      color: #333;
+      text {
+        color: #ff5750;
+        font-size: 15px;
+      }
+    }
+    .l_b {
+      display: flex;
+      align-items: center;
+      margin-top: 34rpx;
+      .play {
+        width: 19rpx;
+        height: 22rpx;
+        background-color: #ccc;
+      }
+      .num {
+        margin-left: 15rpx;
+        color: #999999;
+      }
+      .name {
+        margin-left: 30rpx;
+        color: #666666;
+      }
+    }
+  }
+  .i_r {
+    width: 122rpx;
+    height: 52rpx;
+    background-color: #ff5750;
+    border-radius: 4px;
+    color: #fffefe;
+    font-size: 26rpx;
+    line-height: 52rpx;
+    text-align: center;
+  }
+}
+.conten {
+  .title {
+    text {
+      font-size: 30rpx;
+      color: #515151;
+      padding-bottom: 35rpx;
+    }
+  }
+  .banner {
+    margin-top: 35rpx;
+    height: 694rpx;
+    background-color: #ccc;
+		margin-bottom: 40rpx;
+  }
+}
+.result {
+	padding-bottom: 81rpx;
+	.info{
+		height: auto;
+	}
+  .i_tit text {
+    font-size: 16px;
+  }
+	.footer{
+		margin-top: 30rpx;
+	}
+}
+</style>

@@ -1,0 +1,274 @@
+<script>
+import wepy from 'wepy';
+import talk from './template/talk';
+import issue from './template/issue';
+import ask from './template/ask';
+import photo from './template/photo';
+import store from './template/store';
+export default class starInfo extends wepy.page {
+  config = {};
+  components = {
+    talk,
+    issue,
+    ask,
+    photo,
+    store,
+  };
+
+  data = {
+    nav_list: [
+      { name: '说说', id: 'talk' },
+      { name: 'issue', id: 'issue' },
+      { name: '相册', id: 'photo' },
+      { name: '商城精选', id: 'store' }
+    ],
+    toView: ''
+  };
+  methods = {
+    jumpTo(e) {
+      this.toView = e.currentTarget.dataset.opt;
+      this.$apply();
+      console.log(e.currentTarget.dataset.opt);
+    }
+  };
+
+  events = {};
+  onLoad() {
+    wx.setNavigationBarTitle({
+      title: '星球详情' //页面标题
+    });
+  }
+  // Other properties
+}
+</script>
+
+<template lang="wxml">
+  <scroll-view scroll-into-view="{{toView}}" scroll-y="{{true}}" scroll-with-animation="true" class="scr">
+
+  <view class="head">
+    <view class="introduce">
+      <view class="head_img"></view>
+      <view class="head_r">
+        <view class="title">
+          <text>粉丝</text>
+          <text>关注</text>
+          <text>店铺号</text>
+        </view>
+        <view class="prove">个人认证:儿童主播童话作家</view>
+        <view class="info">欢迎关注星球：网红楠丫宝儿，在这里您可以在这里您可以在这里您可以</view>
+      </view>
+    </view>
+  </view>
+  <view class="store">
+    <view class="store_l">
+      <view class="store_logo"></view>
+      <view class="userinfo">
+        <view class="names">楠丫宝儿的小铺</view>
+        <view class="site">
+          <text>杭州</text>
+          <text class="xian">丨</text>
+          <text>223人已购买</text>
+        </view>
+      </view>
+    </view>
+    <view class="store_r">
+      <view class="store_info">
+        <view class="store_img"></view>
+        <view class="store_img"></view>
+        <view class="store_img"></view>
+      </view>
+      <text class="xian"></text>
+      <view class="to_store">去逛逛</view>
+    </view>
+  </view>
+  <view class="content"> 
+    <view class="navbar">
+      <view class="nav_to" wx:for="{{nav_list}}" wx:key="{{index}}" data-opt="{{item.id}}" @tap="jumpTo">
+        {{item.name}}
+      </view>
+    </view>
+    <view class="body_info">
+      <repeat for="{{nav_list}}" key="{{item.id}}"  item="item">
+        <talk wx:if="{{item.id=='talk'}}" :objs.sync="item" />
+        <issue wx:if="{{item.id=='issue'}}" :objs.sync="item" />
+        <photo wx:if="{{item.id=='photo'}}" :objs.sync="item" />
+        <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
+      </repeat>
+    </view>
+  </view>
+      </scroll-view>
+</template>
+
+<style lang="scss">
+page {
+  background-color: #f5f5f5;
+}
+.scr {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+.head {
+  width: 100%;
+  height: 649rpx;
+  background-color: rgba(0, 0, 0, 0.1);
+  padding: 0 28rpx 32rpx 39rpx;
+  display: flex;
+  flex-direction: column-reverse;
+  .head_img {
+    width: 119rpx;
+    height: 119rpx;
+    border-radius: 50%;
+    background-color: #f2f2f2;
+  }
+  .introduce {
+    display: flex;
+    align-items: center;
+    .head_r {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-left: 32rpx;
+      .title {
+        text {
+          color: #333;
+          font-size: 28rpx;
+          padding: 0 20rpx;
+          position: relative;
+          &:before {
+            content: '';
+            position: absolute;
+            background-color: #666;
+            width: 1px;
+            height: 90%;
+            top: 5%;
+            left: 0;
+          }
+        }
+        text:nth-of-type(1) {
+          padding-left: 0;
+          &:before {
+            display: none;
+          }
+        }
+      }
+      .prove,
+      .info {
+        font-size: 28rpx;
+        color: #666;
+        margin-top: 24rpx;
+      }
+      .info {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+      }
+    }
+  }
+}
+.store {
+  margin-top: 18rpx;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 28rpx;
+  height: 152rpx;
+  background-color: #fff;
+  .store_l {
+    display: flex;
+    align-items: center;
+    .store_logo {
+      width: 80rpx;
+      height: 80rpx;
+      border-radius: 50%;
+      overflow: hidden;
+      background-color: #ccc;
+    }
+    .userinfo {
+      margin-left: 11rpx;
+      .names {
+        color: #333333;
+        font-size: 30rpx;
+      }
+      .site {
+        margin-top: 20rpx;
+        text {
+          font-size: 26rpx;
+          color: #666;
+        }
+      }
+      .xian {
+        padding: 0 15rpx;
+      }
+    }
+  }
+  .store_r {
+    display: flex;
+    align-items: center;
+    .xian {
+      margin: 0 25rpx;
+      background-color: #999;
+      width: 1px;
+      height: 29rpx;
+    }
+    .store_info {
+      position: relative;
+      .store_img {
+        position: absolute;
+        right: 0;
+        top: 0;
+        transform: translate(0, -50%);
+        width: 68rpx;
+        height: 68rpx;
+        border-radius: 50%;
+        overflow: hidden;
+        background-color: #ccc;
+      }
+      .store_img:nth-of-type(1) {
+        transform: translate(-100%, -50%);
+        z-index: 9;
+        background-color: #f0f;
+      }
+      .store_img:nth-of-type(2) {
+        transform: translate(-50%, -50%);
+        z-index: 8;
+        background-color: #fcf;
+      }
+    }
+
+    .to_store {
+      border-radius: 21rpx;
+      line-height: 45rpx;
+      padding: 0 20rpx;
+      font-size: 24rpx;
+      color: #ff5750;
+      border: solid 1px #ff5750;
+    }
+  }
+}
+
+.content {
+  margin-top: 20rpx;
+  .navbar {
+    padding: 0 27rpx;
+    background-color: #fff;
+    height: 113rpx;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    .nav_to {
+      flex: auto;
+      height: 100%;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+}
+</style>

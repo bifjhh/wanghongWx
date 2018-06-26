@@ -1,0 +1,104 @@
+<!--  -->
+<template>
+  <view class='photo_content' id="{{objs.id}}" data-rol="{{objs.id}}">
+    <view class="photo_title">
+      <text>相册(62)</text>
+      <text>更多></text>
+    </view>
+    <view class="photo_box">
+      <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
+        <view class="photo_list">
+          <view class="photo_img" wx:for="{{6}}" wx:key="{{index}}">
+            <view class="pingj"></view>
+            <view class="pj_info">
+              <text class="iconfont icon-xiaoxi"> </text>
+              <text class="pj_num">266 </text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Photo extends wepy.component {
+  data = {};
+
+  props = {
+    objs: {
+      type: Object,
+      default: '{}'
+    }
+  };
+  components = {};
+
+  methods = {};
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {}
+
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+.photo_content {
+  background-color: #fff;
+  margin-top: 18rpx;
+  padding-left: 27rpx;
+  padding-bottom: 70rpx;
+  .photo_title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 42rpx 0;
+    padding-right: 27rpx;
+    font-size: 34rpx;
+    color: #333333;
+    text:nth-of-type(2) {
+      font-size: 30rpx;
+      color: #999;
+    }
+  }
+}
+.photo_box {
+  height: 223rpx;
+  box-shadow: 0px 0px 6px 0px rgba(207, 207, 207, 0.28);
+  display: flex;
+  align-items: center;
+}
+.photo_list {
+  width: 100%;
+  display: flex;
+  padding-left: 18rpx;
+}
+.photo_img {
+  width: 180rpx;
+  height: 180rpx;
+  display: flex;
+  flex-direction: column-reverse;
+  margin-right: 15rpx;
+  background-color: #ccc;
+  border-radius: 8px;
+  .pingj {
+    width: 664rpx;
+  }
+  .pj_info {
+    text-align: right;
+    padding-right: 15rpx;
+    padding-bottom: 15rpx;
+    color: #fff;
+    .pj_num {
+      padding-left: 10rpx;
+    }
+  }
+}
+</style>
+	
