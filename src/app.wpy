@@ -69,11 +69,11 @@ image {
 /* 字体图标 */
 @font-face {
   font-family: 'iconfont';  /* project id 716449 */
-  src: url('//at.alicdn.com/t/font_716449_nmgho4hfly.eot');
-  src: url('//at.alicdn.com/t/font_716449_nmgho4hfly.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_716449_nmgho4hfly.woff') format('woff'),
-  url('//at.alicdn.com/t/font_716449_nmgho4hfly.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_716449_nmgho4hfly.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_716449_c5p03icimae.eot');
+  src: url('//at.alicdn.com/t/font_716449_c5p03icimae.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_716449_c5p03icimae.woff') format('woff'),
+  url('//at.alicdn.com/t/font_716449_c5p03icimae.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_716449_c5p03icimae.svg#iconfont') format('svg');
 }
 
 .iconfont {
@@ -83,6 +83,8 @@ image {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.icon-weizhi:before { content: "\e7e6"; }
 
 .icon-iconfontzhizuobiaozhun20:before { content: "\e613"; }
 

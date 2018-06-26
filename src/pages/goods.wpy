@@ -2,25 +2,118 @@
 import wepy from 'wepy';
 
 export default class Goods extends wepy.page {
-    config = {};
-    components = {};
+  config = {};
+  components = {};
 
-    data = {};
-    methods = {};
+  data = {};
+  methods = {};
 
-    events = {};
-    onLoad() {};
-    // Other properties
+  events = {};
+  onLoad() {}
+  // Other properties
 }
-
 </script>
 
 
 <template lang="wxml">
-    <view>
-      好货
+    <view class="shop" wx:for="{{3}}" wx:key="{{index}}">
+        <view class="head">
+            <view class="shop_logo"></view>
+            <view class="shop_info">
+                <text class="shop_name">CHANEL 香奈儿</text>
+                <text class="shop_site">法国</text>
+            </view>
+            <view class="to_shop">进入</view>
+        </view>
+        <view class="intro">高端、时尚简约、简单舒适、纯正风范</view>
+        <view class="goods_list">
+            <view class="goods" wx:for="{{3}}" wx:key="{{index}}">
+                <view class="goods_num">RMB：580.00</view>
+            </view>
+        </view>
     </view>
 </template>
 
 <style lang="scss">
+page {
+  background-color: #f5f5f5;
+}
+.shop {
+  height: 517rpx;
+  padding: 0 45rpx;
+  background-color: #fff;
+  margin-bottom: 15rpx;
+  .head {
+    display: flex;
+    align-items: center;
+    padding-top: 53rpx;
+    .shop_logo {
+      width: 114rpx;
+      height: 114rpx;
+      background-image: linear-gradient(0deg, #fefeff 0%, #ffffff 100%);
+      box-shadow: 0px 0px 10px 0px rgba(0, 6, 13, 0.13);
+      border-radius: 8px;
+    }
+    .shop_info {
+      display: flex;
+      flex-direction: column;
+      margin-left: 32rpx;
+      justify-content: center;
+      .shop_name {
+        font-size: 36rpx;
+        color: #333;
+      }
+      .shop_site {
+        font-size: 28rpx;
+        color: #333;
+      }
+    }
+    .to_shop {
+      width: 150rpx;
+      height: 64rpx;
+      margin-left: 94rpx;
+      border-radius: 32rpx;
+      border: solid 2px rgba(255, 87, 80, 0.37);
+      font-size: 28rpx;
+      color: #ff5750;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .intro {
+    margin-top: 40rpx;
+    padding-left: 25rpx;
+    font-size: 24rpx;
+    color: #666;
+  }
+  .goods_list {
+    margin-top: 40rpx;
+    display: flex;
+    justify-content: space-between;
+    .goods {
+      width: 210rpx;
+      height: 210rpx;
+      background-color: beige;
+      box-shadow: 0px 0px 5px 0px rgba(37, 37, 37, 0.1);
+      border-radius: 8rpx;
+      overflow: hidden;
+      position: relative;
+      .goods_num {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 214rpx;
+        height: 55rpx;
+        background-color: rgba(51, 51, 51, 0.37);
+        opacity: 0.37;
+        font-size: 26rpx;
+        color: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+}
 </style>
