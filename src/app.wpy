@@ -13,7 +13,7 @@ page {
 .bgc_f {
   background: #fff;
 }
-view{
+view {
   box-sizing: border-box;
 }
 view,
@@ -57,44 +57,57 @@ image {
 }
 .clearfix:before,
 .clearfix:after {
-    display: block;
-    content: ".";
-    height: 0;
-    line-height: 0;
-    overflow: hidden;
-    visibility: hidden;
-    clear: both;
+  display: block;
+  content: '.';
+  height: 0;
+  line-height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  clear: both;
 }
 
 /* 字体图标 */
 @font-face {
-  font-family: 'iconfont';  /* project id 716449 */
+  font-family: 'iconfont'; /* project id 716449 */
   src: url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.eot');
-  src: url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.woff') format('woff'),
-  url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.eot?#iefix')
+      format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.woff') format('woff'),
+    url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_716449_7tj4rkk7dmh.svg#iconfont') format('svg');
 }
 
 .iconfont {
-  font-family:"iconfont" !important;
-  font-size:16px;
-  font-style:normal;
+  font-family: 'iconfont' !important;
+  font-size: 16px;
+  font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-weizhi:before { content: "\e7e6"; }
+.icon-weizhi:before {
+  content: '\e7e6';
+}
 
-.icon-iconfontzhizuobiaozhun20:before { content: "\e613"; }
+.icon-iconfontzhizuobiaozhun20:before {
+  content: '\e613';
+}
 
-.icon-zuanshi:before { content: "\e669"; }
+.icon-zuanshi:before {
+  content: '\e669';
+}
 
-.icon-yiguanzhu:before { content: "\e612"; }
+.icon-yiguanzhu:before {
+  content: '\e612';
+}
 
-.icon-guanzhu:before { content: "\e600"; }
+.icon-guanzhu:before {
+  content: '\e600';
+}
 
-.icon-xiaoxi:before { content: "\e601"; }
+.icon-xiaoxi:before {
+  content: '\e601';
+}
 </style>
 
 <script>
@@ -103,13 +116,14 @@ import 'wepy-async-function';
 export default class extends wepy.app {
   config = {
     pages: [
-    'pages/planet', 
-    'pages/my', 
-    'pages/goods', 
-    'pages/dynamic',
-    'pages/search',
-    'pages/starInfo',
-    'pages/test',
+      'pages/planet',
+      'pages/my',
+      'pages/goods',
+      'pages/dynamic',
+      'pages/search',
+      'pages/starInfo',
+      'pages/test',
+      'pages/talkList'
     ],
     tabBar: {
       color: '#707070',
@@ -118,7 +132,7 @@ export default class extends wepy.app {
       borderStyle: 'black',
       list: [
         {
-          selectedIconPath: "/images/xingqiu_active.png",
+          selectedIconPath: '/images/xingqiu_active.png',
           iconPath: '/images/xingqiu.png',
           pagePath: 'pages/planet',
           text: '星球'
@@ -144,13 +158,16 @@ export default class extends wepy.app {
       ]
     },
     window: {
-      backgroundTextStyle: 'white',
-      navigationBarTextStyle: 'white',
       navigationBarTitleText: '网红星球',
-      navigationBarBackgroundColor: '#38373D',
-      backgroundColor: '#F2f2f2',
-      enablePullDownRefresh: true
+      enablePullDownRefresh: false,
     }
+    /*  navigationBarTextStyle: 'black',
+      navigationBarBackgroundColor: '#fff',
+      enablePullDownRefresh: true,
+      backgroundColor: '#fff',
+      backgroundTextStyle: '#333',
+      onReachBottomDistance: 15,
+      navigationStyle: 'custom' */
   };
   globalData = {
     userInfo: null

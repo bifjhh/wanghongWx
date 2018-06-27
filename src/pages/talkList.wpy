@@ -1,0 +1,160 @@
+<!-- 说说列表页面 -->
+<template>
+  <view class='talk_box' >
+    <view class="talk" wx:for="{{3}}" wx:key="{{index}}">
+      <view class="thead">
+        <view class="names">
+          <view class="name_img"></view>
+          <view class="name">网红糖妮妮</view>
+        </view>
+        <view class="">28天前</view>
+      </view>
+      <view class="talk_info">
+        "@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词，表达了自己的想法与见解。他把东西方元素十分自然的融合在歌曲中，突出却不突兀，独具匠心，形成了极具个人特色的新华语曲调"
+      </view>
+      <view class="music">
+        <view class="music_logo"></view>
+        <view class="m_info">
+          <view class="m_title">纸短情长</view>
+          <view class="m_name">烟把乐队</view>
+        </view>
+      </view>
+      <view class="img_list">
+        <view class="pic" wx:for="{{6}}" wx:key="{{index}}"></view>
+      </view>
+      <view class="location">
+        <view>
+          <text class="iconfont icon-weizhi"></text>
+        <text>杭州·杭州萧山国际机场</text>
+        </view>
+      </view>
+      <view class="bottom">
+        <view class="">
+          <text class="iconfont icon-iconfontzhizuobiaozhun20"></text>
+          <text class="iconf">分享</text>
+        </view>
+        <view class="">
+          <text class="iconfont icon-xiaoxi"></text>
+          <text class="iconf">88</text>
+        </view>
+        <view class="">
+          <text class="iconfont icon-guanzhu"></text>
+          <text class="iconf">99</text>
+        </view>
+      </view>
+    </view>
+    <view class=""></view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: 'xxx的说说',
+
+    
+  };
+
+  data = {};
+
+  components = {};
+
+  methods = {};
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {}
+
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+.talk_box {
+  background-color: #fff;
+  padding: 0 27rpx;
+}
+
+.talk {
+  border-bottom: 1px solid #e5e5e5;
+  .thead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 37rpx;
+    .names {
+      display: flex;
+      .name_img {
+        width: 53rpx;
+        height: 53rpx;
+        border-radius: 50%;
+        overflow: hidden;
+        background-color: #eff;
+      }
+      .name {
+        margin-left: 12rpx;
+      }
+    }
+  }
+  .music {
+    margin-top: 20rpx;
+    height: 120rpx;
+    background-color: #ccc;
+    display: flex;
+    .music_logo {
+      width: 113rpx;
+      height: 100%;
+      background-color: #efe;
+    }
+    .m_info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-left: 23rpx;
+    }
+  }
+  .img_list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 34rpx;
+    .pic {
+      width: 218rpx;
+      height: 218rpx;
+      background-color: #ccc;
+      margin-bottom: 10rpx;
+    }
+  }
+  .location {
+    margin-top: 18rpx;
+    view {
+      background-color: #ededed;
+      border-radius: 5rpx;
+      display: inline-block;
+      line-height: 39rpx;
+      padding: 7rpx 10rpx;
+      .icon-weizhi {
+        margin-right: 10rpx;
+      }
+    }
+  }
+  .bottom {
+    display: flex;
+    justify-content: space-around;
+    padding: 40rpx 0;
+    .iconf {
+      padding-left: 15rpx;
+    }
+  }
+}
+.talk:nth-last-of-type(2) {
+  border: none;
+}
+</style>
+	
