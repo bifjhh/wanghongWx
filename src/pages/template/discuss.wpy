@@ -1,0 +1,116 @@
+<!--  -->
+<template>
+   <view class="discuss">
+        <view class="user_img"></view>
+        <view class="contetn">
+          <view class="user_name">
+            追风少年
+          </view>
+          <view class="info">误读不误读，看看房价就知道了，管控肯定会降，如果反而涨了那还说什么！</view>
+          <view class="reply">
+          <block wx:for="{{3}}" wx:key="{{index}}" >
+            <view class="reply_one {{index>1?isno:''}}" >
+              <text class="reply_name">太阳女神</text>: 
+              <text class="reply_info">一点点柴火回复 @少年明眸如水我觉得你这个问题有点局限性，环境不同自然习惯不一样，你得不断坚持.........</text>
+            </view>
+            <view class="sum {{showAdd}}" wx:if="{{item>1}}" @tap="getAll">共3条回复></view>
+          </block>
+          </view>
+          <view class="add_time">5-27 07:39</view>
+        </view>
+      </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.component {
+  props = {};
+
+  data = {
+    isno: 'dsp_none',
+    showAdd: ''
+  };
+
+  components = {};
+
+  methods = {
+    getAll() {
+      let that = this;
+      that.showAdd = 'dsp_none';
+      that.isno = '';
+    }
+  };
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {}
+
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+.discuss {
+  display: flex;
+  padding-top: 32rpx;
+  .user_img {
+    width: 66rpx;
+    height: 66rpx;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #f2f2f2;
+  }
+  .contetn {
+    flex: 1;
+    margin-left: 23rpx;
+    border-bottom: 1px solid #eee;
+    .user_name {
+      color: #999999;
+      font-size: 30rpx;
+      line-height: 42rpx;
+    }
+    .info {
+      margin-top: 20rpx;
+      font-size: 30rpx;
+      letter-spacing: 3rpx;
+      color: #333333;
+    }
+    .reply {
+      margin-top: 20rpx;
+      padding: 6rpx 25rpx 44rpx;
+      background-color: #f4f4f4;
+      border-radius: 8px;
+      .reply_one {
+        margin-top: 30rpx;
+        font-size: 30rpx;
+        text {
+          font-size: 30rpx;
+          letter-spacing: 3rpx;
+          color: #1c87c4;
+        }
+        .reply_info {
+          color: #666666;
+        }
+      }
+      .sum {
+        margin-top: 10rpx;
+        font-size: 30rpx;
+        color: #1c87c4;
+      }
+      .dsp_none {
+        display: none;
+      }
+    }
+    .add_time {
+      margin-top: 27rpx;
+      font-size: 28rpx;
+      letter-spacing: 1px;
+      color: #999999;
+    }
+  }
+}
+</style>
