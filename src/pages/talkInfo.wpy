@@ -33,7 +33,7 @@
       <view class="di_tit">
         评论(1)
       </view>
-      <view class="discuss" wx:for="{{3}}" wx:key="{{index}}">
+      <view class="discuss" wx:for="{{list}}" wx:key="{{item.id}}">
         <view class="user_img"></view>
         <view class="contetn">
           <view class="user_name">
@@ -41,19 +41,19 @@
           </view>
           <view class="info">误读不误读，看看房价就知道了，管控肯定会降，如果反而涨了那还说什么！</view>
           <view class="reply">
-          <block wx:for="{{3}}" wx:key="{{index}}" >
-            <view class="reply_one {{index>1?isno:''}}" >
+          <block wx:for="{{item.reply}}" wx:for-item="one" wx:key="{{index}}" >
+            <view class="reply_one {{item.isshow?'':((index>1)?isno:'')}}" >
               <text class="reply_name">太阳女神</text>: 
               <text class="reply_info">一点点柴火回复 @少年明眸如水我觉得你这个问题有点局限性，环境不同自然习惯不一样，你得不断坚持.........</text>
             </view>
-            <view class="sum {{showAdd}}" wx:if="{{item>1}}" @tap="getAll">共3条回复></view>
           </block>
+            <view class="sum {{item.isshow?'dsp_none':''}}" wx:if="{{item.reply.length>2}}" @tap="getAll({{item.id}})">共3条回复></view>
           </view>
           <view class="add_time">5-27 07:39</view>
         </view>
       </view>
       <view class="add">
-        <input type="text" placeholder="点击此处说两句......">
+        <input type="text" placeholder="点击此处说两句......" />
       </view>
       <view class="buttom">
         <text class="iconfont icon-xiaoxi"></text>
@@ -77,7 +77,19 @@ export default class Example extends wepy.page {
     list: [
       {
         id: 0,
-        reply: [{ id: 0, id: 1, id: 2, id: 3 }]
+        reply: [{ id: 0 }, { id: 1 }]
+      },
+      {
+        id: 1,
+        reply: [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }]
+      },
+      {
+        id: 2,
+        reply: [{ id: 0 }]
+      },
+      {
+        id: 3,
+        reply: [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }]
       }
     ]
   };
@@ -85,8 +97,11 @@ export default class Example extends wepy.page {
   components = {};
 
   methods = {
-    getAll() {
+    getAll(index) {
       let that = this;
+      console.log(index)
+      that.list[index].isshow=true;
+      return 
       that.showAdd = 'dsp_none';
       that.isno = '';
     }
@@ -100,7 +115,16 @@ export default class Example extends wepy.page {
 
   onLoad() {}
 
-  onShow() {}
+  onShow() {
+    let that = this;
+    that.list.forEach(e => {
+      if (e.reply.length > 2) {
+        e.isshow = false;
+      } else {
+        e.isshow = true;
+      }
+    });
+  }
 }
 </script>
 
