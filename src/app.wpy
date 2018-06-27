@@ -123,7 +123,8 @@ export default class extends wepy.app {
       'pages/search',
       'pages/starInfo',
       'pages/test',
-      'pages/talkList'
+      'pages/talkList',
+      'pages/talkInfo',
     ],
     tabBar: {
       color: '#707070',

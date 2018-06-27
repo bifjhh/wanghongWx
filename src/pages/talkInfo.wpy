@@ -1,13 +1,13 @@
 <!-- 说说列表页面 -->
 <template>
   <view class='talk_box' >
-    <view class="talk" wx:for="{{3}}" wx:key="{{index}}">
+    <view class="talk">
       <view class="thead">
         <view class="names">
           <view class="name_img"></view>
           <view class="name">网红糖妮妮</view>
         </view>
-        <view class="earlier">28天前</view>
+        <view class="time">6-08 14:20</view>
       </view>
       <view class="talk_info">
         "@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词，表达了自己的想法与见解。他把东西方元素十分自然的融合在歌曲中，突出却不突兀，独具匠心，形成了极具个人特色的新华语曲调"
@@ -28,20 +28,6 @@
         <text>杭州·杭州萧山国际机场</text>
         </view>
       </view>
-      <view class="bottom">
-        <view class="">
-          <text class="iconfont icon-iconfontzhizuobiaozhun20"></text>
-          <text class="iconf">分享</text>
-        </view>
-        <view class="">
-          <text class="iconfont icon-xiaoxi"></text>
-          <text class="iconf">88</text>
-        </view>
-        <view class="">
-          <text class="iconfont icon-guanzhu"></text>
-          <text class="iconf">99</text>
-        </view>
-      </view>
     </view>
     <view class=""></view>
   </view>
@@ -51,7 +37,7 @@
 import wepy from 'wepy';
 export default class Example extends wepy.page {
   config = {
-    navigationBarTitleText: 'xxx的说说'
+    navigationBarTitleText: '说说正文'
   };
 
   data = {};
@@ -80,17 +66,18 @@ export default class Example extends wepy.page {
 
 .talk {
   border-bottom: 1px solid #e5e5e5;
+  padding-top: 37rpx;
+
   .thead {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-top: 37rpx;
     .names {
       display: flex;
       align-items: center;
       .name_img {
-        width: 53rpx;
-        height: 53rpx;
+        width: 96rpx;
+        height: 96rpx;
         border-radius: 50%;
         overflow: hidden;
         background-color: #eff;
@@ -101,7 +88,7 @@ export default class Example extends wepy.page {
         color: #333333;
       }
     }
-    .earlier {
+    .time{
       font-size: 24rpx;
       color: #999999;
     }
@@ -154,17 +141,6 @@ export default class Example extends wepy.page {
       .icon-weizhi {
         margin-right: 10rpx;
       }
-    }
-  }
-  .bottom {
-    display: flex;
-    justify-content: space-around;
-    padding: 40rpx 0;
-    text {
-      color: #999999;
-    }
-    .iconf {
-      padding-left: 15rpx;
     }
   }
 }

@@ -11,7 +11,7 @@
           <view class="name_img"></view>
           <view class="name">网红糖妮妮</view>
         </view>
-        <view class="">28天前</view>
+        <view class="earlier">28天前</view>
       </view>
       <view class="talk_info">
         "@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词，表达了自己的想法与见解。他把东西方元素十分自然的融合在歌曲中，突出却不突兀，独具匠心，形成了极具个人特色的新华语曲调"
@@ -98,9 +98,10 @@ export default class Talk extends wepy.component {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 37rpx;
+    padding-top: 37rpx;
     .names {
       display: flex;
+      align-items: center;
       .name_img {
         width: 53rpx;
         height: 53rpx;
@@ -110,8 +111,18 @@ export default class Talk extends wepy.component {
       }
       .name {
         margin-left: 12rpx;
+        font-size: 30rpx;
+        color: #333333;
       }
     }
+    .earlier {
+      font-size: 24rpx;
+      color: #999999;
+    }
+  }
+  .talk_info {
+    margin-top: 20rpx;
+    font-size: 30rpx;
   }
   .music {
     margin-top: 20rpx;
@@ -151,6 +162,9 @@ export default class Talk extends wepy.component {
       display: inline-block;
       line-height: 39rpx;
       padding: 7rpx 10rpx;
+      text{
+        color: #999999;
+      }
       .icon-weizhi {
         margin-right: 10rpx;
       }
@@ -160,6 +174,9 @@ export default class Talk extends wepy.component {
     display: flex;
     justify-content: space-around;
     padding: 40rpx 0;
+    text {
+      color: #999999;
+    }
     .iconf {
       padding-left: 15rpx;
     }
