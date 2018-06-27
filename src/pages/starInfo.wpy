@@ -22,13 +22,18 @@ export default class starInfo extends wepy.page {
       { name: '相册', id: 'photo' },
       { name: '商城精选', id: 'store' }
     ],
-    toView: ''
+    toView: '',
+    isInfo:true,
   };
   methods = {
     jumpTo(e) {
       this.toView = e.currentTarget.dataset.opt;
       this.$apply();
       console.log(e.currentTarget.dataset.opt);
+    },
+    showInfo(){
+      let that = this;
+      that.isInfo=!that.isInfo;
     }
   };
 
@@ -54,7 +59,7 @@ export default class starInfo extends wepy.page {
           <text>关注</text>
         </view>
         <view class="prove">个人认证:儿童主播童话作家</view>
-        <view class="info">欢迎关注星球：网红楠丫宝儿，在这里您可以在这里您可以在这里您可以</view>
+        <view class="info {{isInfo?'info_one':''}}" @tap="showInfo">欢迎关注星球：网红楠丫宝儿，在这里您可以在这里您可以在这里您可以</view>
         <view class="attention">
           <view class="add" wx:if="{{0}}">+关注</view>
           <view class="yet_add" wx:else>
@@ -166,13 +171,14 @@ page {
         color: #666;
         margin-top: 24rpx;
       }
-      .info {
+      .info_one {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
       }
+      
       .attention {
         position: absolute;
         top: 0;
