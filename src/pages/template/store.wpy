@@ -11,7 +11,7 @@
           <view class="store_one" wx:for="{{6}}" wx:key="{{index}}">
             <view class="store_img">
               <view class="jingxuan">
-                <text class="iconfont icon-zuanshi"></text>
+                <text class="zuanshi"></text>
                 <text class="txt">精选</text>
               </view>
             </view>
@@ -25,7 +25,9 @@
             </view>
           </view>
           <view class="get_more">
-            <view>查看更多</view>
+            <view>
+              <view></view>
+            </view>
           </view>
         </view>
       </scroll-view>
@@ -102,17 +104,18 @@ export default class Store extends wepy.component {
         padding: 0 10rpx;
         background-color: rgba(255, 255, 255, 0.42);
         border-radius: 5px;
-        text {
-          // font-size: 20rpx;
-          font-size: 10px;
-          color: #ff5750;
-        }
-        .icon-zuanshi {
-          // font-size: 28rpx;
-          font-size: 14px;
+        .zuanshi {
+          display: inline-block;
+          width: 24rpx;
+          height: 21rpx;
+          background: url(http://www.whxq.fenbot.com/WeChat/zuanshi.png)
+            center no-repeat;
+          background-size: contain;
         }
         .txt {
           padding-left: 10rpx;
+          font-size: 10px;
+          color: #ff5750;
         }
       }
     }
@@ -146,10 +149,22 @@ export default class Store extends wepy.component {
     }
   }
   .get_more {
-    background-color: #fff7f7;
+    background: url(http://www.whxq.fenbot.com/WeChat/getadd_bgc.png) center
+      no-repeat;
+    background-size: 100% 100%;
     view {
       width: 322rpx;
       height: 500rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      view {
+        width: 229rpx;
+        height: 199rpx;
+        background: url(http://www.whxq.fenbot.com/WeChat/get_add.png) center
+          no-repeat;
+        background-size: 100% 100%;
+      }
     }
   }
 }

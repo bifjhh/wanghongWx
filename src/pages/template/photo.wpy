@@ -11,7 +11,7 @@
           <view class="photo_img" wx:for="{{6}}" wx:key="{{index}}">
             <view class="pingj"></view>
             <view class="pj_info">
-              <text class="iconfont icon-xiaoxi"> </text>
+              <text class="xiaoxi"> </text>
               <text class="pj_num">266 </text>
             </view>
           </view>
@@ -97,6 +97,14 @@ export default class Photo extends wepy.component {
     color: #fff;
     .pj_num {
       padding-left: 10rpx;
+    }
+    .xiaoxi {
+      display: inline-block;
+      width: 19rpx;
+      height: 19rpx;
+      background: url(http://www.whxq.fenbot.com/WeChat/sspl.png) center
+        no-repeat;
+      background-size: contain;
     }
   }
 }

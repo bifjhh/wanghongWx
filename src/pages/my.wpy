@@ -2,22 +2,20 @@
 import wepy from 'wepy';
 
 export default class My extends wepy.page {
-    config = {};
-    components = {};
+  config = {};
+  components = {};
 
-    data = {};
-    methods = {};
+  data = {};
+  methods = {};
 
-    events = {};
-    onLoad() {};
-    // Other properties
+  events = {};
+  onLoad() {}
+  // Other properties
 }
 </script>
 
 <template lang="wxml">
-    <view>
-      我的
-    </view>
+    <web-view src="https://baidu.com/"></web-view>
 </template>
 
 <style lang="scss">
