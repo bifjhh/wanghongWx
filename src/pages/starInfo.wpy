@@ -61,7 +61,7 @@ export default class starInfo extends wepy.page {
         <view class="prove">个人认证:儿童主播童话作家</view>
         <view class="info {{isInfo?'info_one':''}}" @tap="showInfo">欢迎关注星球：网红楠丫宝儿，在这里您可以在这里您可以在这里您可以</view>
         <view class="attention">
-          <view class="add" wx:if="{{1}}"></view>
+          <view class="add" wx:if="{{1}}">+关注</view>
           <view class="yet_add" wx:else>
           </view>
         </view>
@@ -82,14 +82,12 @@ export default class starInfo extends wepy.page {
     </view>
     <view class="store_r">
       <view class="store_info">
-        <view class="store_img">
-          <image src="http://www.whxq.fenbot.com/WeChat/shop.png" />
-        </view>
+        <view class="store_img"></view>
         <view class="store_img"></view>
         <view class="store_img"></view>
       </view>
       <text class="xian"></text>
-      <view class="to_store"></view>
+      <view class="to_store">去逛逛</view>
     </view>
   </view>
   <view class="content"> 
@@ -124,8 +122,7 @@ page {
 .head {
   width: 100%;
   height: 649rpx;
-  // background-color: rgba(0, 0, 0, 0.1);
-  background-color: linen;
+  background-color: rgba(0, 0, 0, 0.1);
   padding: 0 28rpx 32rpx 39rpx;
   display: flex;
   flex-direction: column-reverse;
@@ -188,11 +185,13 @@ page {
         .add {
           width: 105rpx;
           height: 45rpx;
+          background-color: #ff5750;
           border-radius: 8rpx;
-          background: url(http://www.whxq.fenbot.com/WeChat/addgz.png) center
-            no-repeat;
-          background-size: 100% 100%;
-
+          font-size: 22rpx;
+          color: #fffefe;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
         .yet_add {
           width: 45rpx;
@@ -202,6 +201,15 @@ page {
           background: url(http://www.whxq.fenbot.com/WeChat/yguanzhu.png) center
             no-repeat;
           background-size: 100% 100%;
+        }
+        .icon-yiguanzhu {
+          display: inline-block;
+          padding: 5rpx;
+          font-size: 45rpx;
+          color: #f5f5f5;
+          border: 1px solid #f5f5f5;
+          border-radius: 50%;
+          overflow: hidden;
         }
       }
     }
@@ -267,14 +275,7 @@ page {
       .store_img:nth-of-type(1) {
         transform: translate(-100%, -50%);
         z-index: 9;
-        background-color: #eee;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        image{
-          width: 37rpx;
-          height: 33rpx;
-        }
+        background-color: #f0f;
       }
       .store_img:nth-of-type(2) {
         transform: translate(-50%, -50%);
@@ -284,17 +285,12 @@ page {
     }
 
     .to_store {
-      width: 111rpx;
-      height: 45rpx;
-      // border-radius: 21rpx;
-      // line-height: 45rpx;
-      // padding: 0 20rpx;
-      // font-size: 24rpx;
-      // color: #ff5750;
-      // border: solid 1px #ff5750;
-      background: url(http://www.whxq.fenbot.com/WeChat/gyg.png) center
-        no-repeat;
-      background-size: 100% 100%;
+      border-radius: 21rpx;
+      line-height: 45rpx;
+      padding: 0 20rpx;
+      font-size: 24rpx;
+      color: #ff5750;
+      border: solid 1px #ff5750;
     }
   }
 }
