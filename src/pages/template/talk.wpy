@@ -28,21 +28,21 @@
       </view>
       <view class="location">
         <view>
-        <text class="weizhi"></text>
+          <text class="iconfont icon-weizhi"></text>
         <text>杭州·杭州萧山国际机场</text>
         </view>
       </view>
       <view class="bottom">
         <view class="">
-          <text class="fenxiang"></text>
+          <text class="iconfont icon-fenxiang"></text>
           <text class="iconf">分享</text>
         </view>
         <view class="">
-          <text class="xiaoxi"></text>
+          <text class="iconfont icon-msnui-comment"></text>
           <text class="iconf">88</text>
         </view>
         <view class="">
-          <text class="iconfont icon-guanzhu"></text>
+          <text class="iconfont icon-xinxing"></text>
           <text class="iconf">99</text>
         </view>
       </view>
@@ -90,6 +90,14 @@ export default class Talk extends wepy.component {
   justify-content: space-between;
   padding-top: 5rpx;
   padding-top: 42rpx;
+  text {
+    font-size: 34rpx;
+    color: #333333;
+  }
+  text:nth-of-type(2) {
+    font-size: 30rpx;
+    color: #999999;
+  }
 }
 
 .talk_list {
@@ -168,19 +176,12 @@ export default class Talk extends wepy.component {
       border-radius: 5rpx;
       display: inline-flex;
       align-items: center;
-      line-height: 39rpx;
       padding: 7rpx 10rpx;
       text {
         color: #999999;
       }
-      .weizhi {
+      .icon-weizhi {
         margin-right: 10rpx;
-        display: inline-block;
-        width: 21rpx;
-        height: 25rpx;
-        background: url(http://www.whxq.fenbot.com/WeChat/location.png) center
-          no-repeat;
-        background-size: 100% 100%;
       }
     }
   }
@@ -188,31 +189,21 @@ export default class Talk extends wepy.component {
     display: flex;
     justify-content: space-around;
     padding: 40rpx 0;
+    align-items: center;
     view {
       display: flex;
       align-items: center;
+      justify-content: center;
     }
     text {
       color: #999999;
     }
     .iconf {
       padding-left: 15rpx;
+      font-size: 31rpx;
     }
-    .fenxiang {
-      display: inline-block;
-      width: 31rpx;
-      height: 29rpx;
-      background: url(http://www.whxq.fenbot.com/WeChat/fenxiang.png) center
-        no-repeat;
-      background-size: 100% 100%;
-    }
-    .xiaoxi {
-      display: inline-block;
-      width: 31rpx;
-      height: 29rpx;
-      background: url(http://www.whxq.fenbot.com/WeChat/pinglun.png) center
-        no-repeat;
-      background-size: 100% 100%;
+    .icon-fenxiang {
+      font-size: 40rpx;
     }
   }
 }

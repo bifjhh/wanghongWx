@@ -11,7 +11,7 @@
           <view class="store_one" wx:for="{{6}}" wx:key="{{index}}">
             <view class="store_img">
               <view class="jingxuan">
-                <text class="zuanshi"></text>
+                <text class="iconfont icon-zuanshi"></text>
                 <text class="txt">精选</text>
               </view>
             </view>
@@ -104,18 +104,17 @@ export default class Store extends wepy.component {
         padding: 0 10rpx;
         background-color: rgba(255, 255, 255, 0.42);
         border-radius: 5px;
-        .zuanshi {
-          display: inline-block;
-          width: 24rpx;
-          height: 21rpx;
-          background: url(http://www.whxq.fenbot.com/WeChat/zuanshi.png)
-            center no-repeat;
-          background-size: contain;
+        text {
+          // font-size: 20rpx;
+          font-size: 10px;
+          color: #ff5750;
+        }
+        .icon-zuanshi {
+          // font-size: 28rpx;
+          font-size: 14px;
         }
         .txt {
           padding-left: 10rpx;
-          font-size: 10px;
-          color: #ff5750;
         }
       }
     }
@@ -131,7 +130,7 @@ export default class Store extends wepy.component {
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
       }
     }
@@ -153,7 +152,7 @@ export default class Store extends wepy.component {
       no-repeat;
     background-size: 100% 100%;
     view {
-      width: 322rpx;
+      width: 330rpx;
       height: 500rpx;
       display: flex;
       align-items: center;

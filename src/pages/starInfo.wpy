@@ -18,7 +18,6 @@ export default class starInfo extends wepy.page {
   data = {
     nav_list: [
       { name: '说说', id: 'talk' },
-      { name: 'issue', id: 'issue' },
       { name: '相册', id: 'photo' },
       { name: '商城精选', id: 'store' }
     ],
@@ -82,7 +81,9 @@ export default class starInfo extends wepy.page {
     </view>
     <view class="store_r">
       <view class="store_info">
-        <view class="store_img"></view>
+        <view class="store_img">
+          <image src="http://www.whxq.fenbot.com/WeChat/shop.png" />
+        </view>
         <view class="store_img"></view>
         <view class="store_img"></view>
       </view>
@@ -275,7 +276,14 @@ page {
       .store_img:nth-of-type(1) {
         transform: translate(-100%, -50%);
         z-index: 9;
-        background-color: #f0f;
+        background-color: #eee;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        image {
+          width: 37rpx;
+          height: 33rpx;
+        }
       }
       .store_img:nth-of-type(2) {
         transform: translate(-50%, -50%);

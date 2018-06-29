@@ -24,7 +24,7 @@
       </view>
       <view class="location">
         <view>
-          <text class="weizhi"></text>
+        <text class="iconfont icon-weizhi"></text>
         <text>杭州·杭州萧山国际机场</text>
         </view>
       </view>
@@ -56,9 +56,9 @@
         <input type="text" placeholder="点击此处说两句......" />
       </view>
       <view class="buttom">
-        <view class="xiaoxi"></view>
+        <text class="iconfont iconfont icon-msnui-comment"></text>
         <view class="xin"></view>
-        <view class="fenxiang"></view>
+        <text class="iconfont icon-fenxiang"></text>
       </view>
     </view>
   </view>
@@ -99,9 +99,9 @@ export default class Example extends wepy.page {
   methods = {
     getAll(index) {
       let that = this;
-      console.log(index)
-      that.list[index].isshow=true;
-      return 
+      console.log(index);
+      that.list[index].isshow = true;
+      return;
       that.showAdd = 'dsp_none';
       that.isno = '';
     }
@@ -180,9 +180,16 @@ page {
     .m_info {
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
       margin-left: 23rpx;
+      .m_title {
+        font-size: 31rpx;
+        color: #333333;
+      }
+      .m_name {
+        font-size: 23rpx;
+        color: #999999;
+      }
     }
   }
   .img_list {
@@ -202,20 +209,14 @@ page {
     view {
       background-color: #ededed;
       border-radius: 5rpx;
-      display: inline-block;
-      line-height: 39rpx;
+      display: inline-flex;
+      align-items: center;
       padding: 7rpx 10rpx;
       text {
         color: #999999;
       }
-      .weizhi {
+      .icon-weizhi {
         margin-right: 10rpx;
-        display: inline-block;
-        width: 21rpx;
-        height: 25rpx;
-        background: url(http://www.whxq.fenbot.com/WeChat/location.png) center
-          no-repeat;
-        background-size: 100% 100%;
       }
     }
   }
@@ -319,20 +320,14 @@ page {
     height: 38rpx;
     width: 40rpx;
   }
-  .xiaoxi{
-    background: url(http://www.whxq.fenbot.com/WeChat/pinglun.png)
-              center no-repeat;
-            background-size: 100% 100%;
+  text{
+    font-size: 40rpx;
+    color: #999;
   }
-  .xin{
-    background: url(http://www.whxq.fenbot.com/WeChat/guanzhu.png)
-              center no-repeat;
-            background-size: 100% 100%;
-  }
-  .fenxiang{
-    background: url(http://www.whxq.fenbot.com/WeChat/fenxiang.png)
-              center no-repeat;
-            background-size: 100% 100%;
+  .xin {
+    background: url(http://www.whxq.fenbot.com/WeChat/guanzhu.png) center
+      no-repeat;
+    background-size: 100% 100%;
   }
 }
 </style>

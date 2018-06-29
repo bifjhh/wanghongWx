@@ -23,7 +23,7 @@ export default class Goods extends wepy.page {
                 <text class="shop_name">CHANEL 香奈儿</text>
                 <text class="shop_site">法国</text>
             </view>
-            <view class="to_shop"></view>
+            <view class="to_shop">进入</view>
         </view>
         <view class="intro">高端、时尚简约、简单舒适、纯正风范</view>
         <view class="goods_list">
@@ -73,9 +73,12 @@ page {
       height: 64rpx;
       margin-left: 94rpx;
       border-radius: 32rpx;
-      background: url(http://www.whxq.fenbot.com/WeChat/to_shop.png) center
-        no-repeat;
-      background-size: 100% 100%;
+      border: solid 2px rgba(255, 87, 80, 0.37);
+      font-size: 28rpx;
+      color: #ff5750;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
   .intro {
