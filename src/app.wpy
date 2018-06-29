@@ -69,11 +69,11 @@ image {
 /* 字体图标 */
 @font-face {
   font-family: 'iconfont';  /* project id 716449 */
-  src: url('//at.alicdn.com/t/font_716449_iifug4wb4x.eot');
-  src: url('//at.alicdn.com/t/font_716449_iifug4wb4x.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_716449_iifug4wb4x.woff') format('woff'),
-  url('//at.alicdn.com/t/font_716449_iifug4wb4x.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_716449_iifug4wb4x.svg#iconfont') format('svg');
+  src: url('//at.alicdn.com/t/font_716449_w5gurcnhqrq.eot');
+  src: url('//at.alicdn.com/t/font_716449_w5gurcnhqrq.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_716449_w5gurcnhqrq.woff') format('woff'),
+  url('//at.alicdn.com/t/font_716449_w5gurcnhqrq.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_716449_w5gurcnhqrq.svg#iconfont') format('svg');
 }
 
 .iconfont {
@@ -92,6 +92,8 @@ image {
 
 .icon-xin:before { content: "\e635"; }
 
+.icon-jiantou9:before { content: "\e60b"; }
+
 .icon-zuanshi:before { content: "\e669"; }
 
 .icon-xinxing:before { content: "\e632"; }
@@ -105,6 +107,7 @@ image {
 
 <script>
 import wepy from 'wepy';
+wepy.uri='http://www.whxq.fenbot.com/api/v1/'
 import 'wepy-async-function';
 export default class extends wepy.app {
   config = {

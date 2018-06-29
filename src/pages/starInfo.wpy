@@ -58,7 +58,10 @@ export default class starInfo extends wepy.page {
           <text>关注</text>
         </view>
         <view class="prove">个人认证:儿童主播童话作家</view>
-        <view class="info {{isInfo?'info_one':''}}" @tap="showInfo">欢迎关注星球：网红楠丫宝儿，在这里您可以在这里您可以在这里您可以</view>
+        <view class="info {{isInfo?'info_one':''}}" @tap="showInfo">
+          欢迎关注星球：网红楠丫宝儿，在这里您可以在这里您可以在这里您可以
+          <text class="get_all iconfont icon-jiantou9"></text>
+        </view>
         <view class="attention">
           <view class="add" wx:if="{{1}}">+关注</view>
           <view class="yet_add" wx:else>
@@ -122,11 +125,12 @@ page {
 }
 .head {
   width: 100%;
-  height: 649rpx;
-  background-color: rgba(0, 0, 0, 0.1);
-  padding: 0 28rpx 32rpx 39rpx;
+  height: 650rpx;
   display: flex;
   flex-direction: column-reverse;
+  background: url(http://www.whxq.fenbot.com/WeChat/star_top.png) center
+    no-repeat;
+  background-size: 100% 100%;
   .head_img {
     width: 119rpx;
     height: 119rpx;
@@ -134,6 +138,8 @@ page {
     background-color: #f2f2f2;
   }
   .introduce {
+    padding: 0 28rpx 32rpx 39rpx;
+    background: linear-gradient(to bottom, RGBA(0, 0, 0, 0), RGBA(0, 0, 0, .3), RGBA(0, 0, 0, .5));
     display: flex;
     align-items: center;
     .head_r {
@@ -144,14 +150,14 @@ page {
       position: relative;
       .title {
         text {
-          color: #333;
+          color: #fff;
           font-size: 28rpx;
           padding: 0 20rpx;
           position: relative;
           &:before {
             content: '';
             position: absolute;
-            background-color: #666;
+            background-color: #fff;
             width: 1px;
             height: 90%;
             top: 5%;
@@ -168,8 +174,14 @@ page {
       .prove,
       .info {
         font-size: 28rpx;
-        color: #666;
+        color: #fff;
         margin-top: 24rpx;
+      }
+      .info {
+        position: relative;
+        .get_all {
+          display: none;
+        }
       }
       .info_one {
         overflow: hidden;
@@ -177,6 +189,13 @@ page {
         display: -webkit-box;
         -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
+        padding-right: 15rpx;
+        .get_all {
+          display: block;
+          position: absolute;
+          right: 0;
+          top: 5rpx;
+        }
       }
 
       .attention {

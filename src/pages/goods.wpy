@@ -1,6 +1,5 @@
 <script>
 import wepy from 'wepy';
-
 export default class Goods extends wepy.page {
   config = {};
   components = {};
