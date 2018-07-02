@@ -16,14 +16,16 @@
   <view class="my_star">
     <view class="title">我的星球</view>
     <view class="star_box" @touchstart="touchstart" @touchmove="touchmove" @touchend="touchend" >
-    <block wx:if="{{list.length!=0}}">
-      <view class="star {{index==isindex?'active':''}}" style="left:calc({{(index+1)*50}}% - {{dist+'px'}});" wx:for="{{list}}" wx:key="index" wx:item="item" @tap="toPage('starInfo')">
-        <view class="shade"></view>
+    <block wx:if="{{mystars.length!=0}}">
+      <view class="star {{index==isindex?'active':''}}" style="left:calc({{(index+1)*50}}% - {{dist+'px'}});" wx:for="{{mystars}}" wx:key="index" wx:item="item" @tap.stop="toPage('starInfo')" data-starid="{{item.star_id}}">
+        <view class="shade">
+          <image src="{{item.star_logo}}" />
+        </view>
         <view class="star_info">
-          <view class="star_name">{{item}}的星球</view>
+          <view class="star_name">{{item.star_name}}的星球</view>
           <view class="star_attention">
             <view class="xxin"></view>
-            <view>{{item}}关注</view>
+            <view>{{item.star_likes}}关注</view>
           </view>
         </view>
       </view>
@@ -37,25 +39,26 @@
     </block>
     </view>  
   </view>
-  <view class="attention"  wx:if="{{list.length!=0}}">
+  <view class="attention"  wx:if="{{follows.length!=0}}">
     <view class="title">我关注的星球</view>
     <view class="attention_list">
-      <view wx:for="{{list}}" wx:key="index" wx:item="item" class="att_info" @tap="toPage('starInfo')">
+      <view wx:for="{{follows}}" wx:key="index" wx:item="item" class="att_info" @tap="toPage('starInfo')" data-starid="{{item.star_id}}">
         <view class="info_img">
-				  <image wx:if="{{false}}" src="/images/Mac.png" />
+				  <image src="{{item.star_logo}}" />
         </view>
         <view class="content">
           <view class="head">
             <view class="head_img">
+               <image src="{{item.owner_logo}}" />
             </view>
-            <text>我关注的星球</text>
+            <text>{{item.owner_name}} - {{item.star_name}}</text>
           </view>
-          <view class="c_info">我关注的星球</view>
+          <view class="c_info">{{item.star_say}}</view>
           <view class="base">
             <view class="base_img">
             <image src="/images/xin.png" />
             </view>
-            <text>12万人关注</text>
+            <text>{{item.star_likes}}人关注</text>
           </view>
         </view>
       </view>
@@ -74,15 +77,19 @@
 
 <script>
 import wepy from 'wepy';
-var start = 0,
-  end = 0,
-  isdist = 0;
+
 export default class Planet extends wepy.page {
-  config = {};
+  config = {
+    // disableScroll: true
+  };
   components = {};
 
   data = {
-    list: [1, 2, 3, 4],
+    mystars: [],
+    follows: [],
+    start: 0,
+    end: 0,
+    isdist: 0,
     dist: 0,
     history: 0,
     isindex: 0,
@@ -91,33 +98,42 @@ export default class Planet extends wepy.page {
   };
   methods = {
     touchstart(e) {
-      start = e.changedTouches[0].pageX + this.dist;
-      isdist = e.changedTouches[0].pageX;
+      let that = this;
+      that.start = e.changedTouches[0].pageX + this.dist;
+      that.isdist = e.changedTouches[0].pageX;
+      that.$apply();
     },
     touchmove(e) {
-      let aaa;
-      end = e.changedTouches[0].pageX;
-      this.dist = start - end;
+      let that = this;
+      console.log(e.changedTouches[0].pageX);
+      that.end = e.changedTouches[0].pageX;
+      that.dist = that.start - that.end;
+      that.$apply();
     },
     touchend(e) {
-      let w = this.pageW / 2;
-      end = e.changedTouches[0].pageX;
-      if (isdist - end >= 70 && this.isindex < this.list.length - 1) {
-        this.dist = this.history + w;
-        this.history = this.dist;
-        this.isindex += 1;
-      } else if (isdist - end < -60 && this.isindex >= 1) {
-        this.dist = this.history - w;
-        this.history = this.dist;
-        this.isindex -= 1;
+      let that = this;
+      let w = that.pageW / 2;
+      that.end = e.changedTouches[0].pageX;
+      if (that.isdist - that.end >= 70 && that.isindex < that.mystars.length - 1) {
+        that.dist = that.history + w;
+        that.history = that.dist;
+        that.isindex += 1;
+        that.$apply();
+      } else if (that.isdist - that.end < -60 && that.isindex >= 1) {
+        that.dist = that.history - w;
+        that.history = that.dist;
+        that.isindex -= 1;
+        that.$apply();
       } else {
-        this.dist = this.history;
+        that.dist = that.history;
+        that.$apply();
       }
     },
 
-    toPage(url) {
-      console.log(url);
-      this.$navigate(url);
+    toPage(url,e) {
+      let uri = url+'?star_id='+e.currentTarget.dataset.starid
+      console.log(uri)
+      this.$navigate(uri);
     }
   };
 
@@ -125,8 +141,14 @@ export default class Planet extends wepy.page {
   onShow() {}
   onLoad() {
     let that = this;
-    // that.list.unshift(that.list.pop());
     that.pageW = wx.getSystemInfoSync().windowWidth;
+
+    wepy.request({ url: 'star', method: 'POST' }).then(res => {
+      console.log(res.data);
+      that.mystars = res.data.data.mystar;
+      that.follows = res.data.data.followstar;
+      that.$apply();
+    });
   }
   // Other properties
 }
@@ -219,8 +241,8 @@ export default class Planet extends wepy.page {
           .xxin {
             width: 18rpx;
             height: 16rpx;
-            background: url(http://www.whxq.fenbot.com/WeChat/xxin.png)
-              center no-repeat;
+            background: url(http://www.whxq.fenbot.com/WeChat/xxin.png) center
+              no-repeat;
             background-size: 100% 100%;
             margin-right: 5rpx;
           }

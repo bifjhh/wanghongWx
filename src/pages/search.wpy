@@ -74,34 +74,20 @@ export default class Search extends wepy.page {
       let that = this;
       if (e.detail.cursor >= 1) {
         that.delHeid = true;
+        wepy.request({ url: 'star/search', method: 'POST' }).then(res => {
+          that.lists = res.data.data.lists;
+          that.$apply();
+        });
       } else {
         that.delHeid = false;
+        that.lists = [];
       }
       that.msg = e.detail.value;
-      // wx.request({
-      //   url: wepy.uri + 'star/search',
-      //   method: 'POST',
-      //   data: {
-      //     keyword: e.detail.value
-      //   },
-      //   header: {
-      //     'content-type': 'application/json'
-      //   },
-      //   success: function(res) {
-      //     debugger;
-      //     console.log(res);
-      //     console.log(res.data.data.lists);
-      //     that.lists = res.data.data.lists;
-      //     that.$apply();
-      //   }
-      // });
-      // return;
-      console.log(wepy.request.then)
-      // wepy.request({ url: wepy.uri + 'star/search', method: 'POST' }).then(res => console.log(res));
     },
     del() {
-      console.log('清空');
-      this.msg = '';
+      let that = this;
+      that.msg = '';
+      that.lists = [];
     },
     cencel() {
       this.$switch('./planet');

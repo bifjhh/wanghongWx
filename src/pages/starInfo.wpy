@@ -1,3 +1,81 @@
+
+<template lang="wxml">
+  <scroll-view scroll-into-view="{{toView}}" scroll-y="{{true}}" scroll-with-animation="true" class="scr">
+
+  <view class="head">
+    <view class="introduce">
+      <view class="head_img"></view>
+      <view class="head_r">
+        <view class="title">
+          <text>{{starInfo.head.star_uv}}粉丝</text>
+          <text>{{starInfo.head.star_likes}}关注</text>
+        </view>
+        <view class="prove">{{starInfo.head.owner_auth}}:儿童主播童话作家</view>
+        <view class="info {{isInfo?'info_one':''}}" @tap="showInfo">
+          欢迎关注星球：{{starInfo.head.star_description}}
+          <text class="get_all iconfont icon-jiantou9"></text>
+        </view>
+        <view class="attention">
+          <view class="add" wx:if="{{starInfo.head.is_follow_star}}">+关注</view>
+          <view class="yet_add" wx:else>
+            <text class="iconfont icon-yiguanzhu"></text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <view class="store">
+    <view class="store_l">
+      <view class="store_logo">
+        <image src="{{starInfo.shop.shop_logo}}" />
+      </view>
+      <view class="userinfo">
+        <view class="names">{{starInfo.shop.shop_name}}</view>
+        <view class="site">
+          <text>{{starInfo.shop.shop_city}}</text>
+          <text class="xian">丨</text>
+          <text>{{starInfo.shop.shop_bnum}}人已购买</text>
+        </view>
+      </view>
+    </view>
+    <view class="store_r">
+      <view class="store_info">
+        <view class="store_img">
+          <image src="http://www.whxq.fenbot.com/WeChat/shop.png" />
+        </view>
+        <view class="store_img" wx:for="{{starInfo.shop.imgs}}" wx:key="{{index}}">
+          <image src="{{item}}"/>
+        </view>
+        
+      </view>
+      <text class="xian"></text>
+      <view class="to_store">去逛逛</view>
+    </view>
+  </view>
+  <view class="content"> 
+    <view class="navbar">
+      <view class="nav_to " wx:for="{{nav_list}}" wx:key="{{index}}" data-opt="{{item.id}}" @tap="jumpTo">
+        {{item.name}}
+      </view>
+    </view>
+    <view class="body_info">
+      <!-- <repeat for="{{nav_list}}" key="{{item.id}}"  item="item">
+        <talk wx:if="{{item.id=='talk'}}" :objs.sync="starInfo.dynamic.say" />
+        <issue wx:if="{{item.id=='issue'}}" :objs.sync="item" />
+        <photo wx:if="{{item.id=='photo'}}" :objs.sync="item" />
+        <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
+      </repeat> -->
+      <repeat>
+        <talk :objs.sync="starInfo.dynamic.say" />
+        <photo :objs.sync="starInfo.dynamic.photos" />
+        <store :objs.sync="starInfo.dynamic.goods" />
+      </repeat>
+
+
+    </view>
+  </view>
+      </scroll-view>
+</template>
 <script>
 import wepy from 'wepy';
 import talk from './template/talk';
@@ -16,6 +94,7 @@ export default class starInfo extends wepy.page {
   };
 
   data = {
+    starInfo: {},
     nav_list: [
       { name: '说说', id: 'talk' },
       { name: '相册', id: 'photo' },
@@ -37,80 +116,28 @@ export default class starInfo extends wepy.page {
   };
 
   events = {};
-  onLoad() {
-    wx.setNavigationBarTitle({
-      title: '星球详情' //页面标题
-    });
+  onLoad(options) {
+    console.log(options);
+    console.log(options.star_id);
+    let that = this;
+    wepy
+      .request({
+        url: 'star/show',
+        method: 'POST',
+        data: { star_id: options.star_id }
+      })
+      .then(res => {
+        console.log(res.data);
+        that.starInfo = res.data.data;
+        wx.setNavigationBarTitle({
+          title: that.starInfo.head.star_name
+        });
+        that.$apply();
+      });
   }
   // Other properties
 }
 </script>
-
-<template lang="wxml">
-  <scroll-view scroll-into-view="{{toView}}" scroll-y="{{true}}" scroll-with-animation="true" class="scr">
-
-  <view class="head">
-    <view class="introduce">
-      <view class="head_img"></view>
-      <view class="head_r">
-        <view class="title">
-          <text>粉丝</text>
-          <text>关注</text>
-        </view>
-        <view class="prove">个人认证:儿童主播童话作家</view>
-        <view class="info {{isInfo?'info_one':''}}" @tap="showInfo">
-          欢迎关注星球：网红楠丫宝儿，在这里您可以在这里您可以在这里您可以
-          <text class="get_all iconfont icon-jiantou9"></text>
-        </view>
-        <view class="attention">
-          <view class="add" wx:if="{{1}}">+关注</view>
-          <view class="yet_add" wx:else>
-          </view>
-        </view>
-      </view>
-    </view>
-  </view>
-  <view class="store">
-    <view class="store_l">
-      <view class="store_logo"></view>
-      <view class="userinfo">
-        <view class="names">楠丫宝儿的小铺</view>
-        <view class="site">
-          <text>杭州</text>
-          <text class="xian">丨</text>
-          <text>223人已购买</text>
-        </view>
-      </view>
-    </view>
-    <view class="store_r">
-      <view class="store_info">
-        <view class="store_img">
-          <image src="http://www.whxq.fenbot.com/WeChat/shop.png" />
-        </view>
-        <view class="store_img"></view>
-        <view class="store_img"></view>
-      </view>
-      <text class="xian"></text>
-      <view class="to_store">去逛逛</view>
-    </view>
-  </view>
-  <view class="content"> 
-    <view class="navbar">
-      <view class="nav_to" wx:for="{{nav_list}}" wx:key="{{index}}" data-opt="{{item.id}}" @tap="jumpTo">
-        {{item.name}}
-      </view>
-    </view>
-    <view class="body_info">
-      <repeat for="{{nav_list}}" key="{{item.id}}"  item="item">
-        <talk wx:if="{{item.id=='talk'}}" :objs.sync="item" />
-        <issue wx:if="{{item.id=='issue'}}" :objs.sync="item" />
-        <photo wx:if="{{item.id=='photo'}}" :objs.sync="item" />
-        <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
-      </repeat>
-    </view>
-  </view>
-      </scroll-view>
-</template>
 
 <style lang="scss">
 page {
@@ -138,8 +165,13 @@ page {
     background-color: #f2f2f2;
   }
   .introduce {
-    padding: 0 28rpx 32rpx 39rpx;
-    background: linear-gradient(to bottom, RGBA(0, 0, 0, 0), RGBA(0, 0, 0, .3), RGBA(0, 0, 0, .5));
+    padding: 28rpx 28rpx 32rpx 39rpx;
+    background: linear-gradient(
+      to bottom,
+      RGBA(0, 0, 0, 0),
+      RGBA(0, 0, 0, 0.3),
+      RGBA(0, 0, 0, 0.5)
+    );
     display: flex;
     align-items: center;
     .head_r {
@@ -214,17 +246,17 @@ page {
           align-items: center;
         }
         .yet_add {
-          width: 45rpx;
-          height: 45rpx;
-          border-radius: 50%;
-          overflow: hidden;
-          background: url(http://www.whxq.fenbot.com/WeChat/yguanzhu.png) center
-            no-repeat;
-          background-size: 100% 100%;
+          // width: 45rpx;
+          // height: 45rpx;
+          // border-radius: 50%;
+          // overflow: hidden;
+          // background: url(http://www.whxq.fenbot.com/WeChat/yguanzhu.png) center
+          //   no-repeat;
+          // background-size: 100% 100%;
         }
         .icon-yiguanzhu {
           display: inline-block;
-          padding: 5rpx;
+          padding: 3rpx 6rpx;
           font-size: 45rpx;
           color: #f5f5f5;
           border: 1px solid #f5f5f5;
@@ -339,6 +371,9 @@ page {
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    .active {
+      border-bottom: 1px solid #f00;
     }
   }
 }
