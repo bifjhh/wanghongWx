@@ -66,7 +66,7 @@
         <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
       </repeat> -->
       <repeat>
-        <talk :objs.sync="starInfo.dynamic.say" />
+        <talk :objs.sync="starInfo.dynamic.say"  @toPage.user="toPage"/>
         <photo :objs.sync="starInfo.dynamic.photos" />
         <store :objs.sync="starInfo.dynamic.goods" />
       </repeat>
@@ -112,6 +112,13 @@ export default class starInfo extends wepy.page {
     showInfo() {
       let that = this;
       that.isInfo = !that.isInfo;
+    },
+    toPage(url){
+      let that = this;
+      if(url=='talkList'){
+        url+=('?star_id='+that.starInfo.head.star_id);
+      }
+      this.$navigate(url);
     }
   };
 

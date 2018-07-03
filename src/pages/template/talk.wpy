@@ -3,7 +3,7 @@
   <view class='talk' id="talk" data-rol="talk">
     <view class="title">
       <text>说说({{objs.total}})</text>
-      <text>更多></text>
+      <text @tap="toPage('talkList')">更多></text>
     </view>
     <view class="talk_list" wx:for="{{objs.lists}}" wx:key="{{item.say_id}}" data-sayid="{{item.say_id}}">
       <view class="thead">
@@ -13,12 +13,12 @@
           </view>
           <view class="name">{{item.owner_name}}</view>
         </view>
-        <view class="earlier">28天前</view>
+        <view class="earlier">{{item.say_publish_time}}</view>
       </view>
       <view class="talk_info">
         {{item.say_content}}
       </view>
-      <view class="music">
+      <view class="music" wx:if="{{0}}">
         <view class="music_logo"></view>
         <view class="m_info">
           <view class="m_title">纸短情长</view>
@@ -26,11 +26,23 @@
         </view>
       </view>
       <view class="img_list" wx:if="{{item.say_photos_path.length!=0}}">
-        <view class="pic" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:item="issrc">
+      <block wx:if="{{item.say_photos_path.length==1}}">
+        <view class="pic picw1" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc">
           <image src="{{issrc}}"/>
         </view>
+      </block>
+      <block wx:if="{{item.say_photos_path.length==2}}">
+        <view class="pic picw2" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc">
+          <image src="{{issrc}}"/>
+        </view>
+      </block>
+      <block wx:if="{{item.say_photos_path.length>2}}">
+        <view class="pic" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc">
+          <image src="{{issrc}}"/>
+        </view>
+      </block>
       </view>
-      <view class="location">
+      <view class="location" wx:if="{{item.say_address}}">
         <view>
           <text class="iconfont icon-weizhi"></text>
         <text>{{item.say_address}}</text>
@@ -69,7 +81,11 @@ export default class Talk extends wepy.component {
   };
   components = {};
 
-  methods = {};
+  methods = {
+    toPage(url) {
+       this.$emit('toPage', url)
+    }
+  };
 
   events = {};
 
@@ -173,6 +189,12 @@ export default class Talk extends wepy.component {
       height: 218rpx;
       background-color: #ccc;
       margin-bottom: 10rpx;
+      &.picw1 {
+        width: 100%;
+      }
+      &.picw2 {
+        width: 48%;
+      }
     }
   }
   .location {

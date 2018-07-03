@@ -1,31 +1,47 @@
-<!-- 说说列表页面 -->
+<!--  -->
 <template>
-  <view class='talk_box' >
-    <view class="talk" wx:for="{{3}}" wx:key="{{index}}">
+  <view class='talk'>
+    <view class="talk_list" wx:for="{{objs.lists}}" wx:key="{{item.say_id}}" data-sayid="{{item.say_id}}">
       <view class="thead">
         <view class="names">
-          <view class="name_img"></view>
-          <view class="name">网红糖妮妮</view>
+          <view class="name_img">
+            <image src="{{item.owner_img}}" />
+          </view>
+          <view class="name">{{item.owner_name}}</view>
         </view>
-        <view class="earlier">28天前</view>
+        <view class="earlier">{{item.say_publish_time}}</view>
       </view>
       <view class="talk_info">
-        "@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词，表达了自己的想法与见解。他把东西方元素十分自然的融合在歌曲中，突出却不突兀，独具匠心，形成了极具个人特色的新华语曲调"
+        {{item.say_content}}
       </view>
-      <view class="music">
+      <view class="music" wx:if="{{0}}">
         <view class="music_logo"></view>
         <view class="m_info">
           <view class="m_title">纸短情长</view>
           <view class="m_name">烟把乐队</view>
         </view>
       </view>
-      <view class="img_list">
-        <view class="pic" wx:for="{{6}}" wx:key="{{index}}"></view>
+      <view class="img_list" wx:if="{{item.say_photos_path.length!=0}}">
+      <block wx:if="{{item.say_photos_path.length==1}}">
+        <view class="pic picw1" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc">
+          <image src="{{issrc}}"/>
+        </view>
+      </block>
+      <block wx:if="{{item.say_photos_path.length==2}}">
+        <view class="pic picw2" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc">
+          <image src="{{issrc}}"/>
+        </view>
+      </block>
+      <block wx:if="{{item.say_photos_path.length>2}}">
+        <view class="pic" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc">
+          <image src="{{issrc}}"/>
+        </view>
+      </block>
       </view>
-      <view class="location">
+      <view class="location" wx:if="{{item.say_address}}">
         <view>
-        <text class="iconfont icon-weizhi"></text>
-        <text>杭州·杭州萧山国际机场</text>
+          <text class="iconfont icon-weizhi"></text>
+        <text>{{item.say_address}}</text>
         </view>
       </view>
       <view class="bottom">
@@ -35,27 +51,27 @@
         </view>
         <view class="">
           <text class="iconfont icon-msnui-comment"></text>
-          <text class="iconf">88</text>
+          <text class="iconf">{{item.say_comment}}</text>
         </view>
         <view class="">
           <text class="iconfont icon-xinxing"></text>
-          <text class="iconf">99</text>
+          <text class="iconf">{{item.say_like}}</text>
         </view>
       </view>
     </view>
+   
     <view class=""></view>
   </view>
 </template>
 
 <script>
 import wepy from 'wepy';
-export default class Example extends wepy.page {
-  config = {
-    navigationBarTitleText: 'xxx的说说'
+export default class Talk extends wepy.page {
+  data = {
+    objs: {}
   };
 
-  data = {};
-
+  props = {};
   components = {};
 
   methods = {};
@@ -66,19 +82,36 @@ export default class Example extends wepy.page {
 
   computed = {};
 
-  onLoad() {}
+  onLoad(options) {
+    // console.log(objs)
+    let that = this;
+    wepy
+      .request({
+        url: 'say/list',
+        method: 'POST',
+        data: { star_id: options.star_id }
+      })
+      .then(res => {
+        console.log(res.data);
+        that.objs = res.data.data;
+        wx.setNavigationBarTitle({
+          title: res.data.owner_name + '的说说'
+        });
+        that.$apply();
+      });
+  }
 
   onShow() {}
 }
 </script>
 
 <style lang='scss'>
-.talk_box {
+.talk {
   background-color: #fff;
   padding: 0 27rpx;
 }
 
-.talk {
+.talk_list {
   border-bottom: 1px solid #e5e5e5;
   .thead {
     display: flex;
@@ -145,6 +178,12 @@ export default class Example extends wepy.page {
       height: 218rpx;
       background-color: #ccc;
       margin-bottom: 10rpx;
+      &.picw1 {
+        width: 100%;
+      }
+      &.picw2 {
+        width: 48%;
+      }
     }
   }
   .location {
@@ -185,7 +224,7 @@ export default class Example extends wepy.page {
     }
   }
 }
-.talk:nth-last-of-type(2) {
+.talk_list:nth-last-of-type(2) {
   border: none;
 }
 </style>
