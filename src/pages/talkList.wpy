@@ -78,7 +78,8 @@ import wepy from 'wepy';
 export default class TalkList extends wepy.page {
   data = {
     objs: {},
-    display: 'none'
+    display: 'none',
+    star_id: ''
   };
   props = {};
   components = {};
@@ -98,18 +99,17 @@ export default class TalkList extends wepy.page {
         })
         .then(res => {
           console.log('status', res.data.status);
-          if (res.data.status == '1') {
-            if (type == 'add') {
-              that.objs.lists[index].is_dolike = 1;
-              that.$apply();
-            } else if (type == 'del') {
-              that.objs.lists[index].is_dolike = 0;
-              that.$apply();
-            }
-            that.objs.lists[index].say_like = res.data.data.like;
-            console.log('现在的', that.objs.lists[index].is_dolike);
+          if (res.data.status != '1') return;
+          if (type == 'add') {
+            that.objs.lists[index].is_dolike = 1;
+            that.$apply();
+          } else if (type == 'del') {
+            that.objs.lists[index].is_dolike = 0;
             that.$apply();
           }
+          that.objs.lists[index].say_like = res.data.data.like;
+          console.log('现在的', that.objs.lists[index].is_dolike);
+          that.$apply();
         });
     },
     toPage(url, param) {
@@ -162,16 +162,16 @@ export default class TalkList extends wepy.page {
   events = {};
   watch = {};
   computed = {};
-  onLoad(options) {
+  onShow() {
+    let that = this;
     wx.showLoading({
       title: ''
     });
-    let that = this;
     wepy
       .request({
         url: '/say/list',
         data: {
-          star_id: options.star_id
+          star_id: that.star_id
         }
       })
       .then(res => {
@@ -185,7 +185,11 @@ export default class TalkList extends wepy.page {
         that.$apply();
       });
   }
-  onShow() {}
+  onLoad(options) {
+    let that = this;
+    that.star_id = options.star_id;
+    that.$apply();
+  }
 }
 </script>
 

@@ -19,8 +19,8 @@
         <view class="earlier">{{item.say_publish_time}}</view>
       </view>
       <text class="talk_info">
-        {{item.say_content}}
-      </text>
+          {{item.say_content}}
+        </text>
       <view class="music" wx:if="{{item.say_video_info.title}}">
         <view class="music_logo">
           <image src="{{item.say_video_info.cover}}" />
@@ -50,7 +50,7 @@
       <view class="location" wx:if="{{item.say_address}}" @tap="amap({{item.say_lng*1}},{{item.say_lat*1}},{{item.say_address}})">
         <view>
           <text class="iconfont icon-weizhi"></text>
-        <text>{{item.say_address}}</text>
+          <text>{{item.say_address}}</text>
         </view>
       </view>
       <view class="bottom">
@@ -63,7 +63,7 @@
           <text class="iconf">{{item.say_comment}}</text>
         </view>
         <view wx:if="{{item.is_dolike=='0'}}" class="dianzan" data-sayid="{{item.say_id}}" @tap="praise('add',{{index}})">
-          <text  class="iconfont icon-xinxing"></text>
+          <text class="iconfont icon-xinxing"></text>
           <text class="iconf">{{item.say_like}}</text>
         </view>
         <view wx:else class="dianzan" data-sayid="{{item.say_id}}" @tap="praise('del',{{index}})">
@@ -72,7 +72,6 @@
         </view>
       </view>
     </view>
-   
     <view class=""></view>
   </view>
 </template>
@@ -81,7 +80,6 @@
 import wepy from 'wepy';
 export default class Talk extends wepy.component {
   data = {};
-
   props = {
     objs: {
       type: Object,
@@ -90,7 +88,6 @@ export default class Talk extends wepy.component {
     }
   };
   components = {};
-
   methods = {
     toPage(url, param) {
       let that = this;
@@ -101,7 +98,6 @@ export default class Talk extends wepy.component {
         url += '?id=' + param;
       }
       that.$parent.$navigate(url);
-
       // this.$emit('toPage', url);
     },
     praise(type, index, e) {
@@ -112,23 +108,25 @@ export default class Talk extends wepy.component {
       wepy
         .request({
           url: '/say/do_like',
-          data: { say_id: e.currentTarget.dataset.sayid, dotype: type }
+          data: {
+            say_id: e.currentTarget.dataset.sayid,
+            dotype: type
+          }
         })
         .then(res => {
           console.log(res.data.status);
-          if (res.data.status == '1') return;
+          if (res.data.status != '1') return;
           if (type == 'add') {
             that.$parent.starInfo.dynamic.say.lists[index].is_dolike = 1;
-            thatj.objs.lists[index].is_dolike = 1
-            that.$apply();
+            // thatj.objs.lists[index].is_dolike = 1;
+            // that.$apply();
             that.$parent.$apply();
           } else if (type == 'del') {
             that.$parent.starInfo.dynamic.say.lists[index].is_dolike = 0;
-            thatj.objs.lists[index].is_dolike = 0
-            that.$apply();
+            // thatj.objs.lists[index].is_dolike = 0;
+            // that.$apply();
             that.$parent.$apply();
           }
-
           that.$parent.starInfo.dynamic.say.lists[index].say_like =
             res.data.data.like;
           that.$parent.$apply();
@@ -165,15 +163,10 @@ export default class Talk extends wepy.component {
       });
     }
   };
-
   events = {};
-
   watch = {};
-
   computed = {};
-
   onLoad() {}
-
   onShow() {}
 }
 </script>
@@ -207,7 +200,6 @@ export default class Talk extends wepy.component {
     }
   }
 }
-
 .talk_list {
   border-bottom: 1px solid #e5e5e5;
   .thead {

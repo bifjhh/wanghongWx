@@ -9,7 +9,7 @@
           </view>
           <view class="head_r">
             <view class="title">
-              <text>{{starInfo.head.star_uv}}粉丝</text>
+              <text>{{starInfo.head.star_uv}}粉丝{{starInfo.head.is_follow_star}}</text>
               <text>{{starInfo.head.star_likes}}关注</text>
             </view>
             <view class="prove">{{starInfo.head.owner_auth}}</view>
@@ -18,9 +18,9 @@
               <text class="get_all iconfont icon-jiantou9"></text>
             </view>
             <view class="attention">
-              <view class="add" wx:if="{{starInfo.head.is_follow_star=='false'}}" @tap="follow('add')">+关注</view>
-              <view class="yet_add" wx:else @tap="follow('del')">
-                <text class="iconfont icon-yiguanzhu"></text>
+              <view  wx:if="{{isFollow=='false'}}" class="add" @tap="follow('add')">+关注</view>
+              <view  wx:else class="iconfont icon-yiguanzhu" @tap="follow('del')">
+                <!-- <text class="iconfont icon-yiguanzhu"></text> -->
               </view>
             </view>
           </view>
@@ -60,13 +60,13 @@
         </view>
         <view class="body_info">
           <!-- <repeat for="{{nav_list}}" key="{{item.id}}"  item="item">
-            <talk wx:if="{{item.id=='talk'}}" :objs.sync="starInfo.dynamic.say" />
-            <issue wx:if="{{item.id=='issue'}}" :objs.sync="item" />
-            <photo wx:if="{{item.id=='photo'}}" :objs.sync="item" />
-            <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
-          </repeat> -->
+              <talk wx:if="{{item.id=='talk'}}" :objs.sync="starInfo.dynamic.say" />
+              <issue wx:if="{{item.id=='issue'}}" :objs.sync="item" />
+              <photo wx:if="{{item.id=='photo'}}" :objs.sync="item" />
+              <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
+            </repeat> -->
           <repeat>
-            <talk wx:if="{{starInfo.dynamic.say.total!=0}}" :objs.sync="starInfo.dynamic.say" @toPage.user="toPage" />
+            <talk wx:if="{{starInfo.dynamic.say.total!=0}}" :objs.sync="says" @toPage.user="toPage" />
             <photo wx:if="{{starInfo.dynamic.photos.total!=0}}" :objs.sync="starInfo.dynamic.photos" />
             <store wx:if="{{starInfo.dynamic.goods.length}}" :objs.sync="starInfo.dynamic.goods" />
           </repeat>
@@ -94,6 +94,8 @@ export default class starInfo extends wepy.page {
   data = {
     display: 'none',
     starInfo: {},
+    isFollow: '',
+    says:{},
     nav_list: [
       {
         name: '说说',
@@ -149,9 +151,7 @@ export default class starInfo extends wepy.page {
     /* 关注 */
     follow(type) {
       let that = this;
-      console.log(type);
-      console.log(that.starInfo.head.is_follow_star)
-      return;
+      console.log(type, that.starInfo.head.is_follow_star);
       wepy
         .request({
           url: '/star/follow_star',
@@ -162,14 +162,13 @@ export default class starInfo extends wepy.page {
         })
         .then(res => {
           if (type == 'add') {
-            console.log('add', that.starInfo.head.is_follow_star);
-            that.starInfo.head.is_follow_star = 'true';
+            that.isFollow = 'true';
             that.$apply();
           } else {
-            console.log('del', that.starInfo.head.is_follow_star);
-            that.starInfo.head.is_follow_star = 'false';
+            that.isFollow = 'false';
             that.$apply();
           }
+          console.log(that.starInfo.head.is_follow_star);
         });
     }
   };
@@ -179,7 +178,6 @@ export default class starInfo extends wepy.page {
     wx.showLoading({
       title: ''
     });
-
     //初始化数据加载
     wepy
       .request({
@@ -191,6 +189,8 @@ export default class starInfo extends wepy.page {
       .then(res => {
         if (res.data.status != 1) return;
         that.starInfo = res.data.data;
+        that.isFollow = res.data.data.head.is_follow_star;
+        that.says = res.data.data.dynamic.say;
         wx.setNavigationBarTitle({
           title: that.starInfo.head.star_name
         });
@@ -313,15 +313,6 @@ page {
           display: flex;
           justify-content: center;
           align-items: center;
-        }
-        .yet_add {
-          // width: 45rpx;
-          // height: 45rpx;
-          // border-radius: 50%;
-          // overflow: hidden;
-          // background: url(http://www.whxq.fenbot.com/WeChat/yguanzhu.png) center
-          //   no-repeat;
-          // background-size: 100% 100%;
         }
         .icon-yiguanzhu {
           display: inline-block;
