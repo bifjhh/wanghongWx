@@ -1,5 +1,7 @@
 
 <template lang="wxml">
+<!-- <button @tap="gbtime">改变时间</button> -->
+<view style="display:{{display}}">
 	<view class="search">
 		<view class="s_info" @tap="toPage('search')">
 			<view class="s_l">
@@ -9,40 +11,47 @@
 			  <text>请输入口令搜索星球</text>
       </view>
 			<view class="s_r">
-				  <image src="/images/Mac.png" />
+				  <!-- <image src="/images/Mac.png" /> -->
       </view>
 		</view>
 	</view>
-  <view class="my_star">
+
+  <view class="my_star" style="background: url(http://www.whxq.fenbot.com/WeChat/ic_img_mystar@3x.png) center no-repeat; background-size: cover;">
     <view class="title">我的星球</view>
-    <view class="star_box" @touchstart="touchstart" @touchmove="touchmove" @touchend="touchend" >
-    <block wx:if="{{mystars.length!=0}}">
-      <view class="star {{index==isindex?'active':''}}" style="left:calc({{(index+1)*50}}% - {{dist+'px'}});" wx:for="{{mystars}}" wx:key="index" wx:item="item" @tap.stop="toPage('starInfo')" data-starid="{{item.star_id}}">
-        <view class="shade">
-          <image src="{{item.star_logo}}" />
+    <view class="star_box">
+      <block wx:if="{{mystars.length!=0}}">
+        <swiper  autoplay="{{false}}" previous-margin="{{'190rpx'}}" next-margin="{{'190rpx'}}" bindchange="swiperChange">
+          <block wx:for="{{mystars}}" wx:key="index" wx:item="item">
+            <swiper-item>
+              <view class="slide-image {{swiperIndex == index ? 'active' : ''}}"  @tap="toPage('starInfo',{{item.star_id}})" data-starid="{{item.star_id}}">
+                <image src="{{item.star_logo}}" />
+                <view class="shade">
+                </view>
+                <view class="star_info">
+                  <view class="star_name">{{item.star_name}}的星球</view>
+                  <view class="star_attention">
+                    <view class="xxin"></view>
+                    <view>{{item.star_likes}}关注</view>
+                  </view>
+                </view>
+              </view>
+            </swiper-item>
+          </block>
+        </swiper>
+      </block>
+      <block wx:else>
+        <view class="slide-image active one" @tap="showMd(0)">
+          <text class="new_star">
+            创建星球 \n 展示个性魅力
+          </text>
         </view>
-        <view class="star_info">
-          <view class="star_name">{{item.star_name}}的星球</view>
-          <view class="star_attention">
-            <view class="xxin"></view>
-            <view>{{item.star_likes}}关注</view>
-          </view>
-        </view>
-      </view>
-    </block>
-    <block wx:else>
-       <view class="star active" style="left:50%;background:transparent;"  @tap="toPage('starInfo')">
-        <text class="new_star">
-          创建星球 \n 展示个性魅力
-        </text>
-      </view>
-    </block>
+      </block>
     </view>  
   </view>
   <view class="attention"  wx:if="{{follows.length!=0}}">
     <view class="title">我关注的星球</view>
     <view class="attention_list">
-      <view wx:for="{{follows}}" wx:key="index" wx:item="item" class="att_info" @tap="toPage('starInfo')" data-starid="{{item.star_id}}">
+      <view wx:for="{{follows}}" wx:key="index" wx:item="item" class="att_info" @tap="toPage('starInfo',{{item.star_id}})" data-starid="{{item.star_id}}">
         <view class="info_img">
 				  <image src="{{item.star_logo}}" />
         </view>
@@ -55,9 +64,7 @@
           </view>
           <view class="c_info">{{item.star_say}}</view>
           <view class="base">
-            <view class="base_img">
-            <image src="/images/xin.png" />
-            </view>
+            <text class="base_imgs iconfont icon-xin"></text>
             <text>{{item.star_likes}}人关注</text>
           </view>
         </view>
@@ -72,7 +79,25 @@
       <text class="null_info">
        搜索你喜欢的星球 \n 快去关注哦
       </text>
+  </view>
+  <view class="to_app">
+    打开App
+  </view>
+<block wx:if="{{isModal}}">
+  <view class="layer"></view>
+  <view class="modal">
+    <view class="m_img">
+      <image src="/images/modal.png" />
     </view>
+    <view class="m_txt">请至网红星球App进行操作管理</view>
+    <view class="m_btn" @tap="showMd(1)">
+      <view>取消</view>
+      <view>确认</view>
+    </view>
+  </view>
+</block>
+
+</view>
 </template>
 
 <script>
@@ -85,70 +110,58 @@ export default class Planet extends wepy.page {
   components = {};
 
   data = {
+    display: 'none',
     mystars: [],
     follows: [],
-    start: 0,
-    end: 0,
-    isdist: 0,
-    dist: 0,
-    history: 0,
-    isindex: 0,
-    isend: 0,
-    pageW: 0
+    swiperIndex: 0,
+    isModal: false
   };
   methods = {
-    touchstart(e) {
-      let that = this;
-      that.start = e.changedTouches[0].pageX + this.dist;
-      that.isdist = e.changedTouches[0].pageX;
-      that.$apply();
+    gbtime() {
+      wx.setStorage({
+        key: 'expired',
+        data: 1
+      });
     },
-    touchmove(e) {
-      let that = this;
-      console.log(e.changedTouches[0].pageX);
-      that.end = e.changedTouches[0].pageX;
-      that.dist = that.start - that.end;
-      that.$apply();
-    },
-    touchend(e) {
-      let that = this;
-      let w = that.pageW / 2;
-      that.end = e.changedTouches[0].pageX;
-      if (that.isdist - that.end >= 70 && that.isindex < that.mystars.length - 1) {
-        that.dist = that.history + w;
-        that.history = that.dist;
-        that.isindex += 1;
-        that.$apply();
-      } else if (that.isdist - that.end < -60 && that.isindex >= 1) {
-        that.dist = that.history - w;
-        that.history = that.dist;
-        that.isindex -= 1;
-        that.$apply();
-      } else {
-        that.dist = that.history;
-        that.$apply();
-      }
+    swiperChange(e) {
+      this.swiperIndex = e.detail.current;
     },
 
-    toPage(url,e) {
-      let uri = url+'?star_id='+e.currentTarget.dataset.starid
-      console.log(uri)
-      this.$navigate(uri);
+    toPage(url, id) {
+      console.log(url, id);
+      url += '?star_id=' + id;
+      this.$navigate(url);
+    },
+    showMd(is) {
+      if (is == 0) {
+        this.isModal = true;
+      } else {
+        this.isModal = false;
+      }
     }
   };
 
   events = {};
-  onShow() {}
-  onLoad() {
+  onLoad() {}
+  onShow() {
     let that = this;
-    that.pageW = wx.getSystemInfoSync().windowWidth;
-
-    wepy.request({ url: 'star', method: 'POST' }).then(res => {
-      console.log(res.data);
-      that.mystars = res.data.data.mystar;
-      that.follows = res.data.data.followstar;
-      that.$apply();
+    that.pageW = wx.getSystemInfoSync().windowWidth / 2;
+    wx.showLoading({
+      title: ''
     });
+
+    wepy
+      .request({
+        url: '/star'
+      })
+      .then(res => {
+        if (res.data.status != 1) return;
+        that.mystars = res.data.data.mystar;
+        that.follows = res.data.data.followstar;
+        wx.hideLoading();
+        that.display = 'block';
+        that.$apply();
+      });
   }
   // Other properties
 }
@@ -184,6 +197,8 @@ export default class Planet extends wepy.page {
       align-items: center;
       text {
         margin-left: 14rpx;
+        font-size: 30rpx;
+        color: #666666;
       }
     }
     .s_r {
@@ -203,13 +218,16 @@ export default class Planet extends wepy.page {
     position: relative;
     height: 446rpx;
     padding-top: 40rpx;
-    padding-bottom: 56rpx;
+    // padding-bottom: 56rpx;
     box-shadow: 0px 2px 4px 0px rgba(31, 28, 29, 0.05);
     overflow: hidden;
-    .star {
+    swiper {
+      height: 100%;
+    }
+    .slide-image {
       position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%) scale(0.8);
+      top: 0;
+      transform: scale(0.8);
       width: 350rpx;
       height: 350rpx;
       border-radius: 10px;
@@ -218,14 +236,26 @@ export default class Planet extends wepy.page {
       overflow: hidden;
       display: flex;
       flex-direction: column-reverse;
+      &.active {
+        transform: scale(1);
+        &.one {
+          left: 50%;
+          top: 40rpx;
+          transform: translate(-50%, 0);
+        }
+      }
       .shade {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        opacity: 0.5;
+        background: linear-gradient(
+          to bottom,
+          RGBA(0, 0, 0, 0),
+          RGBA(0, 0, 0, 0),
+          RGBA(0, 0, 0, 0.7)
+        );
       }
       .star_info {
         position: absolute;
@@ -263,13 +293,10 @@ export default class Planet extends wepy.page {
         background-size: 100% 100%;
       }
     }
-    .star.active {
-      transform: translate(-50%, -50%) scale(1);
-    }
   }
 }
 .attention {
-  box-shadow: 0px 2px 4px 0px rgba(31, 28, 29, 0.05);
+  // box-shadow: 0px 2px 4px 0px rgba(31, 28, 29, 0.05);
   padding: 0 28rpx;
   padding-bottom: 20rpx;
   .title {
@@ -278,7 +305,8 @@ export default class Planet extends wepy.page {
   .att_info {
     height: 200rpx;
     border-radius: 8px;
-    box-shadow: 3px 4px 8px rgba(31, 28, 29, 0.05);
+    // box-shadow: 3px 4px 8px rgba(31, 28, 29, 0.05);
+    box-shadow: 4px 3px 20px rgba(31, 28, 29, 0.05);
     margin-bottom: 12rpx;
     display: flex;
     overflow: hidden;
@@ -302,9 +330,22 @@ export default class Planet extends wepy.page {
     font-size: 30rpx;
     color: #333333;
     align-items: center;
+    > text {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+    }
   }
-  .head_img,
-  .base_img {
+  .base {
+     text:nth-of-type(2) {
+       margin-left: 9rpx;
+      font-size: 22rpx;
+      color: #999999;
+    }
+  }
+  .head_img {
     width: 34rpx;
     height: 34rpx;
     overflow: hidden;
@@ -313,10 +354,9 @@ export default class Planet extends wepy.page {
     background-color: #ccc;
     margin-right: 14rpx;
   }
-  .base_img {
-    width: 18rpx;
-    height: 16rpx;
-    background: transparent;
+  .base_imgs {
+    color: red;
+    font-size: 22rpx;
   }
   .c_info {
     flex: 1;
@@ -339,8 +379,8 @@ export default class Planet extends wepy.page {
   }
   .null_img {
     margin: 0 auto;
-    width: 307rpx;
-    height: 275rpx;
+    width: 306rpx;
+    height: 306rpx;
   }
   .null_info {
     margin: 0 auto;
@@ -349,6 +389,68 @@ export default class Planet extends wepy.page {
     line-height: 44rpx;
     color: #999;
     font-size: 30rpx;
+  }
+}
+.to_app {
+  position: fixed;
+  right: 0;
+  top: 918rpx;
+  width: 198rpx;
+  height: 80rpx;
+  background-color: #ff5750;
+  box-shadow: 0px 3rpx 8rpx 0px rgba(89, 10, 7, 0.4);
+  border-radius: 40rpx 0px 0px 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: #ffffff;
+}
+.layer {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0.3;
+  background-color: #000;
+}
+.modal {
+  position: fixed;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  width: 610rpx;
+  // height: 550rpx;
+
+  .m_img {
+    width: 610rpx;
+    height: 285rpx;
+  }
+  .m_txt {
+    margin-top: 72rpx;
+    color: #666666;
+    font-size: 16px;
+    text-align: center;
+  }
+  .m_btn {
+    width: 100%;
+    height: 88rpx;
+    margin-top: 70rpx;
+    border-top: 1px solid rgb(224, 224, 224);
+    display: flex;
+    view {
+      flex: auto;
+      height: 100%;
+      line-height: 88rpx;
+      text-align: center;
+      color: #ff5750;
+      font-size: 17px;
+    }
+    view:nth-of-type(1) {
+      border-right: 1px solid rgb(224, 224, 224);
+    }
   }
 }
 </style>

@@ -1,69 +1,87 @@
 <!-- 说说列表页面 -->
 <template>
-  <view class='talkinfo' >
+  <view class='talkinfo' style="display:{{display}}">
     <view class="talk">
       <view class="thead">
         <view class="names">
-          <view class="name_img"></view>
-          <view class="name">网红糖妮妮</view>
+          <view class="name_img"><image src="{{objs.publisher.headimgurl}}" /></view>
+          <view class="name">{{objs.publisher.name}}</view>
         </view>
-        <view class="time">6-08 14:20</view>
+        <view class="time">{{objs.created_at}}</view>
       </view>
-      <view class="talk_info">
-        "@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词，表达了自己的想法与见解。他把东西方元素十分自然的融合在歌曲中，突出却不突兀，独具匠心，形成了极具个人特色的新华语曲调"
-      </view>
-      <view class="music">
-        <view class="music_logo"></view>
+      <text class="talk_info">
+        {{objs.content}}
+      </text>
+      <view class="music" wx:if="{{objs.video_info.title}}">
+        <view class="music_logo">
+          <image src="{{objs.video_info.link}}" />
+        </view>
         <view class="m_info">
-          <view class="m_title">纸短情长</view>
-          <view class="m_name">烟把乐队</view>
+          <view class="m_title">{{objs.video_info.title}}</view>
+          <view class="m_name">{{objs.video_info.author}}</view>
         </view>
       </view>
-      <view class="img_list">
-        <view class="pic" wx:for="{{6}}" wx:key="{{index}}"></view>
+      <view class="img_list {{objs.photo_list.length>2?'img_list2':''}}" wx:if="{{objs.photo_list.length!=0}}">
+        <block wx:if="{{objs.photo_list.length==1}}">
+          <view class="pic picw1" wx:for="{{objs.photo_list}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) top left no-repeat;background-size:contain;" @tap="showImgs({{issrc}},{{objs.photo_list}})">
+            <!-- <image src="{{issrc}}"/> -->
+          </view>
+        </block>
+        <block wx:if="{{objs.photo_list.length==2}}">
+          <view class="pic picw2" wx:for="{{objs.photo_list}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) center center no-repeat;background-size:cover;" @tap="showImgs({{issrc}},{{objs.photo_list}})">
+            <!-- <image src="{{issrc}}"/> -->
+          </view>
+        </block>
+        <block wx:if="{{objs.photo_list.length>2}}">
+          <view class="pic" wx:for="{{objs.photo_list}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) center center no-repeat;background-size:cover;" @tap="showImgs({{issrc}},{{objs.photo_list}})">
+            <!-- <image src="{{issrc}}"/> -->
+          </view>
+        </block>
       </view>
-      <view class="location">
+      <view class="location" wx:if="{{objs.address}}" @tap="amap({{objs.lng*1}},{{objs.lat*1}},{{objs.address}})">
         <view>
         <text class="iconfont icon-weizhi"></text>
-        <text>杭州·杭州萧山国际机场</text>
+        <text>{{objs.address}}</text>
         </view>
       </view>
     </view>
     <view class="discuss_box">
       <view class="di_tit">
-        评论(1)
+        评论({{objs.comment}})
       </view>
-      <view class="discuss" wx:for="{{list}}" wx:key="{{item.id}}">
-        <view class="user_img"></view>
+      <view class="discuss" wx:for="{{objs.comments.items}}" wx:key="{{item.id}}" wx:for-item="pl">
+        <view class="user_img">
+          <image src="{{pl.user_info.headimgurl}}" />
+        </view>
         <view class="contetn">
           <view class="user_name">
-            追风少年
+            {{pl.user_info.name}}
           </view>
-          <view class="info">误读不误读，看看房价就知道了，管控肯定会降，如果反而涨了那还说什么！</view>
-          <view class="reply">
-          <block wx:for="{{item.reply}}" wx:for-item="one" wx:key="{{index}}" >
+          <view class="info">{{pl.content}}</view>
+          <view class="reply" wx:if="{{pl.comment_list.length}}">
+          <!-- <block wx:for="{{item.comment_list}}" wx:for-item="one" wx:key="{{index}}" >
             <view class="reply_one {{item.isshow?'':((index>1)?isno:'')}}" >
-              <text class="reply_name">太阳女神</text>: 
-              <text class="reply_info">一点点柴火回复 @少年明眸如水我觉得你这个问题有点局限性，环境不同自然习惯不一样，你得不断坚持.........</text>
+              <text class="reply_name">{{one.user_info.name}}</text>: 
+              <text class="reply_info">{{one.content}}</text>
             </view>
-          </block>
+          </block> -->
             <view class="sum {{item.isshow?'dsp_none':''}}" wx:if="{{item.reply.length>2}}" @tap="getAll({{item.id}})">共3条回复></view>
           </view>
-          <view class="add_time">5-27 07:39</view>
+          <view class="add_time">{{pl.created_at}}</view>
         </view>
       </view>
       <view class="add">
-        <input type="text" placeholder="点击此处说两句......" />
+        <input type="text" confirm-type="send" focus="{{true}}" value="{{addMsg}}" placeholder="点击此处说两句......" @input="input" @confirm="confirm"/>
       </view>
       <view class="buttom">
-        <text class="iconfont iconfont icon-msnui-comment"></text>
-        <view class="xin"></view>
+        <text class="iconfont  icon-msnui-comment"></text>
+        <text wx:if="{{objs.liked}}" class="iconfont icon-xinxing" @tap="praise('add')"></text>
+        <text wx:else class="iconfont icon-xin" @tap="praise('del')"></text>
         <text class="iconfont icon-fenxiang"></text>
       </view>
     </view>
   </view>
 </template>
-
 <script>
 import wepy from 'wepy';
 export default class Example extends wepy.page {
@@ -72,6 +90,7 @@ export default class Example extends wepy.page {
   };
 
   data = {
+    display: 'none',
     isno: 'dsp_none',
     showAdd: '',
     list: [
@@ -91,7 +110,9 @@ export default class Example extends wepy.page {
         id: 3,
         reply: [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }]
       }
-    ]
+    ],
+    addMsg: '',
+    objs: {}
   };
 
   components = {};
@@ -104,6 +125,76 @@ export default class Example extends wepy.page {
       return;
       that.showAdd = 'dsp_none';
       that.isno = '';
+    },
+    praise(type, id) {
+      let that = this;
+      wepy
+        .request({
+          url: '/say/do_like',
+          data: { say_id: that.objs.id, dotype: type }
+        })
+        .then(res => {
+          console.log(res.data.status);
+          if (res.data.status == '1') {
+            that.objs.liked = !that.objs.liked;
+            // that.objs.lists[index].say_like = res.data.data.like;
+            that.$apply();
+          }
+        });
+    },
+    input(e) {
+      this.addMsg = e.detail.value;
+    },
+    confirm(e) {
+      let that = this;
+      console.log(that);
+      // console.log(e.detail.value)
+      wepy
+        .request({
+          url: '/say/comment',
+          data: {
+            sign: '',
+            say_id: that.objs.id,
+            content: that.addMsg
+          }
+        })
+        .then(res => {
+          if (res.data.status == '1') {
+            console.log(res.data);
+            that.addMsg = '';
+            that.getInfo();
+          }
+        });
+    },
+    showImgs(img, imgs) {
+      wx.previewImage({
+        current: img, // 当前显示图片的http链接
+        urls: imgs // 需要预览的图片http链接列表
+      });
+    },
+    amap(lng, lat, address) {
+      console.log(lng, lat, address);
+      wx.getSetting({
+        success(res) {
+          if (!res.authSetting['scope.userLocation']) {
+            wx.authorize({
+              scope: 'scope.userLocation',
+              success() {
+                wx.openLocation({
+                  longitude: lng,
+                  latitude: lat,
+                  address: address
+                });
+              }
+            });
+          }
+          wx.openLocation({
+            longitude: lng,
+            latitude: lat,
+            address: address
+          });
+        }
+      });
     }
   };
 
@@ -113,7 +204,29 @@ export default class Example extends wepy.page {
 
   computed = {};
 
-  onLoad() {}
+  onLoad(options) {
+    wx.showLoading({
+      title: ''
+    });
+    console.log(options.id);
+    this.options = options;
+    this.getInfo();
+  }
+  getInfo() {
+    let that = this;
+    wepy
+      .request({
+        url: '/say/detail',
+        data: { sign: '', id: that.options.id, page: 1 }
+      })
+      .then(res => {
+        if (res.data.status != 1) return;
+        that.objs = res.data.data;
+        wx.hideLoading();
+        that.display = 'block';
+        that.$apply();
+      });
+  }
 
   onShow() {
     let that = this;
@@ -133,10 +246,13 @@ page {
   box-sizing: border-box;
   background-color: #f5f5f5;
 }
-
+.talkinfo {
+  padding-bottom: 117rpx;
+}
 .talk {
   padding: 0 27rpx;
   padding-top: 37rpx;
+  padding-bottom: 48rpx;
   background-color: #fff;
   .thead {
     display: flex;
@@ -154,7 +270,7 @@ page {
       }
       .name {
         margin-left: 12rpx;
-        font-size: 30rpx;
+        font-size: 36rpx;
         color: #333333;
       }
     }
@@ -165,6 +281,7 @@ page {
   }
   .talk_info {
     margin-top: 20rpx;
+    word-break: break-all;
     font-size: 30rpx;
   }
   .music {
@@ -178,6 +295,7 @@ page {
       background-color: #efe;
     }
     .m_info {
+      flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -185,6 +303,11 @@ page {
       .m_title {
         font-size: 31rpx;
         color: #333333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
       }
       .m_name {
         font-size: 23rpx;
@@ -197,11 +320,37 @@ page {
     flex-wrap: wrap;
     justify-content: space-around;
     margin-top: 34rpx;
+    &.img_list2 {
+      justify-content: initial;
+    }
     .pic {
       width: 218rpx;
       height: 218rpx;
-      background-color: #ccc;
       margin-bottom: 10rpx;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-right: 15rpx;
+    }
+    .picw1 {
+      width: 100%;
+      height: auto;
+      margin-right: 0;
+      height: 400rpx;
+
+      image {
+        height: 400rpx;
+        display: block;
+      }
+    }
+    .picw2 {
+      width: 48%;
+      height: auto;
+      height: 330rpx;
+      margin-right: 0;
+      image {
+        height: 330rpx;
+        display: block;
+      }
     }
   }
   .location {
@@ -222,7 +371,9 @@ page {
   }
 }
 .discuss_box {
+  margin-top: 20rpx;
   padding: 0 27rpx;
+  padding-bottom: 20rpx;
   background-color: #fff;
   .di_tit {
     height: 100rp;
@@ -255,6 +406,7 @@ page {
     .info {
       margin-top: 20rpx;
       font-size: 30rpx;
+      word-break: break-all;
       letter-spacing: 3rpx;
       color: #333333;
     }
@@ -286,7 +438,7 @@ page {
     }
     .add_time {
       margin-top: 27rpx;
-      font-size: 28rpx;
+      font-size: 24rpx;
       letter-spacing: 1px;
       color: #999999;
     }
@@ -301,9 +453,11 @@ page {
 .add {
   background-color: #f4f4f4;
   margin-top: 50rpx;
+  display: flex;
+  padding-left: 137rpx;
   input {
+    flex: 1;
     border-radius: 8px;
-    width: 100%;
     height: 87rpx;
     line-height: 87rpx;
     font-size: 34rpx;
@@ -312,6 +466,12 @@ page {
   }
 }
 .buttom {
+  position: fixed;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  background: #fff;
+  z-index: 9;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -320,14 +480,12 @@ page {
     height: 38rpx;
     width: 40rpx;
   }
-  text{
+  text {
     font-size: 40rpx;
     color: #999;
   }
-  .xin {
-    background: url(http://www.whxq.fenbot.com/WeChat/guanzhu.png) center
-      no-repeat;
-    background-size: 100% 100%;
+  .icon-xin {
+    color: red;
   }
 }
 </style>

@@ -1,47 +1,90 @@
+<!-- 登录页面 -->
 <template>
-  <div>
-
-  </div>
+  <button open-type="getUserInfo" @getuserinfo="getuserinfo">一键授权</button>
 </template>
 
 <script>
-  import wepy from 'wepy'
-  import Counter from 'counter' // alias example
-  import moduleA from 'module-a' // aliasFields ignore module example
-  import Toast from 'wepy-com-toast'
-
-  console.log('moduleA ignored: ', moduleA) // => moduleA ignored: {}
-
-
-  export default class Index extends wepy.page {
-    config = {
-      navigationBarTitleText: 'index'
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  };
+  data = {};
+  components = {};
+  methods = {
+    getuserinfo(res) {
+      console.log(res);
+      this.login(this.app);
+      // this.$switch('planet');
+      // wx.navigateBack({
+      //   delta: 1
+      // });
     }
-    components = {
-    
-    }
+  };
+  login(that) {
+    let code;
 
-
-    data={
-
-    }
-
-    computed = {
-     
-    }
-
-    methods = {}
-
-    events = {
-     
-    }
-
-    onLoad() {
-     
-    }
+    wepy
+      .login({})
+      .then(res => {
+        console.log(1);
+        code = res.code;
+        if (res.code) return res.code;
+        console.log('登录失败！' + res.errMsg);
+      })
+      .then(res => {
+        console.log(res);
+        wepy.getUserInfo({}).then(user => {
+          wepy
+            .request({
+              url: '/miniprogram_login',
+              data: {
+                code: code,
+                iv: user.iv,
+                encryptData: user.encryptedData
+              },
+            })
+            .then(res => {
+              console.log(res);
+              that.globalData.expired = res.data.data.expired;
+              if (res.data.status != 1) return;
+              that.globalData.token = res.data.data.token;
+              wx.setStorage({
+                key: 'token',
+                data: res.data.data.token
+              });
+              wx.setStorage({
+                key: 'expired',
+                data: res.data.data.expired
+              });
+              wx.navigateBack({
+                delta: 1
+              });
+            });
+        });
+      });
   }
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad() {
+    this.app = this.$parent;
+    console.log(this.app);
+    wx.getSetting({
+      success: function(res) {
+        console.log(!res.authSetting['scope.userInfo']);
+        if (res.authSetting['scope.userInfo']) {
+          console.log('已经授权,过来刷新的')
+          wx.navigateBack({
+            delta: 1
+          });
+        }
+      }
+    });
+  }
+  onShow() {}
+}
 </script>
 
-<style scoped>
-
+<style lang='scss'>
 </style>

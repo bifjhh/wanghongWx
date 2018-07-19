@@ -1,0 +1,85 @@
+<!-- 支付界面 -->
+<template>
+  <view class='container'>
+    <button @tap="pay">点击测试支付</button>
+    <button @tap="getInfo">点击获取支付</button>
+    <button @tap="toPage">跳转web</button>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '支付测试'
+  };
+  data = {
+    info: {},
+    obj: {
+      timestamp: '1531475777',
+      nonce_str: 'ss8yiVHgkJoTpqkK',
+      package: 'prepay_id'
+    }
+  };
+  components = {};
+  pay(obj) {
+    let url = `webview?src=https://www.whxq.fenbot.com/store#/orderList&sku_id=${
+      obj.sku_id
+    }&order_id=${obj.order_id}&id=${obj.id}&buy_num=${obj.buy_num}&goods_id=${
+      obj.goods_id
+    }`;
+    wepy
+      .requestPayment({
+        timeStamp: obj.timestamp,
+        nonceStr: obj.nonce_str,
+        package: 'prepay_id=' + obj.prepay_id,
+        signType: 'MD5',
+        paySign: obj.pay_sign
+      })
+      .then(res => {
+        console.log('支付成功');
+        url += '&isPay=true';
+        this.$navigate(url);
+      })
+      .catch(res => {
+        console.log('失败');
+        url += '&isPay=false';
+        this.$navigate(url);
+      });
+  }
+  methods = {
+    getInfo() {
+      wepy
+        .request({
+          url: ''
+        })
+        .then(res => {
+          console.log(res.data);
+          this.info = res.data;
+          this.$apply();
+        });
+    },
+    toPage() {
+      this.$navigate('webview');
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad(options) {
+    let that = this;
+    console.log('options', options);
+    if (options.timestamp) {
+      that.pay(options);
+    }
+  }
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+button {
+  margin-top: 100rpx;
+  width: 100%;
+}
+</style>

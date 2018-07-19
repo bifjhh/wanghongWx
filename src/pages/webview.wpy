@@ -1,0 +1,48 @@
+<!-- web-view -->
+<template>
+    <web-view src="{{src}}"></web-view>
+    <!-- <web-view src="https://www.whxq.fenbot.com/store#/orderList"></web-view> -->
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: ''
+  };
+
+  data = {
+    src: ''
+  };
+
+  components = {};
+
+  methods = {};
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad(options) {
+    this.src = options.src+'?token='+options.token+'&expired='+options.expired+'&id='+options.id;
+    // this.src = options.src+"?id="+options.id;
+    if(options.isPay){
+      this.src=`https://www.whxq.fenbot.com/store#/orderList?sku_id=${options.sku_id}&order_id=${options.order_id}&id=${options.id}&buy_num=${options.buy_num}&goods_id=${options.goods_id}&isPay=${options.isPay}`
+    }
+    console.log('web-view',options);
+    console.log('this.src',this.src);
+    // console.log(options.src);
+    // console.log(options.expired);
+    // console.log(options.id);
+    // console.log(options.token);
+    // console.log(this.src);
+  }
+
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+</style>

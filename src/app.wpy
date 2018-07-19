@@ -1,3 +1,226 @@
+
+<script>
+import wepy from 'wepy';
+const uri = 'http://www.whxq.fenbot.com/api/v1';
+import 'wepy-async-function';
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/planet',
+      'pages/my',
+      'pages/goods',
+      'pages/dynamic',
+      'pages/search',
+      'pages/starInfo',
+      'pages/talkList',
+      'pages/talkInfo',
+      'pages/creation',
+      'pages/pay',
+      'pages/login',
+      'pages/interest',
+      'pages/like',
+      'pages/discuss',
+      'pages/wallet',
+      'pages/safety',
+      'pages/set',
+      'pages/help',
+      'pages/amend1',
+      'pages/amend2',
+      'pages/myinfo',
+      'pages/test',
+      'pages/webview'
+    ],
+    tabBar: {
+      color: '#707070',
+      backgroundColor: '#fff',
+      selectedColor: '#ff5750',
+      borderStyle: 'black',
+      list: [
+        {
+          selectedIconPath: '/images/xingqiu_active2.png',
+          iconPath: '/images/xingqiu2.png',
+          pagePath: 'pages/planet',
+          text: '星球'
+        },
+        {
+          selectedIconPath: '/images/dongtai_active2.png',
+          iconPath: '/images/dongtai2.png',
+          pagePath: 'pages/dynamic',
+          text: '动态'
+        },
+        {
+          selectedIconPath: '/images/haohuo_active2.png',
+          iconPath: '/images/haohuo2.png',
+          pagePath: 'pages/goods',
+          text: '好货'
+        },
+        {
+          selectedIconPath: '/images/my_active2.png',
+          iconPath: '/images/my2.png',
+          pagePath: 'pages/my',
+          text: '我的'
+        }
+      ]
+    },
+    window: {
+      navigationBarTitleText: '网红星球',
+      navigationBarBackgroundColor: '#fff',
+      enablePullDownRefresh: false,
+      backgroundTextStyle: '#333',
+      navigationBarTextStyle: 'black',
+      backgroundColor: '#fff'
+    }
+    /*  navigationBarTextStyle: 'black',
+          navigationBarBackgroundColor: '#fff',
+          enablePullDownRefresh: true,
+          backgroundColor: '#fff',
+          backgroundTextStyle: '#333',
+          onReachBottomDistance: 15,
+          navigationStyle: 'custom' */
+  };
+  globalData = {
+    userInfo: null,
+    // token: '',
+    expired: ''
+  };
+  constructor() {
+    super();
+    this.use('requestfix');
+    this.use('promisify');
+    this.intercept('request', {
+      // 发出请求时的回调函数
+      config(p) {
+        // console.log(p);
+        let that = this;
+        // console.log('之前的时间--', that.globalData.expired);
+        // console.log('之前的token--', that.globalData.token);
+        // console.log('现在的时间--', Date.parse(new Date()) / 1000);
+        let istm = Date.parse(new Date()) / 1000;
+        /* token 参数 */
+        if (istm >= that.globalData.expired && p.url != '/refresh_token') {
+          console.log('过期');
+          wepy
+            .request({
+              url: '/refresh_token',
+              data: {
+                token: that.globalData.token
+              },
+              method: 'POST'
+            })
+            .then(res => {
+              if (res.data.status == 0) {
+                console.log('登录失败');
+                return false;
+              }
+              console.log('刷新', res);
+              that.globalData.token = res.data.data.token;
+              that.globalData.expired = res.data.data.expired;
+              wx.setStorage({
+                key: 'token',
+                data: res.data.data.token
+              });
+              wx.setStorage({
+                key: 'expired',
+                data: res.data.data.expired
+              });
+              console.log(that.globalData.expired);
+            });
+        }
+        p.method = 'POST';
+        p.url = uri + p.url;
+        p.header = {
+          'content-type': 'application/json',
+          Authorization: 'Bearer ' + this.globalData.token
+        };
+        // p.header.Authorization = 'Bearer ' + this.globalData.token;
+        if (!p.data) {
+          p.data = {};
+        }
+        p.data.login_platform = 'miniprogram';
+        // 必须返回OBJECT参数对象，否则无法发送请求到服务端
+        return p;
+      },
+      // 请求成功后的回调函数
+      success(res) {
+        // 可以在这里对收到的响应数据对象进行加工处理
+        // console.log('request success: ', res);
+        // 必须返回响应数据对象，否则后续无法对响应数据进行处理
+        // console.log(res.data);
+        if (res.data.status != 1) {
+          if (res.data.message == '请先登录') {
+            wx.navigateTo({
+              url: 'login'
+            });
+          }
+          wx.hideLoading();
+          wx.showToast({
+            title: res.data.message,
+            icon: 'none',
+            duration: 1500
+          });
+        }
+        return res;
+      },
+      //请求失败后的回调函数
+      fail(p) {
+        // console.log('request fail: ', p);
+        // 必须返回响应数据对象，否则后续无法对响应数据进行处理
+        return p;
+      },
+      // 请求完成时的回调函数(请求成功或失败都会被执行)
+      complete(p) {
+        // console.log('request complete: ', p);
+      }
+    });
+  }
+  onLaunch() {
+    let that = this;
+    this.testAsync();
+    // this.login(that);
+    wx.getStorage({
+      key: 'token',
+      success: function(res) {
+        if (!res.data) return;
+        // console.log('token---加载');
+        // console.log(res.data);
+        that.globalData.token = res.data;
+      }
+    });
+    wx.getStorage({
+      key: 'expired',
+      success: function(res) {
+        if (!res.data) return;
+        // console.log('expired---加载');
+        // console.log(res.data);
+        that.globalData.expired = res.data;
+      }
+    });
+  }
+  sleep(s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('promise resolved');
+      }, s * 1000);
+    });
+  }
+  async testAsync() {
+    const data = await this.sleep(3);
+    // console.log(data);
+  }
+  getUserInfo(cb) {
+    const that = this;
+    if (this.globalData.userInfo) {
+      cb && cb(this.globalData.userInfo);
+      return;
+      // return this.globalData.userInfo;
+    }
+    wepy.getUserInfo({}).then(res => {
+      that.globalData.userInfo = res.userInfo;
+      cb && cb(res.userInfo);
+    });
+  }
+}
+</script>
 <style lang="less">
 .container {
   height: 100%;
@@ -65,15 +288,15 @@ image {
   visibility: hidden;
   clear: both;
 }
-
 /* 字体图标 */
 @font-face {
-  font-family: 'iconfont';  /* project id 716449 */
-  src: url('//at.alicdn.com/t/font_716449_u1t1e1e22th.eot');
-  src: url('//at.alicdn.com/t/font_716449_u1t1e1e22th.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_716449_u1t1e1e22th.woff') format('woff'),
-  url('//at.alicdn.com/t/font_716449_u1t1e1e22th.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_716449_u1t1e1e22th.svg#iconfont') format('svg');
+  font-family: 'iconfont'; /* project id 716449 */
+  src: url('//at.alicdn.com/t/font_716449_wiy0oakzipj.eot');
+  src: url('//at.alicdn.com/t/font_716449_wiy0oakzipj.eot?#iefix')
+      format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_716449_wiy0oakzipj.woff') format('woff'),
+    url('//at.alicdn.com/t/font_716449_wiy0oakzipj.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_716449_wiy0oakzipj.svg#iconfont') format('svg');
 }
 
 .iconfont {
@@ -84,155 +307,75 @@ image {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-msnui-comment:before { content: "\e614"; }
-
-.icon-fenxiang:before { content: "\e616"; }
-
-.icon-weizhi:before { content: "\e7e6"; }
-
-.icon-xin:before { content: "\e635"; }
-
-.icon-jiantou9:before { content: "\e60b"; }
-
-.icon-zuanshi:before { content: "\e669"; }
-
-.icon-xinxing:before { content: "\e632"; }
-
-.icon-yiguanzhu:before { content: "\e612"; }
-
-.icon-guanzhu:before { content: "\e600"; }
-
-.icon-xiaoxi:before { content: "\e601"; }
-</style>
-
-<script>
-import wepy from 'wepy';
-const uri = 'http://www.whxq.fenbot.com/api/v1/';
-import 'wepy-async-function';
-export default class extends wepy.app {
-  config = {
-    pages: [
-      'pages/planet',
-      'pages/my',
-      'pages/goods',
-      'pages/dynamic',
-      'pages/search',
-      'pages/starInfo',
-      'pages/test',
-      'pages/talkList',
-      'pages/talkInfo'
-    ],
-    tabBar: {
-      color: '#707070',
-      selectedColor: '#36a2e6',
-      backgroundColor: '#fff',
-      borderStyle: 'black',
-      list: [
-        {
-          selectedIconPath: '/images/xingqiu_active.png',
-          iconPath: '/images/xingqiu.png',
-          pagePath: 'pages/planet',
-          text: '星球'
-        },
-        {
-          selectedIconPath: '/images/dongtai_active.png',
-          iconPath: '/images/dongtai.png',
-          pagePath: 'pages/dynamic',
-          text: '动态'
-        },
-        {
-          selectedIconPath: '/images/haohuo_active.png',
-          iconPath: '/images/haohuo.png',
-          pagePath: 'pages/goods',
-          text: '好货'
-        },
-        {
-          selectedIconPath: '/images/my_active.png',
-          iconPath: '/images/my.png',
-          pagePath: 'pages/my',
-          text: '我的'
-        }
-      ]
-    },
-    window: {
-      navigationBarTitleText: '网红星球',
-      navigationBarBackgroundColor: '#fff',
-      enablePullDownRefresh: false,
-      backgroundTextStyle: '#333',
-      navigationBarTextStyle: 'black',
-      backgroundColor: '#fff'
-    }
-    /*  navigationBarTextStyle: 'black',
-      navigationBarBackgroundColor: '#fff',
-      enablePullDownRefresh: true,
-      backgroundColor: '#fff',
-      backgroundTextStyle: '#333',
-      onReachBottomDistance: 15,
-      navigationStyle: 'custom' */
-  };
-  globalData = {
-    userInfo: null
-  };
-  constructor() {
-    super();
-    this.use('promisify');
-    this.intercept('request', {
-      // 发出请求时的回调函数
-      config(p) {
-        p.url=uri+p.url;
-        // 对所有request请求中的OBJECT参数对象统一附加时间戳属性
-        // p
-        // console.log('config request: ', p);
-        // 必须返回OBJECT参数对象，否则无法发送请求到服务端
-        return p;
-      },
-
-      // 请求成功后的回调函数
-      success(p) {
-        // 可以在这里对收到的响应数据对象进行加工处理
-        // console.log('request success: ', p);
-        // 必须返回响应数据对象，否则后续无法对响应数据进行处理
-        return p;
-      },
-
-      //请求失败后的回调函数
-      fail(p) {
-        // console.log('request fail: ', p);
-        // 必须返回响应数据对象，否则后续无法对响应数据进行处理
-        return p;
-      },
-
-      // 请求完成时的回调函数(请求成功或失败都会被执行)
-      complete(p) {
-        // console.log('request complete: ', p);
-      }
-    });
-  }
-  onLaunch() {
-    this.testAsync();
-  }
-  sleep(s) {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve('promise resolved');
-      }, s * 1000);
-    });
-  }
-  async testAsync() {
-    const data = await this.sleep(3);
-    console.log(data);
-  }
-  getUserInfo(cb) {
-    const that = this;
-    if (this.globalData.userInfo) {
-      return this.globalData.userInfo;
-    }
-    wepy.getUserInfo({
-      success(res) {
-        that.globalData.userInfo = res.userInfo;
-        cb && cb(res.userInfo);
-      }
-    });
-  }
+.icon-icon4:before {
+  content: '\e604';
 }
-</script>
+
+.icon-msnui-comment:before {
+  content: '\e614';
+}
+
+.icon-fenxiang:before {
+  content: '\e616';
+}
+
+.icon-weizhi:before {
+  content: '\e7e6';
+}
+
+.icon-xin:before {
+  content: '\e635';
+}
+
+.icon-bofang:before {
+  content: '\e60a';
+}
+
+.icon-anquan:before {
+  content: '\e7e7';
+}
+
+.icon-jiantou9:before {
+  content: '\e60b';
+}
+
+.icon-zuanshi:before {
+  content: '\e669';
+}
+
+.icon-xinxing:before {
+  content: '\e632';
+}
+
+.icon-yiguanzhu:before {
+  content: '\e612';
+}
+
+.icon-guanzhu:before {
+  content: '\e600';
+}
+
+.icon-xiaoxi:before {
+  content: '\e601';
+}
+
+.icon-man:before {
+  content: '\e6d6';
+}
+
+.icon-woman:before {
+  content: '\e6d7';
+}
+
+.icon-shouji:before {
+  content: '\e602';
+}
+
+.icon-xiaoxi1:before {
+  content: '\e9bd';
+}
+
+.icon-jiantou:before {
+  content: '\e60c';
+}
+</style>

@@ -1,0 +1,94 @@
+<!-- 修改 -->
+<template>
+  <view class='amend_box'>
+    <view class="yin"></view>
+    <view class="inp">
+      <input placeholder="介绍一下你自己" auto-focus @input="bindinput"/>
+    </view>
+    <view class="btn" @tap="userSet">
+      保存
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '个人介绍'
+  };
+
+  data = {};
+
+  components = {};
+
+  methods = {
+    bindinput(e) {
+      let that = this;
+      that.msg = e.detail.value.replace(/^\s+|\s+$/g, '');
+      that.$apply();
+    },
+    userSet() {
+      let that = this;
+      wepy
+        .request({
+          url: '/user/set',
+          data: { value: that.msg, type: 'introduce' }
+        })
+        .then(res => {
+          if (res.data.status == 1) {
+            wx.navigateBack({
+              delta: 1
+            });
+          }
+        });
+    }
+  };
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {}
+
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+page {
+  background-color: #f5f5f5;
+}
+.yin {
+  height: 1px;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+}
+.inp {
+  margin-top: 20rpx;
+  height: 100rpx;
+  background-color: #ffffff;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+  padding-left: 26rpx;
+  input {
+    height: 100%;
+    line-height: 100rpx;
+    font-size: 32rpx;
+    color: #999999;
+  }
+}
+.btn {
+  margin: 0 auto;
+  margin-top: 80rpx;
+  width: 694rpx;
+  height: 84rpx;
+  background-color: #ff5750;
+  border-radius: 8rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32rpx;
+  color: #ffffff;
+}
+</style>

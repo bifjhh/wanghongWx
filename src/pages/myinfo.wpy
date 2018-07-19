@@ -1,0 +1,222 @@
+<!-- 资料管理 -->
+<template>
+  <view class='myinfo_box'>
+    <view class="yin"></view>
+    <view class="lists">
+      <view class="list">
+        <view class="info">
+          <text>修改头像</text>
+          <view class="state">
+            <view class="portrait">
+              <image src="{{user.headimgurl||userInfo.avatarUrl}}" />
+            </view>
+            <text class="iconfont icon-jiantou"></text>
+          </view>
+        </view>
+      </view>
+      <view class="list" @tap="toPage('amend1')">
+        <view class="info">
+          <text>名字</text>
+          <view class="state">
+            <text>{{user.name||userInfo.nickName}}</text>
+            <text class="iconfont icon-jiantou"></text>
+          </view>
+        </view>
+      </view>
+      <view class="list" @tap="toPage('amend2')">
+        <view class="info">
+          <text>个人介绍</text>
+          <view class="state">
+            <text>{{user.introduce||'未设置'}}</text>
+            <text class="iconfont icon-jiantou"></text>
+          </view>
+        </view>
+      </view>
+      <view class="list">
+        <view class="info">
+          <text>性别</text>
+          <view class="state">
+            <text>{{user.sex||(userInfo.gender==1?'男':'女')}}</text>
+            <text class="iconfont icon-jiantou"></text>
+          </view>
+        </view>
+      </view>
+      <view class="list">
+        <view class="info">
+          <text>常住地</text>
+          <view class="state">
+            <picker mode="region" @change="bindRegionChange" value="{{address}}" custom-item="{{customItem}}">
+              <view class="picker">
+                <text>{{address||userInfo.country}}</text>
+                <text class="iconfont icon-jiantou"></text>
+              </view>
+            </picker>
+          </view>
+        </view>
+      </view>
+      <view class="list">
+        <view class="info">
+          <text>生日</text>
+          <view class="state">
+            <picker mode="date" value="{{birthday}}" start="1900-01-01" @change="bindDateChange">
+              <view class="picker">
+                <text>{{user.birthday||'未设置'}}</text>
+                <text class="iconfont icon-jiantou"></text>
+              </view>
+            </picker>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '资料管理'
+  };
+  data = {
+    userInfo: {},
+    user: {},
+    birthday: '',
+    address: ''
+  };
+  components = {};
+  methods = {
+    toPage(url) {
+      this.$navigate(url);
+    },
+    /* 日期 */
+    bindDateChange(e) {
+      let that = this;
+      // that.birthday = e.detail.value;
+      that.$apply();
+      that.userSet(that, 'birthday', e.detail.value);
+    },
+    /* 地区 */
+    bindRegionChange(e) {
+      let that = this;
+      // that.address = e.detail.value[0] + '-' + e.detail.value[1];
+      that.$apply();
+      that.userSet(
+        that,
+        'address',
+        e.detail.value[0] + ',' + e.detail.value[1]
+      );
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  userSet(that, type, value) {
+    wepy
+      .request({
+        url: '/user/set',
+        data: { value: value, type: type }
+      })
+      .then(res => {
+        if (res.data.status == 1) {
+          that.getUserInfo(that);
+          wx.showToast({
+            title: '设置成功',
+            icon: 'success',
+            duration: 1500
+          });
+        }
+      });
+  }
+  onLoad() {
+    let that = this;
+    // that.getUser(that);
+  }
+  onShow() {
+    let that = this;
+    that.getUser(that);
+    that.getUserInfo(that);
+  }
+  getUserInfo(that) {
+    wepy
+      .request({
+        url: '/user/show'
+      })
+      .then(res => {
+        console.log(res.data.data);
+        that.user = res.data.data.user.detail_info;
+        //设置常住地
+        if (that.user.province && that.user.city) {
+          that.address = that.user.province + '-' + that.user.city;
+        } else if (that.user.province || that.user.city) {
+          that.address = that.user.province || that.user.city;
+        }
+        that.$apply();
+      });
+  }
+  getUser(_that) {
+    _that.$parent.getUserInfo(userInfo => {
+      console.log('userInfo', userInfo);
+      if (userInfo) {
+        _that.userInfo = userInfo;
+        _that.$apply();
+      }
+    });
+  }
+}
+</script>
+
+<style lang='scss'>
+page {
+  background-color: #f5f5f5;
+}
+.yin {
+  height: 1px;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+}
+.lists {
+  background-color: #fff;
+  padding: 0 28rpx;
+  margin-top: 20rpx;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+  .list {
+    height: 90rpx;
+    .info {
+      height: 100%;
+      border-bottom: 1px solid #ececee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      > text {
+        font-size: 30rpx;
+        color: #333333;
+      }
+      .state {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        .picker {
+          display: flex;
+          align-items: center;
+          height: 100%;
+        }
+        .portrait {
+          width: 90rpx;
+          height: 90rpx;
+          overflow: hidden;
+          border-radius: 50%;
+        }
+        text {
+          font-size: 30rpx;
+          color: #999999;
+        }
+        .icon-jiantou {
+          margin-left: 15rpx;
+        }
+      }
+    }
+  }
+  .list:nth-of-type(1) {
+    height: 120rpx;
+  }
+}
+</style>

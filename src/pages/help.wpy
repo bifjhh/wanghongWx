@@ -1,0 +1,75 @@
+<!-- 帮助与反馈 -->
+<template>
+  <view class='help_box'>
+    <view class="yin"></view>
+    <view class="head">常见问题</view>
+    <view class="lists">
+      <view class="list">
+      <text class="">星球在哪里进行管理操作？</text>
+      <text class="iconfont icon-jiantou"></text>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '帮助与反馈'
+  };
+
+  data = {};
+
+  components = {};
+
+  methods = {};
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {}
+
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+page {
+  background-color: #f5f5f5;
+}
+.yin {
+  height: 1px;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+}
+.head{
+  margin-top: 10rpx;
+  padding-left: 28rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  font-size: 28rpx;
+	color: #666666;
+}
+.lists {
+  padding: 0 28rpx;
+  background-color: #fff;
+}
+.list {
+  border-bottom: 1px solid #eee;
+  height: 88rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text {
+    font-size: 30rpx;
+    color: #333333;
+  }
+  .icon-jiantou {
+    color: #999;
+  }
+}
+</style>

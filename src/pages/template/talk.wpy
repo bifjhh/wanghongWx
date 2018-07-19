@@ -3,7 +3,10 @@
   <view class='talk' id="talk" data-rol="talk">
     <view class="title">
       <text>说说({{objs.total}})</text>
-      <text @tap="toPage('talkList')">更多></text>
+      <view @tap="toPage('talkList')">
+        <text>更多</text>
+        <text class="iconfont icon-jiantou"></text>
+      </view>
     </view>
     <view class="talk_list" wx:for="{{objs.lists}}" wx:key="{{item.say_id}}" data-sayid="{{item.say_id}}">
       <view class="thead">
@@ -15,50 +18,56 @@
         </view>
         <view class="earlier">{{item.say_publish_time}}</view>
       </view>
-      <view class="talk_info">
+      <text class="talk_info">
         {{item.say_content}}
-      </view>
-      <view class="music" wx:if="{{0}}">
-        <view class="music_logo"></view>
+      </text>
+      <view class="music" wx:if="{{item.say_video_info.title}}">
+        <view class="music_logo">
+          <image src="{{item.say_video_info.cover}}" />
+        </view>
         <view class="m_info">
-          <view class="m_title">纸短情长</view>
-          <view class="m_name">烟把乐队</view>
+          <view class="m_title">{{item.say_video_info.title}}</view>
+          <view class="m_name">{{item.say_video_info.author}}</view>
         </view>
       </view>
-      <view class="img_list" wx:if="{{item.say_photos_path.length!=0}}">
-      <block wx:if="{{item.say_photos_path.length==1}}">
-        <view class="pic picw1" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc">
-          <image src="{{issrc}}"/>
-        </view>
-      </block>
-      <block wx:if="{{item.say_photos_path.length==2}}">
-        <view class="pic picw2" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc">
-          <image src="{{issrc}}"/>
-        </view>
-      </block>
-      <block wx:if="{{item.say_photos_path.length>2}}">
-        <view class="pic" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc">
-          <image src="{{issrc}}"/>
-        </view>
-      </block>
+      <view class="img_list {{item.say_photos_path.length>2?'img_list2':''}}" wx:if="{{item.say_photos_path.length!=0}}">
+        <block wx:if="{{item.say_photos_path.length==1}}">
+          <view class="pic picw1" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) top left no-repeat;background-size:contain;" @tap="showImgs({{issrc}},{{item.say_photos_path}})">
+            <!-- <image src="{{issrc}}"/> -->
+          </view>
+        </block>
+        <block wx:if="{{item.say_photos_path.length==2}}">
+          <view class="pic picw2" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) center center no-repeat;background-size:cover;" @tap="showImgs({{issrc}},{{item.say_photos_path}})">
+            <!-- <image src="{{issrc}}"/> -->
+          </view>
+        </block>
+        <block wx:if="{{item.say_photos_path.length>2}}">
+          <view class="pic" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) center center no-repeat;background-size:cover;" @tap="showImgs({{issrc}},{{item.say_photos_path}})">
+            <!-- <image src="{{issrc}}"/> -->
+          </view>
+        </block>
       </view>
-      <view class="location" wx:if="{{item.say_address}}">
+      <view class="location" wx:if="{{item.say_address}}" @tap="amap({{item.say_lng*1}},{{item.say_lat*1}},{{item.say_address}})">
         <view>
           <text class="iconfont icon-weizhi"></text>
         <text>{{item.say_address}}</text>
         </view>
       </view>
       <view class="bottom">
-        <view class="">
+        <view class="fenxiang">
           <text class="iconfont icon-fenxiang"></text>
           <text class="iconf">分享</text>
         </view>
-        <view class="">
+        <view class="pinglun" @tap="toPage('talkInfo',{{item.say_id}})">
           <text class="iconfont icon-msnui-comment"></text>
           <text class="iconf">{{item.say_comment}}</text>
         </view>
-        <view class="">
-          <text class="iconfont icon-xinxing"></text>
+        <view wx:if="{{item.is_dolike=='0'}}" class="dianzan" data-sayid="{{item.say_id}}" @tap="praise('add',{{index}})">
+          <text  class="iconfont icon-xinxing"></text>
+          <text class="iconf">{{item.say_like}}</text>
+        </view>
+        <view wx:else class="dianzan" data-sayid="{{item.say_id}}" @tap="praise('del',{{index}})">
+          <text class="iconfont icon-xin"></text>
           <text class="iconf">{{item.say_like}}</text>
         </view>
       </view>
@@ -76,14 +85,84 @@ export default class Talk extends wepy.component {
   props = {
     objs: {
       type: Object,
-      default: '{}'
+      default: '{}',
+      twoWay: true
     }
   };
   components = {};
 
   methods = {
-    toPage(url) {
-       this.$emit('toPage', url)
+    toPage(url, param) {
+      let that = this;
+      if (url == 'talkList') {
+        url += '?star_id=' + that.$parent.starInfo.head.star_id;
+      }
+      if (url == 'talkInfo') {
+        url += '?id=' + param;
+      }
+      that.$parent.$navigate(url);
+
+      // this.$emit('toPage', url);
+    },
+    praise(type, index, e) {
+      let that = this;
+      // console.log(type, index, e.currentTarget.dataset.sayid);
+      console.log('type', type);
+      console.log(that.$parent.starInfo.dynamic.say.lists[index].is_dolike);
+      wepy
+        .request({
+          url: '/say/do_like',
+          data: { say_id: e.currentTarget.dataset.sayid, dotype: type }
+        })
+        .then(res => {
+          console.log(res.data.status);
+          if (res.data.status == '1') return;
+          if (type == 'add') {
+            that.$parent.starInfo.dynamic.say.lists[index].is_dolike = 1;
+            thatj.objs.lists[index].is_dolike = 1
+            that.$apply();
+            that.$parent.$apply();
+          } else if (type == 'del') {
+            that.$parent.starInfo.dynamic.say.lists[index].is_dolike = 0;
+            thatj.objs.lists[index].is_dolike = 0
+            that.$apply();
+            that.$parent.$apply();
+          }
+
+          that.$parent.starInfo.dynamic.say.lists[index].say_like =
+            res.data.data.like;
+          that.$parent.$apply();
+        });
+    },
+    showImgs(img, imgs) {
+      wx.previewImage({
+        current: img, // 当前显示图片的http链接
+        urls: imgs // 需要预览的图片http链接列表
+      });
+    },
+    amap(lng, lat, address) {
+      console.log(lng, lat, address);
+      wx.getSetting({
+        success(res) {
+          if (!res.authSetting['scope.userLocation']) {
+            wx.authorize({
+              scope: 'scope.userLocation',
+              success() {
+                wx.openLocation({
+                  longitude: lng,
+                  latitude: lat,
+                  address: address
+                });
+              }
+            });
+          }
+          wx.openLocation({
+            longitude: lng,
+            latitude: lat,
+            address: address
+          });
+        }
+      });
     }
   };
 
@@ -93,9 +172,7 @@ export default class Talk extends wepy.component {
 
   computed = {};
 
-  onLoad() {
-    // console.log(objs)
-  }
+  onLoad() {}
 
   onShow() {}
 }
@@ -116,9 +193,18 @@ export default class Talk extends wepy.component {
     font-size: 34rpx;
     color: #333333;
   }
-  text:nth-of-type(2) {
-    font-size: 30rpx;
-    color: #999999;
+  > view {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    text {
+      font-size: 30rpx;
+      color: #999999;
+    }
+    .icon-jiantou {
+      margin-left: 5rpx;
+      font-size: 24rpx;
+    }
   }
 }
 
@@ -153,6 +239,7 @@ export default class Talk extends wepy.component {
   .talk_info {
     margin-top: 20rpx;
     font-size: 30rpx;
+    word-break: break-all;
   }
   .music {
     margin-top: 20rpx;
@@ -184,16 +271,34 @@ export default class Talk extends wepy.component {
     flex-wrap: wrap;
     justify-content: space-around;
     margin-top: 34rpx;
+    &.img_list2 {
+      justify-content: initial;
+    }
     .pic {
       width: 218rpx;
       height: 218rpx;
       background-color: #ccc;
       margin-bottom: 10rpx;
-      &.picw1 {
-        width: 100%;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-right: 15rpx;
+    }
+    .picw1 {
+      width: 100%;
+      height: auto;
+      margin-right: 0;
+      image {
+        height: 400rpx;
+        display: block;
       }
-      &.picw2 {
-        width: 48%;
+    }
+    .picw2 {
+      width: 48%;
+      height: auto;
+      margin-right: 0;
+      image {
+        height: 330rpx;
+        display: block;
       }
     }
   }
@@ -232,6 +337,9 @@ export default class Talk extends wepy.component {
     }
     .icon-fenxiang {
       font-size: 40rpx;
+    }
+    .icon-xin {
+      color: red;
     }
   }
 }

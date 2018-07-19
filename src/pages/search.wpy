@@ -1,5 +1,6 @@
 
 <template lang="wxml">
+<view style="display:{{display}}">
   <view class="search">
 		<view class="s_info">
         <view class="search_img">
@@ -23,7 +24,8 @@
 				<view class="i_l">
 					<view class="i_tit"><text>晓说武装到牙齿的文艺青年</text></view>
 					<view class="l_b">
-						<view class="play"></view>
+						<view class="play iconfont icon-bofang">
+            </view>
 						<view class="num">4.5万</view>
 						<view class="name">高晓松</view>
 					</view>
@@ -42,20 +44,26 @@
 		<view class="list">
 			<view class="info" wx:for="{{lists}}" wx:key="index">
 				<view class="i_l">
-					<view class="i_tit"><text>晓说</text>武装到牙齿的文艺青年</view>
+					<!-- <view class="i_tit"><text>晓说</text>武装到牙齿的文艺青年</view> -->
+					<view class="i_tit"><text></text>{{item.description}}</view>
 					<view class="l_b">
-						<view class="play"></view>
-						<view class="num">4.5万</view>
-						<view class="name">高晓松</view>
+						<view class="play iconfont icon-bofang">
+            </view>
+						<view class="num">{{item.uv}}</view>
+						<view class="name">{{item.star_user_info.name}}</view>
 					</view>
 				</view>
-				<view class="i_r">
+				<view wx:if="{{item.has_attention==0}}" class="i_r" @tap="follow('add',{{item.id}},{{index}})">
 					关注
+				</view>
+				<view wx:else class="i_r" @tap="follow('del',{{item.id}},{{index}})">
+					已关注
 				</view>
 			</view>
 		</view>
 	
 	</view>
+</view>
 </template>
 <script>
 import wepy from 'wepy';
@@ -67,14 +75,15 @@ export default class Search extends wepy.page {
   data = {
     delHeid: false,
     msg: '',
-    lists: []
+    lists: [],
+    display: 'none'
   };
   methods = {
     bindinput(e) {
       let that = this;
       if (e.detail.cursor >= 1) {
         that.delHeid = true;
-        wepy.request({ url: 'star/search', method: 'POST' }).then(res => {
+        wepy.request({ url: '/star/search', data:{keyword:e.detail.value} }).then(res => {
           that.lists = res.data.data.lists;
           that.$apply();
         });
@@ -91,11 +100,49 @@ export default class Search extends wepy.page {
     },
     cencel() {
       this.$switch('./planet');
+    },
+    /* 关注 */
+    follow(type, id, index) {
+      let that = this;
+      // console.log(type);
+      // console.log(id);
+      // console.log(index);
+      // console.log(that.lists[index].has_attention);
+      wepy
+        .request({
+          url: '/star/follow_star',
+          data: {
+            star_id: id,
+            dotype: type
+          }
+        })
+        .then(res => {
+          if (type == 'add') {
+            console.log('add');
+            that.lists[index].has_attention = 1;
+            that.$apply();
+          } else {
+            console.log('del');
+            that.lists[index].has_attention = 0;
+            that.$apply();
+          }
+        });
     }
   };
 
   events = {};
-  onLoad() {}
+  onLoad() {
+    let that = this;
+    wx.showLoading({
+      title: ''
+    });
+
+    setTimeout(() => {
+      wx.hideLoading();
+      that.display = 'block';
+      that.$apply();
+    }, 500);
+  }
   // Other properties
 }
 </script>
@@ -160,11 +207,17 @@ page {
   justify-content: space-between;
   align-items: center;
   .i_l {
+    flex: 1;
     display: flex;
     flex-direction: column;
     .i_tit {
       font-size: 30rpx;
       color: #333;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
       text {
         color: #ff5750;
         font-size: 15px;
@@ -175,9 +228,8 @@ page {
       align-items: center;
       margin-top: 34rpx;
       .play {
-        width: 19rpx;
-        height: 22rpx;
-        background-color: #ccc;
+        font-size: 22rpx;
+        color: #999;
       }
       .num {
         margin-left: 15rpx;

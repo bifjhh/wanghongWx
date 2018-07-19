@@ -1,0 +1,102 @@
+<!-- 账号安全 -->
+<template>
+  <view class='safety_box'>
+    <view class="yin"></view>
+    <view class="list">
+      <view class="info">
+        <text>手机号</text>
+        <view class="state">
+          <text wx:if="{{1}}">未绑定</text>
+          <text wx:else>已绑定</text>
+          <text class="iconfont icon-jiantou"></text>
+        </view>
+      </view>
+    </view>
+    <view class="list m0">
+      <view class="info">
+        <text>登录密码</text>
+        <view class="state">
+          <text wx:if="{{1}}">未设置</text>
+          <text wx:else>已设置</text>
+          <text class="iconfont icon-jiantou"></text>
+        </view>
+      </view>
+    </view>
+    <view class="list">
+      <view class="info">
+        <text>微信账号</text>
+        <view class="state">
+          <text wx:if="{{1}}">未绑定</text>
+          <text wx:else>已绑定</text>
+          <text class="iconfont icon-jiantou"></text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '账号安全'
+  };
+
+  data = {};
+
+  components = {};
+
+  methods = {};
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {}
+
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+page {
+  background-color: #f5f5f5;
+}
+.yin {
+  width: 100%;
+  height: 1px;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.1);
+}
+.list {
+  margin-top: 20rpx;
+  height: 88rpx;
+  background-color: #ffffff;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+  padding: 0 28rpx;
+  .info {
+    height: 100%;
+    border-bottom: 1px solid #ececee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    > text {
+      font-size: 30rpx;
+      color: #333333;
+    }
+    .state {
+      text {
+        font-size: 30rpx;
+        color: #999999;
+      }
+      .icon-jiantou{
+        margin-left: 15rpx;
+      }
+    }
+  }
+}
+.m0 {
+  margin-top: 0;
+}
+</style>

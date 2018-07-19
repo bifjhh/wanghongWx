@@ -1,0 +1,122 @@
+<!-- 喜欢和赞 -->
+<template>
+  <view class='interest'>
+    <view class="yin"></view>
+    <view class="lists" wx:if="{{0}}">
+      <view class="list" wx:for="{{6}}" wx:key="index">
+        <view class="user">
+          <view class="portrait"></view>
+          <view class="user_r">
+            <view class="name">网红网易云往忆云</view>
+            <view class=" iconfont icon-xin"></view>
+            <view class="time">7月9日  06:13</view>
+          </view>
+        </view>
+        <view class="logo"></view>
+      </view>
+    </view>
+    <view class="null" wx:else>
+      <view class="img">
+        <image src="/images/ic_img@3x.png" />
+      </view>
+      <text>你还没有喜欢和点赞哦！</text>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '喜欢和赞'
+  };
+  data = {lists:{}};
+  components = {};
+  methods = {};
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad() {}
+  onShow() {
+    let that = this;
+    wepy
+      .request({
+        url: '/dynamic/like_list'
+      })
+      .then(res => {
+        console.log(res.data);
+        // this.lists = res.data.items;
+        // this.$apply();
+      });
+  }
+}
+</script>
+
+<style lang='scss'>
+.yin {
+  width: 100%;
+  height: 12px;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+  margin-bottom: 5rpx;
+}
+.lists {
+  padding: 0 28rpx;
+}
+.list {
+  height: 148rpx;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  .user {
+    display: flex;
+    height: 100%;
+    .portrait {
+      margin-top: 17rpx;
+      width: 76rpx;
+      height: 76rpx;
+      border-radius: 50%;
+      background-color: #eee;
+      overflow: hidden;
+    }
+    .user_r {
+      margin-left: 20rpx;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 100%;
+      .icon-xin {
+        color: #ff5750;
+      }
+      .name {
+        font-size: 28rpx;
+        color: #333333;
+      }
+      .time {
+        color: #999;
+        font-size: 26rpx;
+      }
+    }
+  }
+  .logo {
+    width: 82rpx;
+    height: 85rpx;
+    background-color: #eee;
+    margin-top: 17rpx;
+  }
+}
+.null {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .img {
+    margin-top: 253rpx;
+    width: 416rpx;
+    height: 300rpx;
+  }
+  text {
+    margin-top: 60rpx;
+    font-size: 24rpx;
+    color: #999999;
+  }
+}
+</style>

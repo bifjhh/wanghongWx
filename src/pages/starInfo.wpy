@@ -1,80 +1,79 @@
 
 <template lang="wxml">
-  <scroll-view scroll-into-view="{{toView}}" scroll-y="{{true}}" scroll-with-animation="true" class="scr">
-
-  <view class="head">
-    <view class="introduce">
-      <view class="head_img"></view>
-      <view class="head_r">
-        <view class="title">
-          <text>{{starInfo.head.star_uv}}粉丝</text>
-          <text>{{starInfo.head.star_likes}}关注</text>
-        </view>
-        <view class="prove">{{starInfo.head.owner_auth}}:儿童主播童话作家</view>
-        <view class="info {{isInfo?'info_one':''}}" @tap="showInfo">
-          欢迎关注星球：{{starInfo.head.star_description}}
-          <text class="get_all iconfont icon-jiantou9"></text>
-        </view>
-        <view class="attention">
-          <view class="add" wx:if="{{starInfo.head.is_follow_star}}">+关注</view>
-          <view class="yet_add" wx:else>
-            <text class="iconfont icon-yiguanzhu"></text>
+  <view style="display:{{display}}">
+    <scroll-view scroll-into-view="{{toView}}" scroll-y="{{true}}" scroll-with-animation="true" class="scr">
+      <view class="head" style="background: url({{starInfo.head.star_logo}}) center no-repeat;background-size:cover;">
+        <view class="introduce">
+          <view class="head_img">
+            <image src="{{starInfo.head.owner_logo}}" />
+          </view>
+          <view class="head_r">
+            <view class="title">
+              <text>{{starInfo.head.star_uv}}粉丝</text>
+              <text>{{starInfo.head.star_likes}}关注</text>
+            </view>
+            <view class="prove">{{starInfo.head.owner_auth}}</view>
+            <view class="info {{isInfo?'info_one':''}}" @tap="showInfo">
+              {{starInfo.head.star_description}}
+              <text class="get_all iconfont icon-jiantou9"></text>
+            </view>
+            <view class="attention">
+              <view class="add" wx:if="{{starInfo.head.is_follow_star=='false'}}" @tap="follow('add')">+关注</view>
+              <view class="yet_add" wx:else @tap="follow('del')">
+                <text class="iconfont icon-yiguanzhu"></text>
+              </view>
+            </view>
           </view>
         </view>
       </view>
-    </view>
-  </view>
-  <view class="store">
-    <view class="store_l">
-      <view class="store_logo">
-        <image src="{{starInfo.shop.shop_logo}}" />
-      </view>
-      <view class="userinfo">
-        <view class="names">{{starInfo.shop.shop_name}}</view>
-        <view class="site">
-          <text>{{starInfo.shop.shop_city}}</text>
-          <text class="xian">丨</text>
-          <text>{{starInfo.shop.shop_bnum}}人已购买</text>
+      <view class="store" wx:if="{{starInfo.shop.shop_logo}}">
+        <view class="store_l">
+          <view class="store_logo">
+            <image src="{{starInfo.shop.shop_logo}}" />
+          </view>
+          <view class="userinfo">
+            <view class="names">{{starInfo.shop.shop_name}}</view>
+            <view class="site">
+              <text>{{starInfo.shop.shop_city}}</text>
+              <text class="xian">丨</text>
+              <text>{{starInfo.shop.shop_bnum}}人已购买</text>
+            </view>
+          </view>
+        </view>
+        <view class="store_r">
+          <view class="store_info">
+            <view class="store_img">
+              <image src="http://www.whxq.fenbot.com/WeChat/shop.png" />
+            </view>
+            <view class="store_img" wx:for="{{starInfo.shop.imgs}}" wx:key="{{index}}" wx:if="{{index!=0}}" style="background: url({{item}}) center no-repeat;background-size:cover;">
+            </view>
+          </view>
+          <text class="xian"></text>
+          <view class="to_store" @tap="toWeb({{starInfo.shop.shop_link}})">去逛逛</view>
         </view>
       </view>
-    </view>
-    <view class="store_r">
-      <view class="store_info">
-        <view class="store_img">
-          <image src="http://www.whxq.fenbot.com/WeChat/shop.png" />
+      <view class="content">
+        <view class="navbar">
+          <view class="nav_to " wx:for="{{nav_list}}" wx:key="{{index}}" data-opt="{{item.id}}" @tap="jumpTo">
+            {{item.name}}
+          </view>
         </view>
-        <view class="store_img" wx:for="{{starInfo.shop.imgs}}" wx:key="{{index}}">
-          <image src="{{item}}"/>
+        <view class="body_info">
+          <!-- <repeat for="{{nav_list}}" key="{{item.id}}"  item="item">
+            <talk wx:if="{{item.id=='talk'}}" :objs.sync="starInfo.dynamic.say" />
+            <issue wx:if="{{item.id=='issue'}}" :objs.sync="item" />
+            <photo wx:if="{{item.id=='photo'}}" :objs.sync="item" />
+            <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
+          </repeat> -->
+          <repeat>
+            <talk wx:if="{{starInfo.dynamic.say.total!=0}}" :objs.sync="starInfo.dynamic.say" @toPage.user="toPage" />
+            <photo wx:if="{{starInfo.dynamic.photos.total!=0}}" :objs.sync="starInfo.dynamic.photos" />
+            <store wx:if="{{starInfo.dynamic.goods.length}}" :objs.sync="starInfo.dynamic.goods" />
+          </repeat>
         </view>
-        
       </view>
-      <text class="xian"></text>
-      <view class="to_store">去逛逛</view>
-    </view>
+    </scroll-view>
   </view>
-  <view class="content"> 
-    <view class="navbar">
-      <view class="nav_to " wx:for="{{nav_list}}" wx:key="{{index}}" data-opt="{{item.id}}" @tap="jumpTo">
-        {{item.name}}
-      </view>
-    </view>
-    <view class="body_info">
-      <!-- <repeat for="{{nav_list}}" key="{{item.id}}"  item="item">
-        <talk wx:if="{{item.id=='talk'}}" :objs.sync="starInfo.dynamic.say" />
-        <issue wx:if="{{item.id=='issue'}}" :objs.sync="item" />
-        <photo wx:if="{{item.id=='photo'}}" :objs.sync="item" />
-        <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
-      </repeat> -->
-      <repeat>
-        <talk :objs.sync="starInfo.dynamic.say"  @toPage.user="toPage"/>
-        <photo :objs.sync="starInfo.dynamic.photos" />
-        <store :objs.sync="starInfo.dynamic.goods" />
-      </repeat>
-
-
-    </view>
-  </view>
-      </scroll-view>
 </template>
 <script>
 import wepy from 'wepy';
@@ -92,57 +91,119 @@ export default class starInfo extends wepy.page {
     photo,
     store
   };
-
   data = {
+    display: 'none',
     starInfo: {},
     nav_list: [
-      { name: '说说', id: 'talk' },
-      { name: '相册', id: 'photo' },
-      { name: '商城精选', id: 'store' }
+      {
+        name: '说说',
+        id: 'talk'
+      },
+      {
+        name: '相册',
+        id: 'photo'
+      },
+      {
+        name: '商城精选',
+        id: 'store'
+      }
     ],
     toView: '',
-    isInfo: true
+    isInfo: true,
+    starId: ''
   };
   methods = {
+    /* 锚点跳转 */
     jumpTo(e) {
       this.toView = e.currentTarget.dataset.opt;
       this.$apply();
       console.log(e.currentTarget.dataset.opt);
     },
+    /* 显示全部 */
     showInfo() {
       let that = this;
-      that.isInfo = !that.isInfo;
+      that.isInfo = false;
     },
-    toPage(url){
+    /* 跳转星球详情 */
+    toPage(url, param) {
       let that = this;
-      if(url=='talkList'){
-        url+=('?star_id='+that.starInfo.head.star_id);
+      if (url == 'talkList') {
+        url += '?star_id=' + that.starInfo.head.star_id;
+      }
+      if (url == 'talkInfo') {
+        url += '?id=' + param;
       }
       this.$navigate(url);
+    },
+    toWeb(url) {
+      console.log(url);
+      let token = url.substr(url.search(/\?token=/) + 7);
+      url = url.substr(0, url.search(/\?token=/));
+      url = `webview?token=${token}&src=${url}&id=${
+        this.starInfo.shop.shop_id
+      }`;
+      console.log('url', url);
+      // return;
+      this.$navigate(url);
+    },
+    /* 关注 */
+    follow(type) {
+      let that = this;
+      console.log(type);
+      console.log(that.starInfo.head.is_follow_star)
+      return;
+      wepy
+        .request({
+          url: '/star/follow_star',
+          data: {
+            star_id: that.starId,
+            dotype: type
+          }
+        })
+        .then(res => {
+          if (type == 'add') {
+            console.log('add', that.starInfo.head.is_follow_star);
+            that.starInfo.head.is_follow_star = 'true';
+            that.$apply();
+          } else {
+            console.log('del', that.starInfo.head.is_follow_star);
+            that.starInfo.head.is_follow_star = 'false';
+            that.$apply();
+          }
+        });
     }
   };
-
   events = {};
-  onLoad(options) {
-    console.log(options);
-    console.log(options.star_id);
+  onShow(options) {
     let that = this;
+    wx.showLoading({
+      title: ''
+    });
+
+    //初始化数据加载
     wepy
       .request({
-        url: 'star/show',
-        method: 'POST',
-        data: { star_id: options.star_id }
+        url: '/star/show',
+        data: {
+          star_id: that.starId
+        }
       })
       .then(res => {
-        console.log(res.data);
+        if (res.data.status != 1) return;
         that.starInfo = res.data.data;
         wx.setNavigationBarTitle({
           title: that.starInfo.head.star_name
         });
+        wx.hideLoading();
+        that.display = 'block';
         that.$apply();
       });
   }
-  // Other properties
+  onLoad(options) {
+    let that = this;
+    that.starId = options.star_id;
+    that.$apply();
+  }
 }
 </script>
 
@@ -170,6 +231,7 @@ page {
     height: 119rpx;
     border-radius: 50%;
     background-color: #f2f2f2;
+    overflow: hidden;
   }
   .introduce {
     padding: 28rpx 28rpx 32rpx 39rpx;
@@ -187,6 +249,7 @@ page {
       flex-direction: column;
       margin-left: 32rpx;
       position: relative;
+      overflow: hidden;
       .title {
         text {
           color: #fff;
@@ -236,7 +299,6 @@ page {
           top: 5rpx;
         }
       }
-
       .attention {
         position: absolute;
         top: 0;
@@ -349,7 +411,6 @@ page {
         background-color: #fcf;
       }
     }
-
     .to_store {
       border-radius: 21rpx;
       line-height: 45rpx;
@@ -360,7 +421,6 @@ page {
     }
   }
 }
-
 .content {
   margin-top: 20rpx;
   .navbar {

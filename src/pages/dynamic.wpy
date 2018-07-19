@@ -1,24 +1,217 @@
+<!-- 动态页面 -->
+<template>
+  <view class='dynamic'>
+    <view class="head">
+      <view class="discuss">
+        <view>
+          <text class="iconfont icon-xiaoxi1"></text>
+          <view class="news_num">1</view>
+        </view>
+        <view class="ping">评论</view>
+      </view>
+      <view class="xian"></view>
+      <view class="attention">
+        <view><text class="iconfont icon-guanzhu"></text></view>
+        <text>喜欢和赞</text>
+      </view>
+    </view>
+    <view class="news">
+      <view class="title"><text class="msg">消息</text></view>
+      <view class="state" wx:for="{{3}}" wx:key="{{index}}">
+        <view class="portrait">
+          <view class="news_num">1</view>
+        </view>
+        <view class="state_r">
+          <view class="info">
+            <view class="title">
+              网红星球
+            </view>
+            <view class="time">06-06 18:10</view>
+          </view>
+          <view class="intro">欢迎来到网红星球，我们开创一个新的欢迎来到网红星球，我们开创一个新的</view>
+        </view>
+      </view>
+      <view class="limit">
+        <view></view>
+        <text>我是有底限的</text>
+        <view></view>
+      </view>
+    </view>
+  </view>
+</template>
+
 <script>
 import wepy from 'wepy';
-
-export default class Dynamic extends wepy.page {
-    config = {};
-    components = {};
-
-    data = {};
-    methods = {};
-
-    events = {};
-    onLoad() {};
-    // Other properties
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '动态'
+  };
+  data = {lists:{}};
+  components = {};
+  methods = {};
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad() {}
+  onShow() {
+    let that = this;
+    wepy
+      .request({
+        url: '/dynamic/index'
+      })
+      .then(res => {
+        console.log(res.data);
+        // this.lists = res.data.items;
+        // this.$apply();
+      });
+  }
 }
 </script>
 
-<template lang="wxml">
-    <view>
-      动态
-    </view>
-</template>
+<style lang='scss'>
+page {
+  background-color: #f5f5f5;
+}
+.news_num {
+  width: 44rpx;
+  height: 44rpx;
+  background-color: #ff5750;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  right: 0;
+  transform: translate(20%, -20%);
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  text-align: center;
+  line-height: 44rpx;
+  font-size: 30rpx;
+  color: #fff;
+}
+.head {
+  height: 220rpx;
+  background-color: #fff;
+  margin-top: 4rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .discuss,
+  .attention {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 
-<style lang="scss">
+    > view:nth-of-type(1) {
+      width: 84rpx;
+      height: 84rpx;
+      // overflow: hidden;
+      border-radius: 50%;
+      background-color: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 18rpx;
+      position: relative;
+    }
+    > text {
+      font-size: 26rpx;
+      color: #333;
+    }
+    .ping {
+      font-size: 26rpx;
+      color: #333;
+    }
+  }
+  .xian {
+    height: 134rpx;
+    width: 2rpx;
+    background-color: #e5e5e5;
+  }
+  .iconfont {
+    font-size: 38rpx;
+    color: #999;
+  }
+}
+.news {
+  margin-top: 18rpx;
+  background-color: #fff;
+  padding: 0 28rpx;
+  > .title {
+    padding-top: 40rpx;
+    padding-bottom: 31rpx;
+    .msg {
+      font-size: 36rpx;
+      color: #333333;
+      padding-bottom: 13rpx;
+      border-bottom: 1px solid #ff5750;
+    }
+  }
+  .state {
+    display: flex;
+    border-bottom: 1px solid #f5f5f5;
+    height: 155rpx;
+    align-items: center;
+    .portrait {
+      // margin-top: 33rpx;
+      width: 93rpx;
+      height: 93rpx;
+      border-radius: 50%;
+      background-color: #f2f;
+      // overflow: hidden;
+      position: relative;
+    }
+    .state_r {
+      flex: 1;
+      margin-left: 11rpx;
+      display: flex;
+      flex-direction: column;
+      .info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        > .title {
+          font-size: 32rpx;
+          color: #333333;
+          // margin-top: 46rpx;
+        }
+        .time {
+          font-style: 30rpx;
+          color: #999;
+        }
+      }
+      .intro {
+        margin-top: 20rpx;
+        margin-right: 124rpx;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+      }
+    }
+  }
+}
+.limit {
+  width: 356rpx;
+  height: 70rpx;
+  margin: 0 auto;
+  margin-top: 288rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  view {
+    width: 96rpx;
+    height: 2rpx;
+    background-color: #e5e5e5;
+  }
+  text {
+    margin: 0 12rpx;
+    font-size: 23rpx;
+    color: #999999;
+  }
+}
 </style>

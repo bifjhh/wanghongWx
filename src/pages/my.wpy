@@ -1,22 +1,312 @@
+<!-- 我的 -->
+<template>
+  <view class='mybox'>
+    <view class="head" @tap="toPage('myinfo')">
+      <view class="user">
+        <view class="portrait">
+          <image src="{{user.detail_info.headimgurl||userInfo.avatarUrl}}" />
+        </view>
+        <view class="name">{{user.detail_info.name||userInfo.nickName}}</view>
+      </view>
+      <text class="iconfont icon-jiantou"></text>
+    </view>
+    <view class="safety">
+      <view class="">
+        <text class="iconfont icon-anquan"></text>
+        <text>账号安全</text>
+      </view> 
+      <view class="">
+        <text class="iconfont icon-shouji"></text>
+        <text>手机号</text>
+        <text>{{user.detail_info.bindMobile==1?'(已绑定)':'(未绑定)'}}</text>
+      </view> 
+      <!-- <view class="">
+        <text class="iconfont icon-icon4"></text>
+        <text>微信</text>
+        <text>(已绑)</text>
+      </view> -->
+    </view>
+    <view class="order">
+      <view class="head">
+        <view class="h_l" >
+          <view class="img">
+            <image src="/images/ic_icon_orderform@3x.png" />
+          </view>
+          <text>我的订单</text>
+        </view>
+        <view class="h_r">
+          <text>全部</text>
+          <text class="iconfont icon-jiantou"></text>
+        </view>
+      </view>
+      <view class="is_pay">
+        <view class="await">
+          <view class="img" style="width:60rpx;height:55rpx;">
+            <image src="/images/ic_icon_unpaid@3x.png" />
+          </view>
+          <text>待支付</text>
+        </view>
+        <view class="achieve">
+          <view class="img" style="width:58rpx;height:60rpx;">
+            <image src="/images/ic_icon_pay@3x.png" />
+          </view>
+          <text>已支付</text>
+        </view>
+        <view class="refund">
+          <view class="img" style="width:60rpx;height:60rpx;">
+            <image src="/images/ic_icon_refund@3x.png" />
+          </view>
+          <text>退款</text>
+        </view>
+      </view>
+    </view>
+    <view class="set ">
+      <view class="list">
+        <view class="list_l">
+          <view class="img" style="width:32rpx;height:32rpx;">
+            <image src="/images/ic_icon_wallet@3x.png" />
+          </view>
+          <text>我的钱包</text>
+        </view>
+        <text class="iconfont icon-jiantou"></text>
+      </view>
+      <view class="list">
+        <view class="list_l">
+          <view class="img" style="width:32rpx;height:32rpx;">
+            <image src="/images/ic_icon_share@3x.png" />
+          </view>
+          <text>分享</text>
+        </view>
+        <text class="iconfont icon-jiantou"></text>
+      </view>
+      <view class="list">
+        <view class="list_l">
+          <view class="img" style="width:32rpx;height:32rpx;">
+            <image src="/images/ic_icon_set@3x.png" />
+          </view>
+          <text>设置</text>
+        </view>
+        <text class="iconfont icon-jiantou"></text>
+      </view>
+      <view class="list">
+        <view class="list_l">
+          <view class="img" style="width:32rpx;height:32rpx;">
+            <image src="/images/ic_icon_help@3x.png" />
+          </view>
+          <text>帮助与反馈</text>
+        </view>
+        <text class="iconfont icon-jiantou"></text>
+      </view>
+    </view>
+  </view>
+</template>
+
 <script>
 import wepy from 'wepy';
-
-export default class My extends wepy.page {
-  config = {};
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的',
+    navigationBarBackgroundColor: '#ff635c'
+  };
+  data = { userInfo: {}, user: {} };
   components = {};
-
-  data = {};
-  methods = {};
-
+  methods = {
+    toPage(url) {
+      this.$navigate(url);
+    }
+  };
   events = {};
-  onLoad() {}
-  // Other properties
+  watch = {};
+  computed = {};
+  onLoad() {
+    let that = this;
+    that.$parent.getUserInfo(userInfo => {
+      console.log('userInfo', userInfo);
+      if (userInfo) {
+        that.userInfo = userInfo;
+        that.$apply();
+      }
+    });
+  }
+  onShow() {
+    let that = this;
+    wepy
+      .request({
+        url: '/user/show'
+      })
+      .then(res => {
+        console.log(res.data.data);
+        that.user = res.data.data.user;
+        that.$apply();
+      });
+  }
 }
 </script>
 
-<template lang="wxml">
-    <web-view src="https://baidu.com/"></web-view>
-</template>
-
-<style lang="scss">
+<style lang='scss'>
+page {
+  background-color: #f5f5f5;
+  // padding-bottom: 75rpx;
+}
+.mybox > .head {
+  height: 212rpx;
+  background-image: linear-gradient(59deg, #ff635c 0%, #ff7d68 100%),
+    linear-gradient(#fac5b7, #fac5b7);
+  background-blend-mode: normal, normal;
+  padding: 0 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .user {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+  .portrait {
+    width: 138rpx;
+    height: 138rpx;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .name {
+    color: #fff;
+    font-size: 30rpx;
+    margin-left: 35rpx;
+  }
+  .icon-jiantou {
+    color: #fff;
+  }
+}
+.safety {
+  background-color: #fff;
+  height: 90rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  > view {
+    flex: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 30rpx;
+    border-left: 1px solid #eee;
+    text:nth-of-type(2) {
+      font-size: 26rpx;
+      color: #333333;
+    }
+    text:nth-of-type(3) {
+      font-size: 18rpx;
+      color: #999;
+    }
+  }
+  view:nth-of-type(1) {
+    border: none;
+  }
+  .iconfont {
+    margin-right: 10rpx;
+  }
+  .icon-anquan {
+    color: #50abff;
+  }
+  .icon-shouji {
+    color: #ff8150;
+  }
+  .icon-icon4 {
+    color: #7ad333;
+  }
+}
+.order {
+  background-color: #fff;
+  margin-top: 20rpx;
+  height: 330rpx;
+  background-color: #ffffff;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+  padding: 0 28rpx;
+  .head {
+    height: 100rpx;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #eee;
+    .h_l {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      text {
+        font-size: 32rpx;
+      }
+      .img {
+        width: 24rpx;
+        height: 32rpx;
+        overflow: hidden;
+        margin-right: 20rpx;
+      }
+    }
+    .h_r {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      color: #999;
+      text:nth-of-type(1) {
+        font-size: 30rpx;
+        color: #999;
+      }
+      .icon-jiantou {
+        font-size: 28rpx;
+        margin-left: 10rpx;
+        line-height: 100rpx;
+      }
+    }
+  }
+  .is_pay {
+    height: 230rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    > view {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text {
+        margin-top: 20rpx;
+        font-size: 28rpx;
+        color: #333333;
+      }
+    }
+  }
+}
+.set {
+  margin-top: 20rpx;
+  height: 445rpx;
+  background-color: #ffffff;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+  display: flex;
+  flex-direction: column;
+  padding: 0 26rpx;
+  .list {
+    flex: auto;
+    height: 100%;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .list_l {
+      display: flex;
+      height: 100%;
+      align-items: center;
+      text {
+        font-size: 32rpx;
+        color: #333;
+      }
+      .img {
+        margin-right: 14rpx;
+      }
+    }
+    .icon-jiantou {
+      color: #999;
+      font-size: 28rpx;
+    }
+  }
+}
 </style>
