@@ -35,9 +35,14 @@
       <view class="list">
         <view class="info">
           <text>性别</text>
-          <view class="state">
-            <text>{{user.sex||(userInfo.gender==1?'男':'女')}}</text>
-            <text class="iconfont icon-jiantou"></text>
+           <view class="state">
+            <picker bindchange="bindPickerChange" value="{{user.sex||(userInfo.gender==1?'男':'女')}}" range="{{sexArr}}">
+              <view class="picker">
+               <text> {{user.sex||(userInfo.gender==1?'男':'女')}}</text>
+              <text class="iconfont icon-jiantou"></text>
+
+              </view>
+            </picker>
           </view>
         </view>
       </view>
@@ -81,7 +86,8 @@ export default class Example extends wepy.page {
     userInfo: {},
     user: {},
     birthday: '',
-    address: ''
+    address: '',
+    sexArr: ['请选择', '男','女']
   };
   components = {};
   methods = {
@@ -105,6 +111,13 @@ export default class Example extends wepy.page {
         'address',
         e.detail.value[0] + ',' + e.detail.value[1]
       );
+    },
+    bindPickerChange(e) {
+      let that = this;
+      that.birthday = e.detail.value;
+      // that.sexArr[e.detail.value]
+      console.log(that.sexArr[e.detail.value]);
+      that.userSet(that, 'sex', e.detail.value);
     }
   };
   events = {};
@@ -114,7 +127,10 @@ export default class Example extends wepy.page {
     wepy
       .request({
         url: '/user/set',
-        data: { value: value, type: type }
+        data: {
+          value: value,
+          type: type
+        }
       })
       .then(res => {
         if (res.data.status == 1) {
