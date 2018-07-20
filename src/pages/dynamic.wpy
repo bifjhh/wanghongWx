@@ -2,38 +2,37 @@
 <template>
   <view class='dynamic'>
     <view class="head">
-      <view class="discuss">
+      <view class="discuss" @tap="toPage('discuss')">
         <view>
           <text class="iconfont icon-xiaoxi1"></text>
-          <view class="news_num">1</view>
         </view>
         <view class="ping">评论</view>
       </view>
       <view class="xian"></view>
-      <view class="attention">
+      <view class="attention" @tap="toPage('like')">
         <view><text class="iconfont icon-guanzhu"></text></view>
         <text>喜欢和赞</text>
       </view>
     </view>
     <view class="news">
-      <view class="title"><text class="msg">消息</text></view>
-      <view class="state" wx:for="{{3}}" wx:key="{{index}}">
-        <view class="portrait">
+      <view class="title" wx:if="{{lists.length!=0}}"><text class="msg">消息</text></view>
+      <view class="state" wx:for="{{lists}}" wx:key="{{index}}">
+        <view class="portrait" style="background: url({{item.msg_owner_logo}}) center no-repeat; background-size: cover">
           <view class="news_num">1</view>
         </view>
         <view class="state_r">
           <view class="info">
             <view class="title">
-              网红星球
+              {{item.msg_owner}}
             </view>
-            <view class="time">06-06 18:10</view>
+            <view class="time">{{item.msg_time}}</view>
           </view>
-          <view class="intro">欢迎来到网红星球，我们开创一个新的欢迎来到网红星球，我们开创一个新的</view>
+          <view class="intro">{{item.msg_content}}</view>
         </view>
       </view>
       <view class="limit">
         <view></view>
-        <text>我是有底限的</text>
+        <text>{{lists.length==0?'暂无消息':'我是有底限的'}}</text>
         <view></view>
       </view>
     </view>
@@ -46,9 +45,13 @@ export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '动态'
   };
-  data = {lists:{}};
+  data = {lists:[]};
   components = {};
-  methods = {};
+  methods = {
+    toPage(url){
+      this.$navigate(url);
+    }
+  };
   events = {};
   watch = {};
   computed = {};
@@ -60,9 +63,8 @@ export default class Example extends wepy.page {
         url: '/dynamic/index'
       })
       .then(res => {
-        console.log(res.data);
-        // this.lists = res.data.items;
-        // this.$apply();
+        that.lists = res.data.data.messageList.items;
+        this.$apply();
       });
   }
 }
@@ -166,7 +168,7 @@ page {
     }
     .state_r {
       flex: 1;
-      margin-left: 11rpx;
+      margin-left: 15rpx;
       display: flex;
       flex-direction: column;
       .info {
@@ -199,7 +201,8 @@ page {
   width: 356rpx;
   height: 70rpx;
   margin: 0 auto;
-  margin-top: 288rpx;
+  // margin-top: 288rpx;
+  margin-top: 30rpx;
   display: flex;
   justify-content: center;
   align-items: center;

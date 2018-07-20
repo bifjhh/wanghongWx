@@ -1,6 +1,16 @@
 <!-- 登录页面 -->
 <template>
-  <button open-type="getUserInfo" @getuserinfo="getuserinfo">一键授权</button>
+  <view class="login">
+    <view class="login-img">
+      <image src="/images/ic_tab_selected_star@3x.png" />
+    </view>
+    <view class="login-btn">
+      <button class="loging" open-type="getUserInfo" @getuserinfo="getuserinfo">一键授权</button>
+    </view>
+    <view class="login-text">
+      <text>微信规则限制，必须您主动授权</text>
+    </view>
+  </view>
 </template>
 
 <script>
@@ -23,7 +33,6 @@ export default class Example extends wepy.page {
   };
   login(that) {
     let code;
-
     wepy
       .login({})
       .then(res => {
@@ -42,7 +51,7 @@ export default class Example extends wepy.page {
                 code: code,
                 iv: user.iv,
                 encryptData: user.encryptedData
-              },
+              }
             })
             .then(res => {
               console.log(res);
@@ -74,7 +83,7 @@ export default class Example extends wepy.page {
       success: function(res) {
         console.log(!res.authSetting['scope.userInfo']);
         if (res.authSetting['scope.userInfo']) {
-          console.log('已经授权,过来刷新的')
+          console.log('已经授权,过来刷新的');
           wx.navigateBack({
             delta: 1
           });
@@ -87,4 +96,53 @@ export default class Example extends wepy.page {
 </script>
 
 <style lang='scss'>
+.login {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+}
+
+.login-img {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  margin-left: -100rpx;
+  border: 1px solid #e5e5e5;
+}
+
+.login-img image {
+  width: 100%;
+  height: 100%;
+  // border-radius: 50%;
+}
+
+.login-btn {
+  width: 80%;
+  position: absolute;
+  bottom: 35%;
+  left: 10%;
+}
+
+.login-btn button {
+  background: #41b035;
+  color: #fff;
+  line-height: normal;
+  padding: 16rpx 28rpx;
+}
+
+.login-text {
+  width: 80%;
+  position: absolute;
+  bottom: 30%;
+  left: 10%;
+  text-align: center;
+  color: #999;
+  font-size: 30rpx;
+}
 </style>

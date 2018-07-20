@@ -3,7 +3,7 @@
   <view class='amend_box'>
     <view class="yin"></view>
     <view class="inp">
-      <input placeholder="介绍一下你自己" auto-focus @input="bindinput"/>
+      <input placeholder="{{introduce||'介绍一下你自己'}}" auto-focus @input="bindinput"/>
     </view>
     <view class="btn" @tap="userSet">
       保存
@@ -18,7 +18,7 @@ export default class Example extends wepy.page {
     navigationBarTitleText: '个人介绍'
   };
 
-  data = {};
+  data = {introduce:''};
 
   components = {};
 
@@ -51,7 +51,10 @@ export default class Example extends wepy.page {
 
   computed = {};
 
-  onLoad() {}
+  onLoad(options) {
+    let that = this;
+    that.introduce = options.parameter;
+  }
 
   onShow() {}
 }

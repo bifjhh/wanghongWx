@@ -1,29 +1,80 @@
 <!-- 评论界面 -->
 <template>
   <view class='discuss_box'>
-    <view class="lists" wx:if="{{0}}">
+    <view class="lists" wx:if="{{lists}}">
       <view class="ybox">
         <view class="yin"></view>
       </view>
-      <view class="list" wx:for="{{3}}" wx:key="{{index}}">
-        <view class="wanghong">
-          <view class="title">
-            <view class="t_l">
-              <view class="portrait"></view>
-              <view class="name">网红席采南楠楠</view>
+      <view class="list" wx:for="{{lists}}" wx:key="{{index}}">
+        <!-- <view class="wanghong">
+            <view class="title">
+              <view class="t_l">
+                <view class="portrait"></view>
+                <view class="name">网红席采南楠楠</view>
+              </view>
+              <view class="time">7月9日 06:13</view>
             </view>
-            <view class="time">7月9日 06:13</view>
+            <text class="msg">@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词表达了自己的想法与见解。</text>
+          </view> -->
+        <view class="talk_list">
+          <view class="thead" @tap="toPage('talkInfo',{{item.say_id}})">
+            <view class="names">
+              <view class="name_img">
+                <image src="{{item.say_owner_logo}}" />
+              </view>
+              <view class="name">{{item.say_owner_name}}</view>
+            </view>
+            <view class="earlier">{{item.say_ctime}}</view>
           </view>
-          <text class="msg">@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词表达了自己的想法与见解。</text>
+          <view class="talk_info">
+            {{item.say_content}}
+          </view>
+          <!-- <video id="myVideo" hidden="{{!item.say_video_info.off}}" src="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f660000bd273dcpg623e2usfp6g&line=0" controls poster="{{item.say_video_info.cover}}"></video> -->
+          <!-- <view hidden="{{!item.say_video_info.off}}" class="xxx" @tap="play({{index}})">xxx</view> -->
+          <view class="music" wx:if="{{item.say_video_info.title}}">
+            <view class="music_logo" @tap="play({{index}})">
+              <video src="{{item.say_video_info.link}}" controls poster="{{item.say_video_info.cover}}"></video>
+              <!-- <image src="{{item.say_video_info.cover}}" /> -->
+            </view>
+            <view class="m_info">
+              <view class="m_title">{{item.say_video_info.title}}</view>
+              <view class="m_name">{{item.say_video_info.author}}</view>
+            </view>
+          </view>
+          <view class="img_list {{item.say_photos_path.length>2?'img_list2':''}}" wx:if="{{item.say_photos_path.length!=0}}">
+            <block wx:if="{{item.say_photos_path.length==1}}">
+              <view class="pic picw1" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) top left no-repeat;background-size:contain;" @tap="showImgs({{issrc}},{{item.say_photos_path}})">
+                <!-- <image src="{{issrc}}"/> -->
+              </view>
+            </block>
+            <block wx:if="{{item.say_photos_path.length==2}}">
+              <view class="pic picw2" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) center center no-repeat;background-size:cover;" @tap="showImgs({{issrc}},{{item.say_photos_path}})">
+                <!-- <image src="{{issrc}}"/> -->
+              </view>
+            </block>
+            <block wx:if="{{item.say_photos_path.length>2}}">
+              <view class="pic" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) center center no-repeat;background-size:cover;" @tap="showImgs({{issrc}},{{item.say_photos_path}})">
+                <!-- <image src="{{issrc}}"/> -->
+              </view>
+            </block>
+          </view>
+          <view class="location" wx:if="{{item.say_address}}" @tap="amap({{item.say_lng*1}},{{item.say_lat*1}},{{item.say_address}})">
+            <view>
+              <text class="iconfont icon-weizhi"></text>
+              <text>{{item.say_address}}</text>
+            </view>
+          </view>
         </view>
         <view class="discuss">
-          <view class="portrait"></view>
+          <view class="portrait">
+            <image src="{{itemOne.comment_content[0].comment_owner_logo}}" />
+          </view>
           <view class="discuss_r">
-            <view class="name">网红妖精的上铺</view>
-            <view class="discuss_li" wx:for="{{3}}" wx:key="{{index}}">
-              <view class="info">说的对啊，我心中的道明寺不是这个样子的啊!还有这配配乐感觉有点乱入。</view>
+            <view class="name">{{itemOne.comment_content[0].comment_owner_name}}</view>
+            <view class="discuss_li" wx:for="{{item.comment}}"  wx:for-index="idx" wx:for-item="itemOne" wx:key="{{idx}}">
+              <view class="info">{{itemOne.comment_content}}</view>
               <view class="footer">
-                <view class="time">7月9日 08:12</view>
+                <view class="time">{{itemOne.comment_ctime}}</view>
                 <view class="del">删除</view>
               </view>
             </view>
@@ -31,11 +82,11 @@
         </view>
       </view>
     </view>
-    <view class="null">
+    <view wx:else class="null">
       <view class="img">
         <image src="/images/pl_img@3x.png" />
       </view>
-      <text>你目前还没有评论哦！</text>
+      <text>您目前还没有评论哦！</text>
     </view>
   </view>
 </template>
@@ -46,14 +97,27 @@ export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '评论'
   };
-  data = {};
+  data = {
+    lists: []
+  };
   components = {};
   methods = {};
   events = {};
   watch = {};
   computed = {};
   onLoad() {}
-  onShow() {}
+  onShow() {
+    let that = this;
+    wepy
+      .request({
+        url: '/dynamic/comment_list'
+      })
+      .then(res => {
+        console.log(res.data);
+        that.lists = res.data.data.items;
+        that.$apply();
+      });
+  }
 }
 </script>
 
@@ -164,6 +228,152 @@ page {
     margin-top: 40rpx;
     font-size: 24rpx;
     color: #999999;
+  }
+}
+.talk_list {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 0 30rpx;
+  .thead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 37rpx;
+    padding-bottom: 20rpx;
+    .names {
+      display: flex;
+      align-items: center;
+      .name_img {
+        width: 53rpx;
+        height: 53rpx;
+        border-radius: 50%;
+        overflow: hidden;
+        background-color: #eff;
+      }
+      .name {
+        margin-left: 12rpx;
+        font-size: 30rpx;
+        color: #333333;
+      }
+    }
+    .earlier {
+      font-size: 24rpx;
+      color: #999999;
+    }
+  }
+  .talk_info {
+    // margin-top: 20rpx;
+    font-size: 30rpx;
+    line-height: 48rpx;
+    word-break: break-all;
+  }
+  .music {
+    margin-top: 20rpx;
+    height: 120rpx;
+    background-color: #ccc;
+    display: flex;
+    .music_logo {
+      width: 113rpx;
+      height: 100%;
+      background-color: #efe;
+    }
+    .m_info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-left: 23rpx;
+      .m_title {
+        font-size: 31rpx;
+        color: #333333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+      }
+      .m_name {
+        font-size: 23rpx;
+        color: #999999;
+      }
+    }
+  }
+  .img_list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-top: 34rpx;
+    &.img_list2 {
+      justify-content: initial;
+    }
+    .pic {
+      width: 218rpx;
+      height: 218rpx;
+      margin-bottom: 10rpx;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-right: 15rpx;
+    }
+    .picw1 {
+      width: 100%;
+      height: auto;
+      margin-right: 0;
+      height: 400rpx;
+      image {
+        height: 400rpx;
+        display: block;
+      }
+    }
+    .picw2 {
+      width: 48%;
+      height: auto;
+      height: 330rpx;
+      margin-right: 0;
+      image {
+        height: 330rpx;
+        display: block;
+      }
+    }
+  }
+  .location {
+    margin-top: 18rpx;
+    view {
+      background-color: #ededed;
+      border-radius: 5rpx;
+      display: inline-flex;
+      align-items: center;
+      padding: 7rpx 10rpx;
+      text {
+        color: #999999;
+      }
+      .icon-weizhi {
+        margin-right: 10rpx;
+      }
+    }
+  }
+  .bottom {
+    display: flex;
+    justify-content: space-around;
+    padding: 40rpx 0;
+    align-items: center;
+    view {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    text {
+      color: #999999;
+    }
+    .iconf {
+      padding-left: 15rpx;
+      font-size: 16px;
+    }
+    .icon-fenxiang {
+      font-size: 40rpx;
+    }
+    .icon-xin {
+      color: red;
+    }
   }
 }
 </style>

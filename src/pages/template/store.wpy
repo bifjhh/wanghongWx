@@ -3,7 +3,7 @@
   <view class='store_content' id="store" data-rol="store">
     <view class="store_title">
       <text>商城精选</text>
-      <view>
+      <view @tap="toWeb">
         <text>更多</text>
         <text class="iconfont icon-jiantou"></text>
       </view>
@@ -28,7 +28,7 @@
               <text>.00</text>
             </view>
           </view>
-          <view class="get_more">
+          <view class="get_more" @tap="toWeb">
             <view>
               <view></view>
             </view>
@@ -40,148 +40,163 @@
 </template>
 
 <script>
-  import wepy from 'wepy';
-  export default class Store extends wepy.component {
-    data = {};
-    props = {
-      objs: {
-        type: Object,
-        default: '{}'
-      }
-    };
-    components = {};
-    methods = {
-      toPage(url) {
-        console.log(url);
-        let token = url.substr(url.search(/\?token=/) + 7);
-        url = url.substr(0, url.search(/\?token=/));
-        url = `webview?token=${token}&src=${url}`;
-        console.log(url);
-        // return;
-        this.$parent.$navigate(url);
-      }
-    };
-    events = {};
-    watch = {};
-    computed = {};
-    onLoad() {}
-    onShow() {}
-  }
+import wepy from 'wepy';
+export default class Store extends wepy.component {
+  data = {};
+  props = {
+    objs: {
+      type: Object,
+      default: '{}'
+    }
+  };
+  components = {};
+  methods = {
+    toPage(url) {
+      console.log(url);
+      let token = url.substr(url.search(/\?token=/) + 7);
+      url = url.substr(0, url.search(/\?token=/));
+      url = `webview?token=${token}&src=${url}`;
+      console.log(url);
+      // return;
+      this.$parent.$navigate(url);
+    },
+    toWeb() {
+      let that = this;
+      let url = that.$parent.starInfo.shop.shop_link;
+      console.log(url);
+      let token = url.substr(url.search(/\?token=/) + 7);
+      url = url.substr(0, url.search(/\?token=/));
+      url = `webview?token=${token}&src=${url}&id=${
+        that.$parent.starInfo.shop.shop_id
+      }`;
+      console.log('url', url);
+      // return;
+      that.$parent.$navigate(url);
+    }
+  };
+  events = {};
+  watch = {};
+  computed = {};
+  onLoad() {}
+  onShow() {}
+}
 </script>
 
 <style lang='scss'>
-  .store_content {
-    background-color: #fff;
-    margin-top: 18rpx;
-    padding-left: 27rpx;
-    padding-bottom: 18rpx;
-    .store_title {
+.store_content {
+  background-color: #fff;
+  margin-top: 18rpx;
+  padding-left: 27rpx;
+  padding-bottom: 18rpx;
+  .store_title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 48rpx 29rpx 40rpx;
+    color: #333333;
+    text:nth-of-type(1) {
+      font-size: 34rpx;
+    }
+    view {
+      height: 100%;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 48rpx 29rpx 40rpx;
-      color: #333333;
-      text:nth-of-type(1) {
-        font-size: 34rpx;
+      text {
+        font-size: 30rpx;
+        color: #999999;
       }
-      view {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        text {
-          font-size: 30rpx;
-          color: #999999;
-        }
-        .icon-jiantou {
-          margin-left: 5rpx;
-          font-size: 24rpx;
-        }
+      .icon-jiantou {
+        margin-left: 5rpx;
+        font-size: 24rpx;
       }
     }
   }
-  .store_list {
-    width: 100%;
-    display: flex;
-    .store_one {
-      margin-right: 30rpx;
-      padding-bottom: 10rpx;
-      border: solid 1px #eeeeee;
-      .store_img {
-        width: 330rpx;
-        height: 345rpx;
-        background-color: #ccc;
-        position: relative;
-        .jingxuan {
-          position: absolute;
-          height: 29rpx;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          top: 15rpx;
-          left: 15rpx;
-          padding: 0 10rpx;
-          background-color: rgba(255, 255, 255, 0.42);
-          border-radius: 5px;
-          text {
-            // font-size: 20rpx;
-            font-size: 10px;
-            color: #ff5750;
-          }
-          .icon-zuanshi {
-            // font-size: 28rpx;
-            font-size: 14px;
-          }
-          .txt {
-            padding-left: 10rpx;
-          }
-        }
-      }
-      .store_info {
-        margin: 0 auto;
-        margin-top: 22rpx;
-        width: 295rpx;
-        height: 76rpx;
-        text {
-          font-size: 26rpx;
-          line-height: 34rpx;
-          color: #333333;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-line-clamp: 1;
-          -webkit-box-orient: vertical;
-        }
-      }
-      .store_price {
-        font-size: 26rpx;
-        font-weight: normal;
-        font-stretch: normal;
-        line-height: 34px;
-        letter-spacing: 0px;
-        color: #ff5750;
-        margin-left: 17rpx;
-        .price {
-          font-size: 36rpx;
-        }
-      }
-    }
-    .get_more {
-      background: url(http://www.whxq.fenbot.com/WeChat/getadd_bgc.png) center no-repeat;
-      background-size: 100% 100%;
-      view {
-        width: 330rpx;
-        height: 500rpx;
+}
+.store_list {
+  width: 100%;
+  display: flex;
+  .store_one {
+    margin-right: 30rpx;
+    padding-bottom: 10rpx;
+    border: solid 1px #eeeeee;
+    .store_img {
+      width: 330rpx;
+      height: 345rpx;
+      background-color: #ccc;
+      position: relative;
+      .jingxuan {
+        position: absolute;
+        height: 29rpx;
         display: flex;
         align-items: center;
         justify-content: center;
-        view {
-          width: 229rpx;
-          height: 199rpx;
-          background: url(http://www.whxq.fenbot.com/WeChat/get_add.png) center no-repeat;
-          background-size: 100% 100%;
+        top: 15rpx;
+        left: 15rpx;
+        padding: 0 10rpx;
+        background-color: rgba(255, 255, 255, 0.42);
+        border-radius: 5px;
+        text {
+          // font-size: 20rpx;
+          font-size: 10px;
+          color: #ff5750;
+        }
+        .icon-zuanshi {
+          // font-size: 28rpx;
+          font-size: 14px;
+        }
+        .txt {
+          padding-left: 10rpx;
         }
       }
     }
+    .store_info {
+      margin: 0 auto;
+      margin-top: 22rpx;
+      width: 295rpx;
+      height: 76rpx;
+      text {
+        font-size: 26rpx;
+        line-height: 34rpx;
+        color: #333333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+      }
+    }
+    .store_price {
+      font-size: 26rpx;
+      font-weight: normal;
+      font-stretch: normal;
+      line-height: 34px;
+      letter-spacing: 0px;
+      color: #ff5750;
+      margin-left: 17rpx;
+      .price {
+        font-size: 36rpx;
+      }
+    }
   }
+  .get_more {
+    background: url(http://www.whxq.fenbot.com/WeChat/getadd_bgc.png) center
+      no-repeat;
+    background-size: 100% 100%;
+    view {
+      width: 330rpx;
+      height: 500rpx;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      view {
+        width: 229rpx;
+        height: 199rpx;
+        background: url(http://www.whxq.fenbot.com/WeChat/get_add.png) center
+          no-repeat;
+        background-size: 100% 100%;
+      }
+    }
+  }
+}
 </style>
 	

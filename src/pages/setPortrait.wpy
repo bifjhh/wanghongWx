@@ -1,4 +1,4 @@
-<!-- 测试头像上传 -->
+<!-- 设置头像上传 -->
 <template>
   <view class="wx-content-info" wx:if="{{imageSrc}}">
     <view wx:if="{{isShowImg}}" class="wx-corpper" style="width:{{cropperInitW}}rpx;height:{{cropperInitH}}rpx;background:#000">
@@ -29,7 +29,7 @@
       <!-- <view class="wx-cropper-drag-box"></view> -->
     </view>
     <canvas canvas-id="myCanvas" style="position:absolute;border: 1px solid red; width:{{qualityWidth}}px;height:{{qualityWidth/innerAspectRadio}}px;top:-9999px;left:-9999px;"></canvas>
-    <button wx:if="{{imageSrc!='http://www.whxq.fenbot.com/WeChat/xingqiu_active.png'}}" class="btn" @tap="getImageInfo">确认</button>
+    <button wx:if="{{imageSrc!=options.parameter}}" class="btn" @tap="getImageInfo">确认</button>
     <button wx:else class="btn" @tap="getImage" > 请选择图片 </button>
     <image src="{{returnImage}}" />
   </view>
@@ -65,6 +65,7 @@ export default class Example extends wepy.page {
     imageSrc: 'http://www.whxq.fenbot.com/WeChat/xingqiu_active.png',
     returnImage: '',
     isShowImg: false,
+    options: '',
     // 初始化的宽高
     cropperInitW: windowWRPX,
     cropperInitH: windowWRPX,
@@ -161,7 +162,7 @@ export default class Example extends wepy.page {
       var _this = this;
       wx.chooseImage({
         count: 1,
-        sizeType: ['original', 'compressed'],
+        sizeType: ['compressed'],
         sourceType: ['album', 'camera'],
         success: function(res) {
           console.log('getImage', res);
@@ -261,7 +262,7 @@ export default class Example extends wepy.page {
               })
               .then(paths => {
                 console.log(paths.data.path);
-                return;
+                // return;
                 wepy
                   .request({
                     url: '/user/set',
@@ -270,9 +271,16 @@ export default class Example extends wepy.page {
                   .then(res => {
                     if (res.data.status == 1) {
                       wx.hideLoading();
-                      wx.navigateBack({
-                        delta: 1
+                      wx.showToast({
+                        title: '完成',
+                        icon: 'success',
+                        duration: 600
                       });
+                      setTimeout(() => {
+                        wx.navigateBack({
+                          delta: 1
+                        });
+                      }, 500);
                     }
                   });
               });
@@ -404,7 +412,13 @@ export default class Example extends wepy.page {
   events = {};
   watch = {};
   computed = {};
-  onLoad() {}
+  onLoad(options) {
+    let that = this;
+    that.options = options;
+    that.imageSrc = that.options.parameter;
+    that.isShowImg = true;
+    that.$apply();
+  }
   onShow() {}
 }
 </script>

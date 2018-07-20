@@ -15,7 +15,7 @@
     <view class="intro">{{item.desc_title}}</view>
     <block wx:if="{{item.shop_goods.length!=0}}">
       <view class="goods_list">
-        <view class="goods" wx:for="{{item.shop_goods}}" wx:for-index="one" wx:for-item="itemName" style="background: url({{itemName.thumbnail}}) center no-repeat; background-size: cover">
+        <view class="goods" wx:for="{{item.shop_goods}}" wx:for-index="one" wx:for-item="itemName" style="background: url({{itemName.thumbnail}}) center no-repeat; background-size: cover" @tap="toWeb({{itemName.goods_link}},{{itemName.id}})">
           <view class="goods_num">RMB：{{itemName.price}}</view>
         </view>
       </view>

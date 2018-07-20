@@ -2,7 +2,7 @@
 <template>
   <view class='talk' style="display:{{display}}">
     <view class="talk_list" wx:for="{{objs.lists}}" wx:key="{{item.say_id}}" data-sayid="{{item.say_id}}">
-      <view class="thead">
+      <view class="thead"  @tap="toPage('talkInfo',{{item.say_id}})">
         <view class="names">
           <view class="name_img">
             <image src="{{item.owner_img}}" />
@@ -11,9 +11,9 @@
         </view>
         <view class="earlier">{{item.say_publish_time}}</view>
       </view>
-      <text class="talk_info">
+      <view class="talk_info">
         {{item.say_content}}
-      </text>
+      </view>
       <!-- <video id="myVideo" hidden="{{!item.say_video_info.off}}" src="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f660000bd273dcpg623e2usfp6g&line=0" controls poster="{{item.say_video_info.cover}}"></video> -->
       <!-- <view hidden="{{!item.say_video_info.off}}" class="xxx" @tap="play({{index}})">xxx</view> -->
 
@@ -205,6 +205,7 @@ export default class TalkList extends wepy.page {
     align-items: center;
     justify-content: space-between;
     padding-top: 37rpx;
+    padding-bottom: 20rpx; 
     .names {
       display: flex;
       align-items: center;
@@ -227,8 +228,9 @@ export default class TalkList extends wepy.page {
     }
   }
   .talk_info {
-    margin-top: 20rpx;
+    // margin-top: 20rpx;
     font-size: 30rpx;
+    line-height: 48rpx;
     word-break: break-all;
   }
   .music {

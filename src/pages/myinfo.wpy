@@ -3,7 +3,7 @@
   <view class='myinfo_box'>
     <view class="yin"></view>
     <view class="lists">
-      <view class="list">
+      <view class="list" @tap="toPage('setPortrait',{{user.headimgurl||userInfo.avatarUrl}})">
         <view class="info">
           <text>修改头像</text>
           <view class="state">
@@ -14,7 +14,7 @@
           </view>
         </view>
       </view>
-      <view class="list" @tap="toPage('amend1')">
+      <view class="list" @tap="toPage('amend1',{{user.name||userInfo.nickName}})">
         <view class="info">
           <text>名字</text>
           <view class="state">
@@ -23,7 +23,7 @@
           </view>
         </view>
       </view>
-      <view class="list" @tap="toPage('amend2')">
+      <view class="list" @tap="toPage('amend2',{{user.introduce}})">
         <view class="info">
           <text>个人介绍</text>
           <view class="state">
@@ -87,11 +87,14 @@ export default class Example extends wepy.page {
     user: {},
     birthday: '',
     address: '',
-    sexArr: ['请选择', '男','女']
+    sexArr: ['请选择', '男', '女']
   };
   components = {};
   methods = {
-    toPage(url) {
+    toPage(url, parameter) {
+      if (parameter) {
+        url += '?parameter=' + parameter;
+      }
       this.$navigate(url);
     },
     /* 日期 */
@@ -145,11 +148,10 @@ export default class Example extends wepy.page {
   }
   onLoad() {
     let that = this;
-    // that.getUser(that);
+    that.getUser(that);
   }
   onShow() {
     let that = this;
-    that.getUser(that);
     that.getUserInfo(that);
   }
   getUserInfo(that) {
@@ -207,9 +209,13 @@ page {
         color: #333333;
       }
       .state {
+        flex: 1;
         display: flex;
         align-items: center;
+        justify-content: flex-end;
         height: 100%;
+        text-align: right;
+
         .picker {
           display: flex;
           align-items: center;
@@ -219,12 +225,20 @@ page {
           width: 90rpx;
           height: 90rpx;
           overflow: hidden;
-          border-radius: 50%;
+          > image {
+            border-radius: 50%;
+          }
         }
         text {
           font-size: 30rpx;
           color: #999999;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
         }
+
         .icon-jiantou {
           margin-left: 15rpx;
         }

@@ -10,7 +10,7 @@
       </view>
       <text class="iconfont icon-jiantou"></text>
     </view>
-    <view class="safety">
+    <view class="safety" @tap="toPage('safety')">
       <view class="">
         <text class="iconfont icon-anquan"></text>
         <text>账号安全</text>
@@ -135,7 +135,7 @@ export default class Example extends wepy.page {
         url: '/user/show'
       })
       .then(res => {
-        console.log(res.data.data);
+        // console.log(res.data.data);
         that.user = res.data.data.user;
         that.$apply();
       });
@@ -165,14 +165,24 @@ page {
   .portrait {
     width: 138rpx;
     height: 138rpx;
-    border: 1px solid #fff;
-    border-radius: 50%;
-    overflow: hidden;
+    // border: 1px solid #fff;
+    // border-radius: 50%;
+    // overflow: hidden;
+    image {
+      border: 1px solid #fff;
+      border-radius: 50%;
+    }
   }
   .name {
+    flex: 1;
     color: #fff;
     font-size: 30rpx;
     margin-left: 35rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
   }
   .icon-jiantou {
     color: #fff;

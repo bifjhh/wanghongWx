@@ -2,20 +2,22 @@
 <template>
   <view class='interest'>
     <view class="yin"></view>
-    <view class="lists" wx:if="{{0}}">
-      <view class="list" wx:for="{{6}}" wx:key="index">
+    <view class="lists" wx:if="{{lists}}">
+      <view class="list" wx:for="{{lists}}" wx:key="index">
         <view class="user">
-          <view class="portrait"></view>
+          <view class="portrait">
+            <image src="{{item.say_owner_logo}}" />
+          </view>
           <view class="user_r">
-            <view class="name">网红网易云往忆云</view>
+            <view class="name">{{item.say_owner_name}}</view>
             <view class=" iconfont icon-xin"></view>
-            <view class="time">7月9日  06:13</view>
+            <view class="time">{{item.like_ctime}}</view>
           </view>
         </view>
         <view class="logo"></view>
       </view>
     </view>
-    <view class="null" wx:else>
+    <view wx:else class="null" >
       <view class="img">
         <image src="/images/ic_img@3x.png" />
       </view>
@@ -30,7 +32,7 @@ export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '喜欢和赞'
   };
-  data = {lists:{}};
+  data = {lists:[]};
   components = {};
   methods = {};
   events = {};
@@ -44,9 +46,9 @@ export default class Example extends wepy.page {
         url: '/dynamic/like_list'
       })
       .then(res => {
-        console.log(res.data);
-        // this.lists = res.data.items;
-        // this.$apply();
+        console.log(res.data.data.items);
+        that.lists = res.data.data.items;
+        that.$apply();
       });
   }
 }

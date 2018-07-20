@@ -9,7 +9,7 @@
       </view>
     </view>
     <view class="talk_list" wx:for="{{objs.lists}}" wx:key="{{item.say_id}}" data-sayid="{{item.say_id}}">
-      <view class="thead">
+      <view class="thead" @tap="toPage('talkInfo',{{item.say_id}})">
         <view class="names">
           <view class="name_img">
             <image src="{{item.owner_img}}" />
@@ -18,9 +18,9 @@
         </view>
         <view class="earlier">{{item.say_publish_time}}</view>
       </view>
-      <text class="talk_info">
+      <view class="talk_info">
           {{item.say_content}}
-        </text>
+      </view>
       <view class="music" wx:if="{{item.say_video_info.title}}">
         <view class="music_logo">
           <image src="{{item.say_video_info.cover}}" />
@@ -207,6 +207,7 @@ export default class Talk extends wepy.component {
     align-items: center;
     justify-content: space-between;
     padding-top: 37rpx;
+    padding-bottom: 20px;
     .names {
       display: flex;
       align-items: center;
@@ -229,7 +230,7 @@ export default class Talk extends wepy.component {
     }
   }
   .talk_info {
-    margin-top: 20rpx;
+    // margin-top: 20rpx; 
     font-size: 30rpx;
     word-break: break-all;
   }

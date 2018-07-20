@@ -1,0 +1,75 @@
+<!-- 消息通知 -->
+<template>
+  <view class='notice'>
+    <view class="yin"></view>
+    <view class="list">
+      <text>消息免打扰</text>
+      <view class="switch"><switch checked @change="switch1Change"/></view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    navigationBarTitleText: '消息通知'
+  };
+
+  data = {};
+
+  components = {};
+
+  methods = {
+    switch1Change(e) {
+      console.log('switch1 发生 change 事件，携带值为', e.detail.value);
+    }
+  };
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad() {}
+
+  onShow() {}
+}
+</script>
+
+<style lang='scss'>
+page {
+  background-color: #f5f5f5;
+}
+.yin {
+  height: 2px;
+  background-color: #fff;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+}
+.list {
+  margin-top: 20rpx;
+  padding: 0 28rpx;
+  height: 88rpx;
+  background-color: #ffffff;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.switch {
+  .wx-switch-input {
+    width: 90rpx !important;
+    height: 46rpx !important;
+    background-color: #f00;
+  }
+  .wx-switch-input::before {
+    width: 88rpx !important;
+    height: 44rpx !important;
+  }
+  .wx-switch-input::after {
+    width: 46rpx !important;
+    height: 42rpx !important;
+  } //中间小圆球
+}
+</style>

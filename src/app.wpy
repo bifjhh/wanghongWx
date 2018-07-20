@@ -1,7 +1,7 @@
 
 <script>
 import wepy from 'wepy';
-const uri = 'http://www.whxq.fenbot.com/api/v1';
+const uri = 'https://www.whxq.fenbot.com/api/v1';
 import 'wepy-async-function';
 export default class extends wepy.app {
   config = {
@@ -28,6 +28,8 @@ export default class extends wepy.app {
       'pages/amend2',
       'pages/myinfo',
       'pages/test',
+      'pages/setPortrait',
+      'pages/notice',
       'pages/webview'
     ],
     tabBar: {
@@ -168,8 +170,22 @@ export default class extends wepy.app {
         return p;
       },
       // 请求完成时的回调函数(请求成功或失败都会被执行)
-      complete(p) {
-        // console.log('request complete: ', p);
+      complete(res) {
+        if (res.statusCode != 200) {
+          wx.showToast({
+            title: '网络错误,请稍候再试',
+            icon: 'none',
+            duration: 1500
+          });
+          if (getCurrentPages().length > 1) {
+            setTimeout(() => {
+              wx.navigateBack({
+                delta: 1
+              });
+            }, 1500);
+          }
+        }
+        console.log('request complete: ', res.statusCode);
       }
     });
   }
@@ -221,6 +237,7 @@ export default class extends wepy.app {
   }
 }
 </script>
+
 <style lang="less">
 .container {
   height: 100%;

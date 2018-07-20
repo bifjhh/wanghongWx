@@ -71,10 +71,10 @@
         </view>
       </view>
       <view class="add">
-        <input type="text" confirm-type="send" focus="{{true}}" value="{{addMsg}}" placeholder="点击此处说两句......" @input="input" @confirm="confirm"/>
+        <input type="text" confirm-type="send" focus="{{isfocus}}" value="{{addMsg}}" placeholder="点击此处说两句......" @input="input" @confirm="confirm" @blur="toInput('0')" />
       </view>
-      <view class="buttom">
-        <text class="iconfont  icon-msnui-comment"></text>
+      <view class="buttom" wx:if="{{!isfocus}}">
+        <text class="iconfont  icon-msnui-comment" @tap="toInput('1')"></text>
         <text wx:if="{{objs.liked}}" class="iconfont icon-xinxing" @tap="praise('add')"></text>
         <text wx:else class="iconfont icon-xin" @tap="praise('del')"></text>
         <text class="iconfont icon-fenxiang"></text>
@@ -93,6 +93,7 @@ export default class Example extends wepy.page {
     display: 'none',
     isno: 'dsp_none',
     showAdd: '',
+    isfocus: false,
     list: [
       {
         id: 0,
@@ -141,6 +142,16 @@ export default class Example extends wepy.page {
             that.$apply();
           }
         });
+    },
+    toInput(is) {
+      if (is == 1) {
+        console.log(is);
+        this.isfocus = true;
+        this.$apply();
+      } else {
+        this.isfocus = false;
+        this.$apply();
+      }
     },
     input(e) {
       this.addMsg = e.detail.value;

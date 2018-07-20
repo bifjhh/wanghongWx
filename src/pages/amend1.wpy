@@ -3,7 +3,7 @@
   <view class='amend_box'>
     <view class="yin"></view>
     <view class="inp">
-      <input placeholder="请输入你的昵称" value="{{userName||userInfo.nickName}}" auto-focus @input="bindinput" />
+      <input placeholder="请输入你的昵称" value="{{userName||userInfo.nickName}}" auto-focus @input="bindinput" maxlength="{{12}}"/>
     </view>
     <view class="btn" @tap="userSet">
       保存
@@ -50,7 +50,10 @@ export default class Example extends wepy.page {
 
   computed = {};
 
-  onLoad() {}
+  onLoad(options) {
+    let that = this;
+    that.userName = options.parameter;
+  }
 
   onShow() {
     let that = this;
@@ -61,15 +64,6 @@ export default class Example extends wepy.page {
         that.$apply();
       }
     });
-    wepy
-      .request({
-        url: '/user/show'
-      })
-      .then(res => {
-        console.log(res.data.data);
-        that.userName = res.data.data.user.detail_info.name;
-        that.$apply();
-      });
   }
 }
 </script>

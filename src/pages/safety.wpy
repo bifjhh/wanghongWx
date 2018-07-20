@@ -6,8 +6,8 @@
       <view class="info">
         <text>手机号</text>
         <view class="state">
-          <text wx:if="{{1}}">未绑定</text>
-          <text wx:else>已绑定</text>
+          <text>{{that.user.bindMobile!=1?'未绑定':'已绑定'}}</text>
+          
           <text class="iconfont icon-jiantou"></text>
         </view>
       </view>
@@ -16,8 +16,7 @@
       <view class="info">
         <text>登录密码</text>
         <view class="state">
-          <text wx:if="{{1}}">未设置</text>
-          <text wx:else>已设置</text>
+          <text>{{that.user.ispwd!=1?'未设置':'已设置'}}</text>
           <text class="iconfont icon-jiantou"></text>
         </view>
       </view>
@@ -26,8 +25,7 @@
       <view class="info">
         <text>微信账号</text>
         <view class="state">
-          <text wx:if="{{1}}">未绑定</text>
-          <text wx:else>已绑定</text>
+          <text>已绑定</text>
           <text class="iconfont icon-jiantou"></text>
         </view>
       </view>
@@ -42,7 +40,7 @@ export default class Example extends wepy.page {
     navigationBarTitleText: '账号安全'
   };
 
-  data = {};
+  data = {user:{}};
 
   components = {};
 
@@ -56,7 +54,19 @@ export default class Example extends wepy.page {
 
   onLoad() {}
 
-  onShow() {}
+  onShow() {
+    let that = this;
+    wepy
+      .request({
+        url: '/user/show'
+      })
+      .then(res => {
+        // console.log(res.data.data);
+        that.user = res.data.data.user;
+        console.log(that.user.bindMobile)
+        that.$apply();
+      });
+  }
 }
 </script>
 
@@ -90,7 +100,7 @@ page {
         font-size: 30rpx;
         color: #999999;
       }
-      .icon-jiantou{
+      .icon-jiantou {
         margin-left: 15rpx;
       }
     }
