@@ -19,7 +19,7 @@
         <view class="earlier">{{item.say_publish_time}}</view>
       </view>
       <view class="talk_info">
-          {{item.say_content}}
+        {{item.say_content}}
       </view>
       <view class="music" wx:if="{{item.say_video_info.title}}">
         <view class="music_logo">
@@ -55,19 +55,18 @@
       </view>
       <view class="bottom">
         <view class="fenxiang">
-          <text class="iconfont icon-fenxiang"></text>
+          <view style="width:31rpx;height:29rpx;background: url(https://www.whxq.fenbot.com/WeChat/fenxiang.png) center no-repeat; background-size: cover"></view>
+          <!-- <text class="iconfont icon-fenxiang"></text> -->
           <text class="iconf">分享</text>
         </view>
         <view class="pinglun" @tap="toPage('talkInfo',{{item.say_id}})">
-          <text class="iconfont icon-msnui-comment"></text>
+          <view style="width:30rpx;height:29rpx;background: url(https://www.whxq.fenbot.com/WeChat/pinglun.png) center no-repeat; background-size: cover"></view>
+          <!-- <text class="iconfont icon-msnui-comment"></text> -->
           <text class="iconf">{{item.say_comment}}</text>
         </view>
-        <view wx:if="{{item.is_dolike=='0'}}" class="dianzan" data-sayid="{{item.say_id}}" @tap="praise('add',{{index}})">
-          <text class="iconfont icon-xinxing"></text>
-          <text class="iconf">{{item.say_like}}</text>
-        </view>
-        <view wx:else class="dianzan" data-sayid="{{item.say_id}}" @tap="praise('del',{{index}})">
-          <text class="iconfont icon-xin"></text>
+        <view class="dianzan" data-sayid="{{item.say_id}}" @tap="praise({{index}})">
+          <view class="{{item.is_dolike==0?'cadd':'cdel'}}"></view>
+          <!-- <text class="iconfont icon-xin"></text> -->
           <text class="iconf">{{item.say_like}}</text>
         </view>
       </view>
@@ -100,7 +99,7 @@ export default class Talk extends wepy.component {
       that.$parent.$navigate(url);
       // this.$emit('toPage', url);
     },
-    praise(type, index, e) {
+    /*  praise(type, index, e) {
       let that = this;
       // console.log(type, index, e.currentTarget.dataset.sayid);
       console.log('type', type);
@@ -131,6 +130,10 @@ export default class Talk extends wepy.component {
             res.data.data.like;
           that.$parent.$apply();
         });
+    }, */
+    praise(index) {
+      let that = this;
+      that.$emit('doLike', index)
     },
     showImgs(img, imgs) {
       wx.previewImage({
@@ -230,7 +233,7 @@ export default class Talk extends wepy.component {
     }
   }
   .talk_info {
-    // margin-top: 20rpx; 
+    // margin-top: 20rpx;
     font-size: 30rpx;
     word-break: break-all;
   }
@@ -245,6 +248,7 @@ export default class Talk extends wepy.component {
       background-color: #efe;
     }
     .m_info {
+      flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -314,25 +318,35 @@ export default class Talk extends wepy.component {
   .bottom {
     display: flex;
     justify-content: space-around;
-    padding: 40rpx 0;
+    // padding: 40rpx 0;
+    height: 120rpx;
     align-items: center;
-    view {
+    > view {
+      height: 100%;
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
+      .cadd {
+        width: 35rpx;
+        height: 29rpx;
+        background: url(https://www.whxq.fenbot.com/WeChat/weigz.png) center
+          no-repeat;
+        background-size: cover;
+      }
+      .cdel {
+        width: 35rpx;
+        height: 29rpx;
+        background: url(https://www.whxq.fenbot.com/WeChat/guanzhu.png) center
+          no-repeat;
+        background-size: cover;
+      }
     }
     text {
       color: #999999;
-    }
-    .iconf {
       padding-left: 15rpx;
       font-size: 31rpx;
-    }
-    .icon-fenxiang {
-      font-size: 40rpx;
-    }
-    .icon-xin {
-      color: red;
     }
   }
 }

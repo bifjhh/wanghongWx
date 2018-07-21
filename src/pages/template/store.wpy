@@ -92,7 +92,7 @@ export default class Store extends wepy.component {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 48rpx 29rpx 40rpx;
+    padding: 48rpx 29rpx 40rpx 0;
     color: #333333;
     text:nth-of-type(1) {
       font-size: 34rpx;

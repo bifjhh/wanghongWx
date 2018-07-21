@@ -30,6 +30,7 @@ export default class extends wepy.app {
       'pages/test',
       'pages/setPortrait',
       'pages/notice',
+      'pages/msgList',
       'pages/webview'
     ],
     tabBar: {
@@ -72,17 +73,9 @@ export default class extends wepy.app {
       navigationBarTextStyle: 'black',
       backgroundColor: '#fff'
     }
-    /*  navigationBarTextStyle: 'black',
-          navigationBarBackgroundColor: '#fff',
-          enablePullDownRefresh: true,
-          backgroundColor: '#fff',
-          backgroundTextStyle: '#333',
-          onReachBottomDistance: 15,
-          navigationStyle: 'custom' */
   };
   globalData = {
     userInfo: null,
-    // token: '',
     expired: ''
   };
   constructor() {

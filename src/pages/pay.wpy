@@ -1,9 +1,6 @@
 <!-- 支付界面 -->
 <template>
   <view class='container'>
-    <button @tap="pay">点击测试支付</button>
-    <button @tap="getInfo">点击获取支付</button>
-    <button @tap="toPage">跳转web</button>
   </view>
 </template>
 
@@ -15,15 +12,11 @@ export default class Example extends wepy.page {
   };
   data = {
     info: {},
-    obj: {
-      timestamp: '1531475777',
-      nonce_str: 'ss8yiVHgkJoTpqkK',
-      package: 'prepay_id'
-    }
+    obj: {}
   };
   components = {};
   pay(obj) {
-    let url = `webview?src=https://www.whxq.fenbot.com/store#/orderList&sku_id=${
+    let url = `webview?src=https://www.whxq.fenbot.com/store#/${obj.url}&sku_id=${
       obj.sku_id
     }&order_id=${obj.order_id}&id=${obj.id}&buy_num=${obj.buy_num}&goods_id=${
       obj.goods_id

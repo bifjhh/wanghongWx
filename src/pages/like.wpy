@@ -3,7 +3,7 @@
   <view class='interest'>
     <view class="yin"></view>
     <view class="lists" wx:if="{{lists}}">
-      <view class="list" wx:for="{{lists}}" wx:key="index">
+      <view class="list" wx:for="{{lists}}" wx:key="index" @tap="toPage('talkInfo',{{item.say_id}})">
         <view class="user">
           <view class="portrait">
             <image src="{{item.say_owner_logo}}" />
@@ -14,7 +14,10 @@
             <view class="time">{{item.like_ctime}}</view>
           </view>
         </view>
-        <view class="logo"></view>
+        <view class="list_r">
+          <image wx:if="{{item.say_type!=4}}" src="{{item.say_picture}}" />
+          <text wx:else>{{item.say_content}}</text>
+        </view>
       </view>
     </view>
     <view wx:else class="null" >
@@ -32,9 +35,16 @@ export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '喜欢和赞'
   };
-  data = {lists:[]};
+  data = { lists: [] };
   components = {};
-  methods = {};
+  methods = {
+    toPage(url,parameter) {
+      url+=('?id='+parameter)
+      console.log(url)
+      // return;
+      this.$navigate(url);
+    }
+  };
   events = {};
   watch = {};
   computed = {};
@@ -99,11 +109,11 @@ export default class Example extends wepy.page {
       }
     }
   }
-  .logo {
+  .list_r {
     width: 82rpx;
     height: 85rpx;
-    background-color: #eee;
     margin-top: 17rpx;
+    overflow: hidden;
   }
 }
 .null {

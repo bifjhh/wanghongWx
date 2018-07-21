@@ -16,7 +16,7 @@
     </view>
     <view class="news">
       <view class="title" wx:if="{{lists.length!=0}}"><text class="msg">消息</text></view>
-      <view class="state" wx:for="{{lists}}" wx:key="{{index}}">
+      <view class="state" wx:for="{{lists}}" wx:key="{{index}}" @tap="toPage('msgList',{{item.msg_owner_id}},{{item.msg_owner_type}})">
         <view class="portrait" style="background: url({{item.msg_owner_logo}}) center no-repeat; background-size: cover">
           <view class="news_num">1</view>
         </view>
@@ -48,7 +48,10 @@ export default class Example extends wepy.page {
   data = {lists:[]};
   components = {};
   methods = {
-    toPage(url){
+    toPage(url,send_user_id,send_type){
+      if(send_user_id&&send_type){
+        url=url+'?send_user_id='+send_user_id+'&send_type='+send_type
+      }
       this.$navigate(url);
     }
   };
