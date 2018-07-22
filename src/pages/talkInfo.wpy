@@ -71,13 +71,19 @@
         </view>
       </view>
       <view class="add">
+        <view class="liuyan"></view>
         <input type="text" confirm-type="send" focus="{{isfocus}}" value="{{addMsg}}" placeholder="点击此处说两句......" @input="input" @confirm="confirm" @blur="toInput('0')" />
       </view>
       <view class="buttom" wx:if="{{!isfocus}}">
-        <text class="iconfont  icon-msnui-comment" @tap="toInput('1')"></text>
-        <text wx:if="{{objs.liked}}" class="iconfont icon-xinxing" @tap="praise('add')"></text>
-        <text wx:else class="iconfont icon-xin" @tap="praise('del')"></text>
-        <text class="iconfont icon-fenxiang"></text>
+        <!-- <text class="iconfont  icon-msnui-comment" @tap="toInput('1')"></text> -->
+        <!-- <text wx:if="{{objs.liked}}" class="iconfont icon-xinxing" @tap="praise('add')"></text> -->
+        <!-- <text wx:else class="iconfont icon-xin" @tap="praise('del')"></text> -->
+        <!-- <text class="iconfont icon-fenxiang"></text> -->
+        <view @tap="toInput('1')" style="width:40rpx;height:38rpx;background: url(https://www.whxq.fenbot.com/WeChat/pinglun.png) center no-repeat; background-size: cover"></view>
+        <view class="{{liked==1?'cdel':'cadd'}}" @tap="praise"></view>
+        <view style="width:40rpx;height:38rpx;background: url(https://www.whxq.fenbot.com/WeChat/fenxiang.png) center no-repeat; background-size: cover"></view>
+
+        
       </view>
     </view>
   </view>
@@ -92,6 +98,7 @@ export default class Example extends wepy.page {
   data = {
     display: 'none',
     isno: 'dsp_none',
+    liked:0,
     showAdd: '',
     isfocus: false,
     list: [
@@ -127,17 +134,27 @@ export default class Example extends wepy.page {
       that.showAdd = 'dsp_none';
       that.isno = '';
     },
-    praise(type, id) {
+    praise() {
       let that = this;
+      let type = that.liked == 1 ? 'del' : 'add';
       wepy
         .request({
           url: '/say/do_like',
           data: { say_id: that.objs.id, dotype: type }
         })
         .then(res => {
-          console.log(res.data.status);
           if (res.data.status == '1') {
-            that.objs.liked = !that.objs.liked;
+            if (type == 'add') {
+              that.liked = 1;
+              console.log(type);
+              that.$apply();
+            } else if (type == 'del') {
+              that.liked = 0;
+              console.log(type);
+              that.$apply();
+            }
+            console.log(that.objs.liked);
+            // that.objs.liked = !that.objs.liked;
             // that.objs.lists[index].say_like = res.data.data.like;
             that.$apply();
           }
@@ -233,6 +250,8 @@ export default class Example extends wepy.page {
       .then(res => {
         if (res.data.status != 1) return;
         that.objs = res.data.data;
+        that.liked = res.data.data.liked*1;
+        console.log(res.data.data.liked*1)
         wx.hideLoading();
         that.display = 'block';
         that.$apply();
@@ -466,6 +485,18 @@ page {
   margin-top: 50rpx;
   display: flex;
   padding-left: 137rpx;
+  position: relative;
+  .liuyan {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 89rpx;
+    width: 35rpx;
+    height: 35rpx;
+    background: url(https://www.whxq.fenbot.com/WeChat/liuyan.png) center
+      no-repeat;
+    background-size: cover;
+  }
   input {
     flex: 1;
     border-radius: 8px;
@@ -487,16 +518,19 @@ page {
   align-items: center;
   justify-content: space-around;
   height: 117rpx;
-  view {
+  .cadd {
+    width: 47rpx;
     height: 38rpx;
-    width: 40rpx;
+    background: url(https://www.whxq.fenbot.com/WeChat/weigz.png) center
+      no-repeat;
+    background-size: cover;
   }
-  text {
-    font-size: 40rpx;
-    color: #999;
-  }
-  .icon-xin {
-    color: red;
+  .cdel {
+    width: 47rpx;
+    height: 38rpx;
+    background: url(https://www.whxq.fenbot.com/WeChat/guanzhu.png) center
+      no-repeat;
+    background-size: cover;
   }
 }
 </style>

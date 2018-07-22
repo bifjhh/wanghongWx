@@ -30,6 +30,8 @@ export default class extends wepy.app {
       'pages/test',
       'pages/setPortrait',
       'pages/notice',
+      'pages/msgList',
+      'pages/video',
       'pages/webview'
     ],
     tabBar: {

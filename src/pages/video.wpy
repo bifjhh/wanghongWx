@@ -1,0 +1,41 @@
+<!-- 视频播放 -->
+<template>
+  <view class='video_box'>
+    <video id="myVideo" src="{{src}}"  controls></video>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy';
+  export default class Example extends wepy.page {
+    config = {
+      navigationBarTitleText: "",
+    };
+
+    data = {src:''};
+
+    components = {};
+
+    methods = {};
+
+    events = {};
+
+    watch = {};
+
+    computed = {};
+
+    onLoad(options) { 
+      // this.src=options.src;
+      this.src='https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f660000bd273dcpg623e2usfp6g&line=0';
+      
+    };
+
+    onShow() { };
+  }
+</script>
+
+<style lang='scss'>
+video{
+  width: 100%;
+}
+</style>

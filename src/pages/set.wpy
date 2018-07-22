@@ -2,7 +2,7 @@
 <template>
   <view class='set_box'>
     <view class="yin"></view>
-    <view class="list">
+    <view class="list" @tap="toPage('myinfo')">
       <view class="info">
         <text>个人资料</text>
         <view class="state">
@@ -10,7 +10,7 @@
         </view>
       </view>
     </view>
-    <view class="list">
+    <view class="list" @tap="toPage('safety')">
       <view class="info">
         <text>账号与安全</text>
         <view class="state">
@@ -22,13 +22,12 @@
       <view class="info">
         <text>清除缓存</text>
         <view class="state">
-          <text wx:if="{{1}}">未绑定</text>
-          <text wx:else>已绑定</text>
+          
           <text class="iconfont icon-jiantou"></text>
         </view>
       </view>
     </view>
-    <view class="list">
+    <view class="list" @tap="toPage('notice')">
       <view class="info">
         <text>消息通知</text>
         <view class="state">
@@ -67,7 +66,11 @@ export default class Example extends wepy.page {
 
   components = {};
 
-  methods = {};
+  methods = {
+    toPage(url) {
+      this.$navigate(url);
+    }
+  };
 
   events = {};
 

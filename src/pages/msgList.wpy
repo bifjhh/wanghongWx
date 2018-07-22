@@ -1,0 +1,107 @@
+<!-- 推送消息 -->
+<template>
+  <view class='msg_box'>
+    <view class="yin"></view>
+    <view class="list" wx:for="{{lists}}" wx:key="{{index}}">
+      <view class="time">{{item.msg_ctime}}</view>
+      <view class="info">
+        <view class="portrait">
+          <image src="{{item.msg_owner_logo}}" />
+        </view>
+        <view class="msg">
+          <!-- {{item.msg_content}} -->
+          <text>{{item.msg_content}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Example extends wepy.page {
+  config = {
+    // navigationBarTitleText: "",
+  };
+
+  data = { objs: {}, lists: [] };
+
+  components = {};
+
+  methods = {};
+
+  events = {};
+
+  watch = {};
+
+  computed = {};
+
+  onLoad(options) {
+    console.log(options);
+    this.objs = options;
+    this.$apply();
+  }
+
+  onShow() {
+    let that = this;
+    wepy
+      .request({
+        url: '/dynamic/get_msg_list',
+        data: {
+          send_user_id: that.objs.send_user_id,
+          send_type: that.objs.send_type
+        }
+      })
+      .then(res => {
+        that.lists = res.data.data.items;
+        that.$apply();
+      });
+  }
+}
+</script>
+
+<style lang='scss'>
+.yin {
+  height: 3px;
+  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+}
+.list {
+  padding: 0 28rpx;
+  margin-top: 40rpx;
+  text-align: center;
+  .time {
+    display: inline-flex;
+    border-radius: 15rpx;
+    height: 46rpx;
+    background-color: #f5f5f5;
+    color: #666;
+    line-height: 46rpx;
+    padding: 0 20rpx;
+    font-size: 24rpx;
+  }
+  .info {
+    margin-top: 42rpx;
+    display: flex;
+    .portrait {
+      width: 95rpx;
+      height: 95rpx;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    .msg {
+      flex: 1;
+      text-align: left;
+      margin-left: 20rpx;
+      display: flex;
+      align-items: center;
+      text {
+        padding: 30rpx 26rpx;
+        border-top-left-radius: 50%;
+        font-style: 28rpx;
+        color: #333;
+        background-color: #fff7f7;
+      }
+    }
+  }
+}
+</style>

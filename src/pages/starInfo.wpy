@@ -9,7 +9,7 @@
           </view>
           <view class="head_r">
             <view class="title">
-              <text>{{starInfo.head.star_uv}}粉丝{{starInfo.head.is_follow_star}}</text>
+              <text>{{starInfo.head.star_uv}}粉丝</text>
               <text>{{starInfo.head.star_likes}}关注</text>
             </view>
             <view class="prove">{{starInfo.head.owner_auth}}</view>
@@ -54,8 +54,8 @@
       </view>
       <view class="content">
         <view class="navbar">
-          <view class="nav_to " wx:for="{{nav_list}}" wx:key="{{index}}" data-opt="{{item.id}}" @tap="jumpTo">
-            {{item.name}}
+          <view class="nav_to" wx:for="{{nav_list}}" wx:key="{{index}}" data-opt="{{item.id}}" @tap="jumpTo">
+            <text class="{{item.id==toView?'active':''}}">{{item.name}}</text>
           </view>
         </view>
         <view class="body_info">
@@ -66,7 +66,7 @@
               <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
             </repeat> -->
           <repeat>
-            <talk wx:if="{{starInfo.dynamic.say.total!=0}}" :objs.sync="says" @toPage.user="toPage" />
+            <talk wx:if="{{starInfo.dynamic.say.total!=0}}" :objs.sync="says" @toPage.user="toPage"  @doLike.user="doLike"/>
             <photo wx:if="{{starInfo.dynamic.photos.total!=0}}" :objs.sync="starInfo.dynamic.photos" />
             <store wx:if="{{starInfo.dynamic.goods.length}}" :objs.sync="starInfo.dynamic.goods" />
           </repeat>
@@ -95,7 +95,7 @@ export default class starInfo extends wepy.page {
     display: 'none',
     starInfo: {},
     isFollow: '',
-    says:{},
+    says: {},
     nav_list: [
       {
         name: '说说',
@@ -110,7 +110,7 @@ export default class starInfo extends wepy.page {
         id: 'store'
       }
     ],
-    toView: '',
+    toView: 'talk',
     isInfo: true,
     starId: ''
   };
@@ -123,8 +123,40 @@ export default class starInfo extends wepy.page {
     },
     /* 显示全部 */
     showInfo() {
+      this.isInfo = false;
+    },
+    doLike(index) {
+      console.log(index);
       let that = this;
-      that.isInfo = false;
+      let lists = that.says.lists;
+      let sayid = that.says.lists[index].say_id;
+      let type = lists[index].is_dolike == 0 ? 'add' : 'del';
+      console.log(type, index, sayid);
+      console.log('之前的', lists[index].is_dolike);
+      // return;
+      wepy
+        .request({
+          url: '/say/do_like',
+          data: {
+            say_id: sayid,
+            dotype: type
+          }
+        })
+        .then(res => {
+          if (res.data.status != '1') return;
+          if (type == 'add') {
+            lists[index].is_dolike = 1;
+            that.$apply();
+          } else if (type == 'del') {
+            lists[index].is_dolike = 0;
+            that.$apply();
+          }
+
+          lists[index].say_like = res.data.data.like;
+          that.says.lists=lists;
+          that.$apply();
+          console.log('现在的', that.says.lists[index].is_dolike);
+        });
     },
     /* 跳转星球详情 */
     toPage(url, param) {
@@ -173,8 +205,9 @@ export default class starInfo extends wepy.page {
     }
   };
   events = {};
-  onShow(options) {
+  onShow() {
     let that = this;
+    that.isInfo = true;
     wx.showLoading({
       title: ''
     });
@@ -429,6 +462,17 @@ page {
       display: flex;
       align-items: center;
       justify-content: center;
+      text {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        font-size: 30rpx;
+        color: #999;
+      }
+      &.active text {
+        border-bottom: 1px solid #ff5750;
+        color: #333;
+      }
     }
     .active {
       border-bottom: 1px solid #f00;

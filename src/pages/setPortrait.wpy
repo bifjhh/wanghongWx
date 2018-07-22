@@ -62,7 +62,7 @@ export default class Example extends wepy.page {
     navigationBarTitleText: ''
   };
   data = {
-    imageSrc: 'http://www.whxq.fenbot.com/WeChat/xingqiu_active.png',
+    imageSrc: 'https://www.whxq.fenbot.com/WeChat/xingqiu_active.png',
     returnImage: '',
     isShowImg: false,
     options: '',

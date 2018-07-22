@@ -34,25 +34,25 @@
           </view>
           <text>我的订单</text>
         </view>
-        <view class="h_r">
+        <view class="h_r" @tap="toWeb({{order.total.link}},'-1')">
           <text>全部</text>
           <text class="iconfont icon-jiantou"></text>
         </view>
       </view>
       <view class="is_pay">
-        <view class="await">
+        <view class="await" @tap="toWeb({{order.unpay.link}},'0')">
           <view class="img" style="width:60rpx;height:55rpx;">
             <image src="/images/ic_icon_unpaid@3x.png" />
           </view>
           <text>待支付</text>
         </view>
-        <view class="achieve">
+        <view class="achieve" @tap="toWeb({{order.pay.link}},'1')">
           <view class="img" style="width:58rpx;height:60rpx;">
             <image src="/images/ic_icon_pay@3x.png" />
           </view>
           <text>已支付</text>
         </view>
-        <view class="refund">
+        <view class="refund" @tap="toWeb({{order.refund.link}},'4')">
           <view class="img" style="width:60rpx;height:60rpx;">
             <image src="/images/ic_icon_refund@3x.png" />
           </view>
@@ -61,7 +61,7 @@
       </view>
     </view>
     <view class="set ">
-      <view class="list">
+      <view class="list" @tap="toPage('wallet')">
         <view class="list_l">
           <view class="img" style="width:32rpx;height:32rpx;">
             <image src="/images/ic_icon_wallet@3x.png" />
@@ -79,7 +79,7 @@
         </view>
         <text class="iconfont icon-jiantou"></text>
       </view>
-      <view class="list">
+      <view class="list" @tap="toPage('set')">
         <view class="list_l">
           <view class="img" style="width:32rpx;height:32rpx;">
             <image src="/images/ic_icon_set@3x.png" />
@@ -88,7 +88,7 @@
         </view>
         <text class="iconfont icon-jiantou"></text>
       </view>
-      <view class="list">
+      <view class="list" @tap="toPage('help')">
         <view class="list_l">
           <view class="img" style="width:32rpx;height:32rpx;">
             <image src="/images/ic_icon_help@3x.png" />
@@ -108,10 +108,20 @@ export default class Example extends wepy.page {
     navigationBarTitleText: '我的',
     navigationBarBackgroundColor: '#ff635c'
   };
-  data = { userInfo: {}, user: {} };
+  data = { userInfo: {}, user: {} ,order:{}};
   components = {};
   methods = {
     toPage(url) {
+      this.$navigate(url);
+    },
+    toWeb(url, status) {
+      console.log(url);
+      console.log(status);
+      let token = url.substr(url.search(/\?token=/) + 7);
+      url = url.substr(0, url.search(/\?token=/));
+      url = `webview?token=${token}&src=${url}&id=${status}`;
+      console.log('url', url);
+      // return;
       this.$navigate(url);
     }
   };
@@ -120,6 +130,7 @@ export default class Example extends wepy.page {
   computed = {};
   onLoad() {
     let that = this;
+    console.log(this.app)
     that.$parent.getUserInfo(userInfo => {
       console.log('userInfo', userInfo);
       if (userInfo) {
@@ -137,6 +148,7 @@ export default class Example extends wepy.page {
       .then(res => {
         // console.log(res.data.data);
         that.user = res.data.data.user;
+        that.order = res.data.data.order;
         that.$apply();
       });
   }

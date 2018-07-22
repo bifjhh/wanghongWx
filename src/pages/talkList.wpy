@@ -17,7 +17,7 @@
       <!-- <video id="myVideo" hidden="{{!item.say_video_info.off}}" src="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f660000bd273dcpg623e2usfp6g&line=0" controls poster="{{item.say_video_info.cover}}"></video> -->
       <!-- <view hidden="{{!item.say_video_info.off}}" class="xxx" @tap="play({{index}})">xxx</view> -->
 
-      <view class="music" wx:if="{{item.say_video_info.title}}">
+      <view class="music" wx:if="{{item.say_video_info.title}}" @tap="toPage('video')">
         <view class="music_logo" @tap="play({{index}})">
           <video src="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f660000bd273dcpg623e2usfp6g&line=0" controls poster="{{item.say_video_info.cover}}"></video>
           <!-- <image src="{{item.say_video_info.cover}}" /> -->
@@ -52,19 +52,18 @@
       </view>
       <view class="bottom">
         <view class="fenxiang">
-          <text class="iconfont icon-fenxiang"></text>
+          <!-- <text class="iconfont icon-fenxiang"></text> -->
+          <view style="width:31rpx;height:29rpx;background: url(https://www.whxq.fenbot.com/WeChat/fenxiang.png) center no-repeat; background-size: cover"></view>
           <text class="iconf">分享</text>
         </view>
         <view class="pinglun" @tap="toPage('talkInfo',{{item.say_id}})">
-          <text class="iconfont icon-msnui-comment"></text>
+          <!-- <text class="iconfont icon-msnui-comment"></text> -->
+          <view style="width:30rpx;height:29rpx;background: url(https://www.whxq.fenbot.com/WeChat/pinglun.png) center no-repeat; background-size: cover"></view>
           <text class="iconf">{{item.say_comment}}</text>
         </view>
-        <view wx:if="{{item.is_dolike==0}}" class="dianzan" data-sayid="{{item.say_id}}" @tap="praise('add',{{index}})">
-          <text class="iconfont icon-xinxing"></text>
-          <text class="iconf">{{item.say_like}}</text>
-        </view>
-        <view wx:else class="dianzan" data-sayid="{{item.say_id}}" @tap="praise('del',{{index}})">
-          <text class="iconfont icon-xin"></text>
+        <view class="dianzan" data-sayid="{{item.say_id}}" @tap="praise({{index}})">
+          <!-- <text class="iconfont icon-xinxing"></text> -->
+          <view class="{{item.is_dolike==0?'cadd':'cdel'}}"></view>
           <text class="iconf">{{item.say_like}}</text>
         </view>
       </view>
@@ -84,8 +83,10 @@ export default class TalkList extends wepy.page {
   props = {};
   components = {};
   methods = {
-    praise(type, index, e) {
+    praise(index, e) {
       let that = this;
+      let objs = that.objs;
+      let type = objs.lists[index].is_dolike == 0 ? 'add' : 'del';
       console.log(type, index, e.currentTarget.dataset.sayid);
       console.log('之前的', that.objs.lists[index].is_dolike);
       // return;
@@ -101,13 +102,15 @@ export default class TalkList extends wepy.page {
           console.log('status', res.data.status);
           if (res.data.status != '1') return;
           if (type == 'add') {
-            that.objs.lists[index].is_dolike = 1;
+            objs.lists[index].is_dolike = 1;
             that.$apply();
           } else if (type == 'del') {
-            that.objs.lists[index].is_dolike = 0;
+            objs.lists[index].is_dolike = 0;
             that.$apply();
           }
-          that.objs.lists[index].say_like = res.data.data.like;
+
+          objs.lists[index].say_like = res.data.data.like;
+          that.setData({ objs });
           console.log('现在的', that.objs.lists[index].is_dolike);
           that.$apply();
         });
@@ -205,7 +208,7 @@ export default class TalkList extends wepy.page {
     align-items: center;
     justify-content: space-between;
     padding-top: 37rpx;
-    padding-bottom: 20rpx; 
+    padding-bottom: 20rpx;
     .names {
       display: flex;
       align-items: center;
@@ -320,26 +323,35 @@ export default class TalkList extends wepy.page {
   .bottom {
     display: flex;
     justify-content: space-around;
-    padding: 40rpx 0;
+    // padding: 40rpx 0;
+    height: 120rpx;
     align-items: center;
-    view {
+    > view {
+      height: 100%;
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
       overflow: hidden;
+      .cadd {
+        width: 35rpx;
+        height: 29rpx;
+        background: url(https://www.whxq.fenbot.com/WeChat/weigz.png) center
+          no-repeat;
+        background-size: cover;
+      }
+      .cdel {
+        width: 35rpx;
+        height: 29rpx;
+        background: url(https://www.whxq.fenbot.com/WeChat/guanzhu.png) center
+          no-repeat;
+        background-size: cover;
+      }
     }
     text {
       color: #999999;
-    }
-    .iconf {
       padding-left: 15rpx;
-      font-size: 16px;
-    }
-    .icon-fenxiang {
-      font-size: 40rpx;
-    }
-    .icon-xin {
-      color: red;
+      font-size: 31rpx;
     }
   }
 }
