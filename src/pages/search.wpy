@@ -13,7 +13,7 @@
       </view>
       <view class="cancel" @tap="cencel"> <text>取消</text> </view>
     </view>
-    <view class="conten">
+    <view class="conten" wx:if="{{result.type||lists.length>0}}">
       <view class="result_star" wx:if="{{result.type=='star'}}">
         <view class="title">
           <text>口令星球</text>
@@ -35,11 +35,32 @@
               {{result.star.description}}
             </view>
           </view>
-          <view wx:if="{{result.star.has_attention==0}}" class="i_r" @tap="starFollow('add',{{result.star.id}})">
-            关注
+          <view class="i_r" @tap="starFollow({{result.star.id}})">
+            {{starAttention==0?'关注':'已关注'}}
           </view>
-          <view wx:else class="i_r" @tap="starFollow('del',{{result.star.id}})">
-            已关注
+        </view>
+      </view>
+      <view class="result_star result_goods" wx:if="{{result.type=='goods'}}">
+        <view class="title">
+          <text>口令商品</text>
+        </view>
+        <view class="banner" style="background: url({{result.goods.thumbnail}}) center center no-repeat;background-size:cover;">
+        </view>
+        <view class="info">
+          <view class="i_l">
+            <view class="i_tit">
+              <text>{{result.goods.title}}</text>
+            </view>
+            <view class="l_b">
+              <view class="num">{{result.goods.price}}</view>
+              <view class="name">月销{{result.goods.sales}}笔</view>
+            </view>
+            <view class="footer">
+              所属星球：{{result.goods.star_name}}
+            </view>
+          </view>
+          <view class="i_r" @tap="toWeb({{result.goods.goods_link}},{{result.goods.id}})">
+            打开
           </view>
         </view>
       </view>
@@ -70,37 +91,33 @@
           </block>
         </view>
       </view>
-      <view class="list" wx:if="{{result.lists.length>0}}">
+      <view class="list" wx:if="{{lists.length>0}}">
         <view class="title">
           <text>相关星球</text>
         </view>
-        <view class="info" wx:for="{{result.lists}}" wx:key="index">
+        <view class="info" wx:for="{{lists}}" wx:key="index">
           <view class="i_l" @tap="toPage('starInfo',{{item.id}})">
-            <!-- <view class="i_tit"><text>晓说</text>武装到牙齿的文艺青年</view> -->
-            <view class="i_tit"><text></text>{{item.description}}</view>
+            <view class="i_tit"><text></text>{{item.name}}</view>
             <view class="l_b">
               <view class="play iconfont icon-bofang">
               </view>
               <view class="num">{{item.uv}}</view>
-              <view class="name">{{item.star_user_info.name}}</view>
+              <view class="name">{{item.star_user_info.nickname}}</view>
             </view>
           </view>
-          <view wx:if="{{item.has_attention==0}}" class="i_r" @tap="follow('add',{{item.id}},{{index}})">
-            关注
-          </view>
-          <view wx:else class="i_r" @tap="follow('del',{{item.id}},{{index}})">
-            已关注
+          <view class="i_r" @tap="follow({{item.id}},{{index}})">
+            {{item.has_attention==0?'关注':'已关注'}}
           </view>
         </view>
       </view>
     </view>
-    <view class="null">
+    <view wx:else class="null">
       <view class="null_img">
        <image src="/images/no_xingqiu2.png" />
       </view>
-      <text class="null_info">
+      <view class="null_info">
        没有搜索到相关信息
-      </text>
+      </view>
   </view>
   </view>
 </template>
@@ -113,7 +130,9 @@ export default class Search extends wepy.page {
     delHeid: false,
     msg: '',
     result: {},
-    display: 'none'
+    display: 'none',
+    lists: [],
+    starAttention: 0
   };
   methods = {
     bindinput(e) {
@@ -129,11 +148,15 @@ export default class Search extends wepy.page {
           })
           .then(res => {
             that.result = res.data.data;
+            that.lists = res.data.data.lists;
+            that.starAttention = res.data.data.star.has_attention;
             that.$apply();
           });
       } else {
         that.delHeid = false;
         that.result = {};
+        that.lists = [];
+        that.$apply();
       }
       that.msg = e.detail.value;
     },
@@ -156,6 +179,7 @@ export default class Search extends wepy.page {
       let that = this;
       that.msg = '';
       that.result = {};
+      that.lists = [];
       that.$apply();
     },
     cencel() {
@@ -165,8 +189,11 @@ export default class Search extends wepy.page {
       });
     },
     /* 关注 */
-    follow(type, id, index) {
+    follow(id, index) {
       let that = this;
+      console.log(id, index);
+      let type = that.lists[index].has_attention == 0 ? 'add' : 'del';
+      let lists = that.lists;
       wepy
         .request({
           url: '/star/follow_star',
@@ -177,18 +204,20 @@ export default class Search extends wepy.page {
         })
         .then(res => {
           if (type == 'add') {
-            console.log('add');
-            that.result.lists[index].has_attention = 1;
-            that.$apply();
+            lists[index].has_attention = 1;
           } else {
-            console.log('del');
-            that.result.lists[index].has_attention = 0;
-            that.$apply();
+            lists[index].has_attention = 0;
           }
+          that.lists = lists;
+          that.$apply();
+          console.log(that.lists[index].has_attention);
         });
     },
-    starFollow(type, id) {
+    starFollow(id) {
       let that = this;
+      let type = that.starAttention == 0 ? 'add' : 'del';
+      let result = that.result;
+
       wepy
         .request({
           url: '/star/follow_star',
@@ -200,13 +229,15 @@ export default class Search extends wepy.page {
         .then(res => {
           if (type == 'add') {
             console.log('add');
-            result.lists.has_attention = 1;
-            that.$apply();
+            that.starAttention = 1;
+            // that.$apply();
           } else {
             console.log('del');
-            result.lists.has_attention = 0;
-            that.$apply();
+            that.starAttention = 0;
+            // that.$apply();
           }
+          that.$apply();
+          console.log(that.starAttention);
         });
     }
   };
@@ -232,12 +263,12 @@ page {
   box-sizing: border-box;
 }
 .search {
-  margin-top: 22rpx;
+  // margin-top: 22rpx;
   width: 100%;
   display: flex;
   align-items: center;
-  height: 77rpx;
-  padding-bottom: 36rpx;
+  height: 66rpx;
+  // padding-bottom: 36rpx;
   image {
     display: inline;
   }
@@ -280,6 +311,7 @@ page {
   }
 }
 .conten {
+  padding-top: 35rpx;
   .title {
     padding-bottom: 35rpx;
     text {
@@ -289,9 +321,8 @@ page {
   }
 }
 .result_star {
-  padding-bottom: 81rpx;
   .banner {
-    margin-top: 35rpx;
+    // margin-top: 35rpx;
     height: 694rpx;
     background-color: #ccc;
     margin-bottom: 40rpx;
@@ -307,9 +338,11 @@ page {
   }
   .footer {
     margin-top: 30rpx;
+    color: #999999;
+    font-size: 24rpx;
   }
 }
-.list .title{
+.list .title {
   padding-top: 40rpx;
   padding-bottom: 0;
 }
@@ -332,8 +365,8 @@ page {
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
       text {
-        color: #ff5750;
-        font-size: 15px;
+        font-size: 31rpx;
+        color: #333;
       }
     }
     .l_b {
@@ -365,6 +398,131 @@ page {
     text-align: center;
   }
 }
+.result_shop {
+  .shop {
+    // height: 517rpx;
+    padding: 0 18rpx;
+    padding-bottom: 57rpx;
+    background-color: #fff;
+    margin-bottom: 15rpx;
+    box-shadow: 0px 0px 9rpx 0px rgba(0, 6, 13, 0.08);
+    border-radius: 8rpx;
+    .head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 53rpx;
+      .h_l {
+        flex: 1;
+        height: 100%;
+        display: flex;
+        align-items: center;
+      }
+      .shop_logo {
+        width: 114rpx;
+        height: 114rpx;
+        background-image: linear-gradient(0deg, #fefeff 0%, #ffffff 100%);
+        box-shadow: 0px 0px 10px 0px rgba(0, 6, 13, 0.13);
+        border-radius: 8px;
+      }
+      .shop_info {
+        display: flex;
+        flex-direction: column;
+        margin-left: 32rpx;
+        justify-content: center;
+        .shop_name {
+          font-weight: 600;
+          font-size: 36rpx;
+          color: #333;
+        }
+        .shop_site {
+          font-size: 28rpx;
+          color: #333;
+        }
+      }
+      .to_shop {
+        width: 150rpx;
+        height: 64rpx;
+        border-radius: 32rpx;
+        border: solid 2px rgba(255, 87, 80, 0.37);
+        font-size: 28rpx;
+        color: #ff5750;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+    .intro {
+      margin-top: 40rpx; // padding-left: 25rpx;
+      font-size: 24rpx;
+      color: #666;
+      text-indent: 2em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
+    .goods_list {
+      margin-top: 40rpx;
+      display: flex;
+      justify-content: space-between;
+      .goods {
+        width: 210rpx;
+        height: 210rpx;
+        background-color: beige;
+        box-shadow: 0px 0px 5px 0px rgba(37, 37, 37, 0.1);
+        border-radius: 8rpx;
+        overflow: hidden;
+        position: relative;
+        .goods_num {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 214rpx;
+          height: 55rpx;
+          background-color: rgba(
+            51,
+            51,
+            51,
+            0.37
+          ); // background: url(http://www.whxq.fenbot.com/WeChat/goods_num.png) center no-repeat;
+          // background-size: 100% 100%;
+          font-size: 26rpx;
+          color: #ffffff;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+    }
+  }
+}
+.result_goods {
+  padding-bottom: 0;
+  .banner {
+    margin-bottom: 0;
+    border-radius: 8rpx;
+    overflow: hidden;
+  }
+  .info {
+    padding: 0 20rpx;
+    padding-bottom: 30rpx;
+    box-shadow: 0px 0px 9rpx 0px rgba(0, 6, 13, 0.08);
+    padding-top: 40rpx;
+    .l_b {
+      .num {
+        font-size: 41rpx;
+        color: #ff5750;
+        margin-left: 0;
+      }
+    }
+    .footer {
+      color: #999;
+      font-size: 21rpx;
+    }
+  }
+}
 .null {
   display: flex;
   flex-direction: column;
@@ -379,110 +537,10 @@ page {
     height: 147rpx;
   }
   .null_info {
-    margin: 0 auto;
     margin-top: 33rpx;
     text-align: center;
-    line-height: 44rpx;
     color: #999;
     font-size: 30rpx;
-  }
-}
-.shop {
-  // height: 517rpx;
-  padding: 0 18rpx;
-  padding-bottom: 57rpx;
-  background-color: #fff;
-  margin-bottom: 15rpx;
-  box-shadow: 0px 0px 9rpx 0px rgba(0, 6, 13, 0.08);
-  border-radius: 8rpx;
-  .head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 53rpx;
-    .h_l {
-      flex: 1;
-      height: 100%;
-      display: flex;
-      align-items: center;
-    }
-    .shop_logo {
-      width: 114rpx;
-      height: 114rpx;
-      background-image: linear-gradient(0deg, #fefeff 0%, #ffffff 100%);
-      box-shadow: 0px 0px 10px 0px rgba(0, 6, 13, 0.13);
-      border-radius: 8px;
-    }
-    .shop_info {
-      display: flex;
-      flex-direction: column;
-      margin-left: 32rpx;
-      justify-content: center;
-      .shop_name {
-        font-weight: 600;
-        font-size: 36rpx;
-        color: #333;
-      }
-      .shop_site {
-        font-size: 28rpx;
-        color: #333;
-      }
-    }
-    .to_shop {
-      width: 150rpx;
-      height: 64rpx;
-      border-radius: 32rpx;
-      border: solid 2px rgba(255, 87, 80, 0.37);
-      font-size: 28rpx;
-      color: #ff5750;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-  }
-  .intro {
-    margin-top: 40rpx; // padding-left: 25rpx;
-    font-size: 24rpx;
-    color: #666;
-    text-indent: 2em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-  }
-  .goods_list {
-    margin-top: 40rpx;
-    display: flex;
-    justify-content: space-between;
-    .goods {
-      width: 210rpx;
-      height: 210rpx;
-      background-color: beige;
-      box-shadow: 0px 0px 5px 0px rgba(37, 37, 37, 0.1);
-      border-radius: 8rpx;
-      overflow: hidden;
-      position: relative;
-      .goods_num {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 214rpx;
-        height: 55rpx;
-        background-color: rgba(
-          51,
-          51,
-          51,
-          0.37
-        ); // background: url(http://www.whxq.fenbot.com/WeChat/goods_num.png) center no-repeat;
-        // background-size: 100% 100%;
-        font-size: 26rpx;
-        color: #ffffff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-    }
   }
 }
 </style>

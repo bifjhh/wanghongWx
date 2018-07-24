@@ -12,23 +12,25 @@
       <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
         <view class="store_list">
           <view class="store_one" wx:for="{{objs}}" wx:key="{{item.id}}" @tap="toPage({{item.goods_link}})">
-            <view class="store_img" style="background: url({{item.thumbnail}}) center center no-repeat;background-size:cover;" >
+            <view class="store_img" style="background: url({{item.thumbnail}}) center center no-repeat;background-size:cover;">
               <!-- <image src="{{item.thumbnail}}" /> -->
               <view class="jingxuan">
                 <text class="iconfont icon-zuanshi"></text>
                 <text class="txt">精选</text>
               </view>
             </view>
-            <view class="store_info">
-              <text>{{item.title}}</text>
-            </view>
-            <view class="store_price">
-              <text>￥</text>
-              <text class="price">{{item.price}}</text>
-              <text>.00</text>
+            <view class="bottom">
+              <view class="store_info">
+                <text>{{item.title}}</text>
+              </view>
+              <view class="store_price">
+                <text>￥</text>
+                <text class="price">{{item.price}}</text>
+                <text>.00</text>
+              </view>
             </view>
           </view>
-          <view class="get_more" @tap="toWeb">
+          <view class="store_one get_more" @tap="toWeb">
             <view>
               <view></view>
             </view>
@@ -85,19 +87,18 @@ export default class Store extends wepy.component {
 <style lang='scss'>
 .store_content {
   background-color: #fff;
-  margin-top: 18rpx;
-  padding-left: 27rpx;
-  padding-bottom: 18rpx;
+  margin-top: 18rpx; // padding-left: 27rpx;
+  padding-bottom: 31rpx;
   .store_title {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 48rpx 29rpx 40rpx 0;
+    padding: 48rpx 29rpx 40rpx;
     color: #333333;
     text:nth-of-type(1) {
       font-size: 34rpx;
     }
-    view {
+    > view {
       height: 100%;
       display: flex;
       align-items: center;
@@ -113,28 +114,32 @@ export default class Store extends wepy.component {
   }
 }
 .store_list {
-  width: 100%;
-  display: flex;
+  width: auto;
+  // display: flex;
+  // align-items: center;
+  white-space: nowrap;
   .store_one {
-    margin-right: 30rpx;
-    padding-bottom: 10rpx;
-    border: solid 1px #eeeeee;
+    display: inline-block;
+    margin-left: 30rpx; // padding-bottom: 10rpx;
+    border: solid 1px #eeeeee; // width: 332rpx;
+    border-radius: 8rpx 8rpx 0px 0px;
+
     .store_img {
-      width: 330rpx;
+      width: 332rpx;
       height: 345rpx;
       background-color: #ccc;
+      border-radius: 8rpx 8rpx 0px 0px;
+      overflow: hidden;
       position: relative;
       .jingxuan {
         position: absolute;
         height: 29rpx;
-
         display: flex;
         align-items: center;
         justify-content: center;
         top: 15rpx;
         left: 15rpx;
-        padding:0 10rpx;
-        // padding: 6rpx 10rpx 5rpx;
+        padding: 0 10rpx; // padding: 6rpx 10rpx 5rpx;
         background-color: rgba(255, 255, 255, 0.42);
         border-radius: 5px;
         text {
@@ -150,12 +155,13 @@ export default class Store extends wepy.component {
         }
       }
     }
-    .store_info {
-      margin: 0 auto;
-      margin-top: 22rpx;
-      width: 295rpx;
-      height: 76rpx;
-      text {
+    .bottom {
+      width: 332rpx;
+      height: 155rpx;
+      padding-top: 22rpx;
+      .store_info {
+        // margin: 0 auto;
+        padding-left: 16rpx; // height: 76rpx;
         font-size: 26rpx;
         line-height: 34rpx;
         color: #333333;
@@ -165,26 +171,39 @@ export default class Store extends wepy.component {
         -webkit-line-clamp: 1;
         -webkit-box-orient: vertical;
       }
-    }
-    .store_price {
-      font-size: 26rpx;
-      font-weight: normal;
-      font-stretch: normal;
-      line-height: 34px;
-      letter-spacing: 0px;
-      color: #ff5750;
-      margin-left: 17rpx;
-      .price {
-        font-size: 36rpx;
+      .store_price {
+        margin-top: 30rpx;
+        font-size: 26rpx;
+        color: #ff5750;
+        padding-left: 17rpx;
+        .price {
+          font-size: 36rpx;
+        }
       }
     }
   }
+  .store_one:nth-last-child(1) {
+    margin: 0 30rpx;
+  }
   .get_more {
-    background: url(http://www.whxq.fenbot.com/WeChat/getadd_bgc.png) center
-      no-repeat;
-    background-size: 100% 100%;
-    view {
-      width: 330rpx;
+    // margin-left: 30rpx;
+    // margin-left: 30rpx;
+    border: 0;
+    width: 332rpx;
+    height: 468rpx;
+    position: relative;
+    height: 470rpx;
+    > view {
+      border: solid 1px #eeeeee;
+      border-radius: 8rpx 8rpx 0px 0px;
+      overflow: hidden;
+      position: absolute;
+      background: url(http://www.whxq.fenbot.com/WeChat/getadd_bgc.png) center
+        no-repeat;
+      background-size: cover;
+      top: 0;
+      left: 0;
+      width: 332rpx;
       height: 500rpx;
       display: flex;
       align-items: center;

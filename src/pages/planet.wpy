@@ -60,7 +60,7 @@
             <view class="head_img">
                <image src="{{item.owner_logo}}" />
             </view>
-            <text class="head_name">{{item.owner_name}} - {{item.star_name}}</text>
+            <text class="head_name">{{item.owner_name}} · {{item.star_name}}</text>
           </view>
           <view class="c_info">{{item.star_say}}</view>
           <view class="base">
@@ -142,7 +142,7 @@ export default class Planet extends wepy.page {
 
   events = {};
   onLoad() {
-    console.log(this.$parent.globalData.scene)
+    console.log(this.$parent.globalData.scene);
     wx.showShareMenu({
       withShareTicket: true
     });
@@ -337,6 +337,7 @@ export default class Planet extends wepy.page {
     font-size: 30rpx;
     color: #333333;
     align-items: center;
+    overflow: hidden;
     .head_img {
       width: 34rpx;
       height: 34rpx;
@@ -347,16 +348,25 @@ export default class Planet extends wepy.page {
       margin-right: 14rpx;
     }
     .head_name {
+      flex: 1;
       font-size: 30rpx;
       color: #333333;
-    }
-    > text {
+      // overflow: hidden;
+      // text-overflow: ellipsis;
+      // white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       display: -webkit-box;
       -webkit-line-clamp: 1;
       -webkit-box-orient: vertical;
     }
+    // > text {
+    //   overflow: hidden;
+    //   text-overflow: ellipsis;
+    //   display: -webkit-box;
+    //   -webkit-line-clamp: 1;
+    //   -webkit-box-orient: vertical;
+    // }
   }
   .base {
     display: flex;
