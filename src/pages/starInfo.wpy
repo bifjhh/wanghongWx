@@ -110,7 +110,7 @@ export default class starInfo extends wepy.page {
         id: 'store'
       }
     ],
-    toView: 'init',
+    toView: 'talk',
     isInfo: true,
     starId: ''
   };

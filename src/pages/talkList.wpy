@@ -17,7 +17,7 @@
       <!-- <video id="myVideo" hidden="{{!item.say_video_info.off}}" src="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f660000bd273dcpg623e2usfp6g&line=0" controls poster="{{item.say_video_info.cover}}"></video> -->
       <!-- <view hidden="{{!item.say_video_info.off}}" class="xxx" @tap="play({{index}})">xxx</view> -->
 
-      <view class="music" wx:if="{{item.say_video_info.title}}">
+      <view class="music" wx:if="{{item.say_video_info.title}}" @tap="toPage('video')">
         <view class="music_logo" @tap="play({{index}})">
           <video src="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f660000bd273dcpg623e2usfp6g&line=0" controls poster="{{item.say_video_info.cover}}"></video>
           <!-- <image src="{{item.say_video_info.cover}}" /> -->
