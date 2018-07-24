@@ -1,81 +1,118 @@
 
 <template lang="wxml">
-<view style="display:{{display}}">
-  <view class="search">
-		<view class="s_info">
+  <view style="display:{{display}}">
+    <view class="search">
+      <view class="s_info">
         <view class="search_img">
-				  <image src="/images/search.png" />
-		  	</view>
-			  <input type="text" focus="true" value="{{msg}}" placeholder="搜索你喜欢的星球" @input="bindinput"/>
-				<view class="del" wx:if="{{delHeid}}" @tap="del">
-				  <image src="/images/del.png" />
-				</view>
-		</view>
-		<view class="cancel" @tap="cencel"> <text>取消</text> </view>
-	</view>
-	<view class="conten">
-		<view class="result" wx:if="{{0}}">
-			<view class="title">
-				<text>已搜索到的星球</text>
-			</view>
-			<view class="banner">
-			</view>
-			<view class="info">
-				<view class="i_l">
-					<view class="i_tit"><text>晓说武装到牙齿的文艺青年</text></view>
-					<view class="l_b">
-						<view class="play iconfont icon-bofang">
+          <image src="/images/search.png" />
+        </view>
+        <input type="text" focus="true" value="{{msg}}" placeholder="搜索你喜欢的星球" @input="bindinput" />
+        <view class="del" wx:if="{{delHeid}}" @tap="del">
+          <image src="/images/del.png" />
+        </view>
+      </view>
+      <view class="cancel" @tap="cencel"> <text>取消</text> </view>
+    </view>
+    <view class="conten">
+      <view class="result_star" wx:if="{{result.type=='star'}}">
+        <view class="title">
+          <text>口令星球</text>
+        </view>
+        <view class="banner" style="background: url({{result.star.logo}}) center center no-repeat;background-size:cover;">
+        </view>
+        <view class="info">
+          <view class="i_l">
+            <view class="i_tit">
+              <text>{{result.star.nickname}}</text>
             </view>
-						<view class="num">4.5万</view>
-						<view class="name">高晓松</view>
-					</view>
-					<view class="footer">
-						高晓松回归，喜马拉雅FM《晓说2018》
-					</view>
-				</view>
-				<view class="i_r">
-					关注
-				</view>
-			</view>
-		</view>
-		<view class="title">
-			<text>相关星球</text>
-		</view>
-		<view class="list">
-			<view class="info" wx:for="{{lists}}" wx:key="index">
-				<view class="i_l">
-					<!-- <view class="i_tit"><text>晓说</text>武装到牙齿的文艺青年</view> -->
-					<view class="i_tit"><text></text>{{item.description}}</view>
-					<view class="l_b">
-						<view class="play iconfont icon-bofang">
+            <view class="l_b">
+              <view class="play iconfont icon-bofang">
+              </view>
+              <view class="num">{{result.star.likes}}</view>
+              <view class="name">{{result.star.name}}</view>
             </view>
-						<view class="num">{{item.uv}}</view>
-						<view class="name">{{item.star_user_info.name}}</view>
-					</view>
-				</view>
-				<view wx:if="{{item.has_attention==0}}" class="i_r" @tap="follow('add',{{item.id}},{{index}})">
-					关注
-				</view>
-				<view wx:else class="i_r" @tap="follow('del',{{item.id}},{{index}})">
-					已关注
-				</view>
-			</view>
-		</view>
-	
-	</view>
-</view>
+            <view class="footer">
+              {{result.star.description}}
+            </view>
+          </view>
+          <view wx:if="{{result.star.has_attention==0}}" class="i_r" @tap="starFollow('add',{{result.star.id}})">
+            关注
+          </view>
+          <view wx:else class="i_r" @tap="starFollow('del',{{result.star.id}})">
+            已关注
+          </view>
+        </view>
+      </view>
+      <view class="result_shop" wx:if="{{result.type=='shop'}}">
+        <view class="title">
+          <text>口令店铺</text>
+        </view>
+        <view class="shop">
+          <view class="head">
+            <view class="h_l">
+              <view class="shop_logo">
+                <image src="{{result.shop.logo}}" />
+              </view>
+              <view class="shop_info">
+                <text class="shop_name">{{result.shop.name}}</text>
+                <text class="shop_site">{{result.shop.country}}</text>
+              </view>
+            </view>
+            <view class="to_shop" @tap="toWeb({{result.shop.shop_link}},{{result.shop.star_id}})">进入</view>
+          </view>
+          <view class="intro">{{result.shop.desc_title}}</view>
+          <block wx:if="{{result.shop.shop_goods.length>0}}">
+            <view class="goods_list">
+              <view class="goods" wx:for="{{result.shop.shop_goods}}" wx:for-index="one" wx:for-item="itemName" style="background: url({{itemName.thumbnail}}) center no-repeat; background-size: cover" @tap="toWeb({{itemName.goods_link}},{{itemName.id}})">
+                <view class="goods_num">RMB：{{itemName.price}}</view>
+              </view>
+            </view>
+          </block>
+        </view>
+      </view>
+      <view class="list" wx:if="{{result.lists.length>0}}">
+        <view class="title">
+          <text>相关星球</text>
+        </view>
+        <view class="info" wx:for="{{result.lists}}" wx:key="index">
+          <view class="i_l" @tap="toPage('starInfo',{{item.id}})">
+            <!-- <view class="i_tit"><text>晓说</text>武装到牙齿的文艺青年</view> -->
+            <view class="i_tit"><text></text>{{item.description}}</view>
+            <view class="l_b">
+              <view class="play iconfont icon-bofang">
+              </view>
+              <view class="num">{{item.uv}}</view>
+              <view class="name">{{item.star_user_info.name}}</view>
+            </view>
+          </view>
+          <view wx:if="{{item.has_attention==0}}" class="i_r" @tap="follow('add',{{item.id}},{{index}})">
+            关注
+          </view>
+          <view wx:else class="i_r" @tap="follow('del',{{item.id}},{{index}})">
+            已关注
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="null">
+      <view class="null_img">
+       <image src="/images/no_xingqiu2.png" />
+      </view>
+      <text class="null_info">
+       没有搜索到相关信息
+      </text>
+  </view>
+  </view>
 </template>
 <script>
 import wepy from 'wepy';
-
 export default class Search extends wepy.page {
   config = {};
   components = {};
-
   data = {
     delHeid: false,
     msg: '',
-    lists: [],
+    result: {},
     display: 'none'
   };
   methods = {
@@ -83,31 +120,53 @@ export default class Search extends wepy.page {
       let that = this;
       if (e.detail.cursor >= 1) {
         that.delHeid = true;
-        wepy.request({ url: '/star/search', data:{keyword:e.detail.value} }).then(res => {
-          that.lists = res.data.data.lists;
-          that.$apply();
-        });
+        wepy
+          .request({
+            url: '/star/search',
+            data: {
+              keyword: e.detail.value
+            }
+          })
+          .then(res => {
+            that.result = res.data.data;
+            that.$apply();
+          });
       } else {
         that.delHeid = false;
-        that.lists = [];
+        that.result = {};
       }
       that.msg = e.detail.value;
+    },
+    toPage(url, id) {
+      if (id) {
+        url += '?star_id=' + id;
+      }
+      this.$navigate(url);
+    },
+    toWeb(url, shopId) {
+      console.log(url);
+      let token = url.substr(url.search(/\?token=/) + 7);
+      url = url.substr(0, url.search(/\?token=/));
+      url = `webview?token=${token}&src=${url}&id=${shopId}`;
+      console.log('url', url);
+      // return;
+      this.$navigate(url);
     },
     del() {
       let that = this;
       that.msg = '';
-      that.lists = [];
+      that.result = {};
+      that.$apply();
     },
     cencel() {
-      this.$switch('./planet');
+      // this.$switch('./planet');
+      wx.navigateBack({
+        delta: 1
+      });
     },
     /* 关注 */
     follow(type, id, index) {
       let that = this;
-      // console.log(type);
-      // console.log(id);
-      // console.log(index);
-      // console.log(that.lists[index].has_attention);
       wepy
         .request({
           url: '/star/follow_star',
@@ -119,24 +178,44 @@ export default class Search extends wepy.page {
         .then(res => {
           if (type == 'add') {
             console.log('add');
-            that.lists[index].has_attention = 1;
+            that.result.lists[index].has_attention = 1;
             that.$apply();
           } else {
             console.log('del');
-            that.lists[index].has_attention = 0;
+            that.result.lists[index].has_attention = 0;
+            that.$apply();
+          }
+        });
+    },
+    starFollow(type, id) {
+      let that = this;
+      wepy
+        .request({
+          url: '/star/follow_star',
+          data: {
+            star_id: id,
+            dotype: type
+          }
+        })
+        .then(res => {
+          if (type == 'add') {
+            console.log('add');
+            result.lists.has_attention = 1;
+            that.$apply();
+          } else {
+            console.log('del');
+            result.lists.has_attention = 0;
             that.$apply();
           }
         });
     }
   };
-
   events = {};
   onLoad() {
     let that = this;
     wx.showLoading({
       title: ''
     });
-
     setTimeout(() => {
       wx.hideLoading();
       that.display = 'block';
@@ -200,6 +279,40 @@ page {
     }
   }
 }
+.conten {
+  .title {
+    padding-bottom: 35rpx;
+    text {
+      font-size: 30rpx;
+      color: #515151;
+    }
+  }
+}
+.result_star {
+  padding-bottom: 81rpx;
+  .banner {
+    margin-top: 35rpx;
+    height: 694rpx;
+    background-color: #ccc;
+    margin-bottom: 40rpx;
+  }
+  .info {
+    height: auto;
+    .i_tit text {
+      font-size: 32rpx;
+    }
+  }
+  .i_tit text {
+    font-size: 16px;
+  }
+  .footer {
+    margin-top: 30rpx;
+  }
+}
+.list .title{
+  padding-top: 40rpx;
+  padding-bottom: 0;
+}
 .info {
   display: flex;
   width: 100%;
@@ -252,31 +365,124 @@ page {
     text-align: center;
   }
 }
-.conten {
+.null {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 90rpx;
   .title {
-    text {
-      font-size: 30rpx;
-      color: #515151;
-      padding-bottom: 35rpx;
-    }
+    padding-bottom: 58rpx;
   }
-  .banner {
-    margin-top: 35rpx;
-    height: 694rpx;
-    background-color: #ccc;
-    margin-bottom: 40rpx;
+  .null_img {
+    margin: 0 auto;
+    margin-top: 210rpx;
+    width: 306rpx;
+    height: 147rpx;
+  }
+  .null_info {
+    margin: 0 auto;
+    margin-top: 33rpx;
+    text-align: center;
+    line-height: 44rpx;
+    color: #999;
+    font-size: 30rpx;
   }
 }
-.result {
-  padding-bottom: 81rpx;
-  .info {
-    height: auto;
+.shop {
+  // height: 517rpx;
+  padding: 0 18rpx;
+  padding-bottom: 57rpx;
+  background-color: #fff;
+  margin-bottom: 15rpx;
+  box-shadow: 0px 0px 9rpx 0px rgba(0, 6, 13, 0.08);
+  border-radius: 8rpx;
+  .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 53rpx;
+    .h_l {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      align-items: center;
+    }
+    .shop_logo {
+      width: 114rpx;
+      height: 114rpx;
+      background-image: linear-gradient(0deg, #fefeff 0%, #ffffff 100%);
+      box-shadow: 0px 0px 10px 0px rgba(0, 6, 13, 0.13);
+      border-radius: 8px;
+    }
+    .shop_info {
+      display: flex;
+      flex-direction: column;
+      margin-left: 32rpx;
+      justify-content: center;
+      .shop_name {
+        font-weight: 600;
+        font-size: 36rpx;
+        color: #333;
+      }
+      .shop_site {
+        font-size: 28rpx;
+        color: #333;
+      }
+    }
+    .to_shop {
+      width: 150rpx;
+      height: 64rpx;
+      border-radius: 32rpx;
+      border: solid 2px rgba(255, 87, 80, 0.37);
+      font-size: 28rpx;
+      color: #ff5750;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
-  .i_tit text {
-    font-size: 16px;
+  .intro {
+    margin-top: 40rpx; // padding-left: 25rpx;
+    font-size: 24rpx;
+    color: #666;
+    text-indent: 2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
   }
-  .footer {
-    margin-top: 30rpx;
+  .goods_list {
+    margin-top: 40rpx;
+    display: flex;
+    justify-content: space-between;
+    .goods {
+      width: 210rpx;
+      height: 210rpx;
+      background-color: beige;
+      box-shadow: 0px 0px 5px 0px rgba(37, 37, 37, 0.1);
+      border-radius: 8rpx;
+      overflow: hidden;
+      position: relative;
+      .goods_num {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 214rpx;
+        height: 55rpx;
+        background-color: rgba(
+          51,
+          51,
+          51,
+          0.37
+        ); // background: url(http://www.whxq.fenbot.com/WeChat/goods_num.png) center no-repeat;
+        // background-size: 100% 100%;
+        font-size: 26rpx;
+        color: #ffffff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    }
   }
 }
 </style>

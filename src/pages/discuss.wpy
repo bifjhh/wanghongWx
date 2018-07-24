@@ -1,21 +1,19 @@
 <!-- 评论界面 -->
 <template>
   <view class='discuss_box'>
+    <view class="yin"></view>
     <view class="lists" wx:if="{{lists}}">
-      <view class="ybox">
-        <view class="yin"></view>
-      </view>
       <view class="list" wx:for="{{lists}}" wx:key="{{index}}">
         <!-- <view class="wanghong">
-            <view class="title">
-              <view class="t_l">
-                <view class="portrait"></view>
-                <view class="name">网红席采南楠楠</view>
+              <view class="title">
+                <view class="t_l">
+                  <view class="portrait"></view>
+                  <view class="name">网红席采南楠楠</view>
+                </view>
+                <view class="time">7月9日 06:13</view>
               </view>
-              <view class="time">7月9日 06:13</view>
-            </view>
-            <text class="msg">@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词表达了自己的想法与见解。</text>
-          </view> -->
+              <text class="msg">@Mr_凡先生 新专辑首支中文单曲《天地》上线#亚洲新歌榜# ！这首《天地》由吴亦凡一手包办词曲，用重拍节奏以及打动人心的歌词表达了自己的想法与见解。</text>
+            </view> -->
         <view class="talk_list">
           <view class="thead" @tap="toPage('talkInfo',{{item.say_id}})">
             <view class="names">
@@ -67,15 +65,15 @@
         </view>
         <view class="discuss">
           <view class="portrait">
-            <image src="{{itemOne.comment_content[0].comment_owner_logo}}" />
+            <image src="{{item.comment[0].comment_owner_logo}}" />
           </view>
           <view class="discuss_r">
-            <view class="name">{{itemOne.comment_content[0].comment_owner_name}}</view>
-            <view class="discuss_li" wx:for="{{item.comment}}"  wx:for-index="idx" wx:for-item="itemOne" wx:key="{{idx}}">
+            <view class="name">{{item.comment[0].comment_owner_name}}</view>
+            <view class="discuss_li" wx:for="{{item.comment}}" wx:for-index="idx" wx:for-item="itemOne" wx:key="{{idx}}">
               <view class="info">{{itemOne.comment_content}}</view>
               <view class="footer">
                 <view class="time">{{itemOne.comment_ctime}}</view>
-                <view class="del">删除</view>
+                <view class="del" @tap="del({{itemOne.comment_id}})">删除</view>
               </view>
             </view>
           </view>
@@ -92,288 +90,299 @@
 </template>
 
 <script>
-import wepy from 'wepy';
-export default class Example extends wepy.page {
-  config = {
-    navigationBarTitleText: '评论'
-  };
-  data = {
-    lists: []
-  };
-  components = {};
-  methods = {};
-  events = {};
-  watch = {};
-  computed = {};
-  onLoad() {}
-  onShow() {
-    let that = this;
-    wepy
-      .request({
-        url: '/dynamic/comment_list'
-      })
-      .then(res => {
-        console.log(res.data);
-        that.lists = res.data.data.items;
-        that.$apply();
-      });
+  import wepy from 'wepy';
+  export default class Example extends wepy.page {
+    config = {
+      navigationBarTitleText: '评论'
+    };
+    data = {
+      lists: []
+    };
+    components = {};
+    methods = {
+      del(id) {
+        wepy
+          .request({
+            url: '/say/del_comment',
+            data: {
+              comment_id: id
+            }
+          })
+          .then(res => {
+            console.log(res.data);
+          });
+      }
+    };
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {}
+    onShow() {
+      let that = this;
+      wepy
+        .request({
+          url: '/dynamic/comment_list'
+        })
+        .then(res => {
+          console.log(res.data);
+          that.lists = res.data.data.items;
+          that.$apply();
+        });
+    }
   }
-}
 </script>
 
 <style lang='scss'>
-page {
-  background-color: #f5f5f5;
-}
-.ybox {
-  background-color: #fff;
-  padding-bottom: 15rpx;
-  .yin {
-    width: 100%;
-    height: 12px;
-    box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
+  page {
+    background-color: #f5f5f5;
   }
-}
-.list {
-  background-color: #fff;
-  margin-bottom: 20rpx;
-  .wanghong {
-    padding: 0 30rpx;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 45rpx;
-    .title {
-      display: flex;
-      height: 120rpx;
-      align-items: center;
-      justify-content: space-between;
-      .t_l {
+  .list {
+    background-color: #fff;
+    margin-bottom: 20rpx;
+    .wanghong {
+      padding: 0 30rpx;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 45rpx;
+      .title {
         display: flex;
-        .portrait {
-          width: 76rpx;
-          height: 76rpx;
-          background-color: #f3f;
-          border-radius: 50%;
-        }
-        .name {
-          color: #000;
-          font-size: 30rpx;
+        height: 120rpx;
+        align-items: center;
+        justify-content: space-between;
+        .t_l {
           display: flex;
-          align-items: center;
-          margin-left: 14rpx;
+          .portrait {
+            width: 76rpx;
+            height: 76rpx;
+            background-color: #f3f;
+            border-radius: 50%;
+          }
+          .name {
+            color: #000;
+            font-size: 30rpx;
+            display: flex;
+            align-items: center;
+            margin-left: 14rpx;
+          }
         }
-      }
-      .time {
-        font-size: 26rpx;
-        color: #999999;
-      }
-    }
-    .msg {
-      font-size: 30rpx;
-      color: #333333;
-      line-height: 48rpx;
-    }
-  }
-  .discuss {
-    padding: 0 26rpx;
-    padding-top: 43rpx;
-    display: flex;
-    .portrait {
-      width: 60rpx;
-      height: 60rpx;
-      border-radius: 50%;
-      background-color: #efc;
-    }
-    .discuss_r {
-      flex: 1;
-      margin-left: 18rpx;
-      .name {
-        font-size: 28rpx;
-        color: #999999;
-      }
-      .discuss_li {
-        padding-top: 24rpx;
-        padding-bottom: 27rpx;
-        .info {
+        .time {
           font-size: 26rpx;
-          line-height: 42rpx;
-          color: #333333;
-        }
-        .footer {
-          display: flex;
-          margin-top: 30rpx;
-          justify-content: space-between;
-          .time {
-            font-size: 24rpx;
-            color: #999999;
-          }
-          .del {
-            font-size: 24rpx;
-            color: #4d7aad;
-          }
+          color: #999999;
         }
       }
-    }
-  }
-}
-.null {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  .img {
-    margin-top: 399rpx;
-    width: 286rpx;
-    height: 188rpx;
-  }
-  text {
-    margin-top: 40rpx;
-    font-size: 24rpx;
-    color: #999999;
-  }
-}
-.talk_list {
-  border-bottom: 1px solid #e5e5e5;
-  padding: 0 30rpx;
-  .thead {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 37rpx;
-    padding-bottom: 20rpx;
-    .names {
-      display: flex;
-      align-items: center;
-      .name_img {
-        width: 53rpx;
-        height: 53rpx;
-        border-radius: 50%;
-        overflow: hidden;
-        background-color: #eff;
-      }
-      .name {
-        margin-left: 12rpx;
+      .msg {
         font-size: 30rpx;
         color: #333333;
+        line-height: 48rpx;
       }
     }
-    .earlier {
+    .discuss {
+      padding: 0 26rpx;
+      padding-top: 43rpx;
+      display: flex;
+      .portrait {
+        width: 60rpx;
+        height: 60rpx;
+        border-radius: 50%;
+        background-color: #efc;
+      }
+      .discuss_r {
+        flex: 1;
+        margin-left: 18rpx;
+        .name {
+          font-size: 28rpx;
+          color: #999999;
+        }
+        .discuss_li {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          padding-top: 24rpx;
+          padding-bottom: 27rpx;
+          .info {
+            flex: 1;
+            font-size: 26rpx;
+            line-height: 42rpx;
+            color: #333333;
+            word-break: break-all;
+          }
+          .footer {
+            flex: 1;
+            display: flex;
+            margin-top: 30rpx;
+            justify-content: space-between;
+            .time {
+              font-size: 24rpx;
+              color: #999999;
+            }
+            .del {
+              font-size: 24rpx;
+              color: #4d7aad;
+            }
+          }
+        }
+      }
+    }
+  }
+  .null {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .img {
+      margin-top: 399rpx;
+      width: 286rpx;
+      height: 188rpx;
+    }
+    text {
+      margin-top: 40rpx;
       font-size: 24rpx;
       color: #999999;
     }
   }
-  .talk_info {
-    // margin-top: 20rpx;
-    font-size: 30rpx;
-    line-height: 48rpx;
-    word-break: break-all;
-  }
-  .music {
-    margin-top: 20rpx;
-    height: 120rpx;
-    background-color: #ccc;
-    display: flex;
-    .music_logo {
-      width: 113rpx;
-      height: 100%;
-      background-color: #efe;
-    }
-    .m_info {
-      flex: 1;
+  .talk_list {
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0 30rpx;
+    padding-bottom: 20rpx;
+    .thead {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      margin-left: 23rpx;
-      .m_title {
-        font-size: 31rpx;
-        color: #333333;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 37rpx;
+      padding-bottom: 20rpx;
+      .names {
+        display: flex;
+        align-items: center;
+        .name_img {
+          width: 53rpx;
+          height: 53rpx;
+          border-radius: 50%;
+          overflow: hidden;
+          background-color: #eff;
+        }
+        .name {
+          margin-left: 12rpx;
+          font-size: 30rpx;
+          color: #333333;
+        }
       }
-      .m_name {
-        font-size: 23rpx;
+      .earlier {
+        font-size: 24rpx;
         color: #999999;
       }
     }
-  }
-  .img_list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    margin-top: 34rpx;
-    &.img_list2 {
-      justify-content: initial;
+    .talk_info {
+      // margin-top: 20rpx;
+      font-size: 30rpx;
+      line-height: 48rpx;
+      word-break: break-all;
     }
-    .pic {
-      width: 218rpx;
-      height: 218rpx;
-      margin-bottom: 10rpx;
-      border-radius: 5px;
-      overflow: hidden;
-      margin-right: 15rpx;
+    .music {
+      margin-top: 20rpx;
+      height: 120rpx;
+      background-color: #ccc;
+      display: flex;
+      .music_logo {
+        width: 113rpx;
+        height: 100%;
+        background-color: #efe;
+      }
+      .m_info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 23rpx;
+        .m_title {
+          font-size: 31rpx;
+          color: #333333;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
+        .m_name {
+          font-size: 23rpx;
+          color: #999999;
+        }
+      }
     }
-    .picw1 {
-      width: 100%;
-      height: auto;
-      margin-right: 0;
-      height: 400rpx;
-      image {
+    .img_list {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      margin-top: 34rpx;
+      &.img_list2 {
+        justify-content: initial;
+      }
+      .pic {
+        width: 218rpx;
+        height: 218rpx;
+        margin-bottom: 10rpx;
+        border-radius: 5px;
+        overflow: hidden;
+        margin-right: 15rpx;
+      }
+      .picw1 {
+        width: 100%;
+        height: auto;
+        margin-right: 0;
         height: 400rpx;
-        display: block;
+        image {
+          height: 400rpx;
+          display: block;
+        }
       }
-    }
-    .picw2 {
-      width: 48%;
-      height: auto;
-      height: 330rpx;
-      margin-right: 0;
-      image {
+      .picw2 {
+        width: 48%;
+        height: auto;
         height: 330rpx;
-        display: block;
+        margin-right: 0;
+        image {
+          height: 330rpx;
+          display: block;
+        }
       }
     }
-  }
-  .location {
-    margin-top: 18rpx;
-    view {
-      background-color: #ededed;
-      border-radius: 5rpx;
-      display: inline-flex;
+    .location {
+      margin-top: 18rpx;
+      view {
+        background-color: #ededed;
+        border-radius: 5rpx;
+        display: inline-flex;
+        align-items: center;
+        padding: 7rpx 10rpx;
+        text {
+          color: #999999;
+        }
+        .icon-weizhi {
+          margin-right: 10rpx;
+        }
+      }
+    }
+    .bottom {
+      display: flex;
+      justify-content: space-around;
+      padding: 40rpx 0;
       align-items: center;
-      padding: 7rpx 10rpx;
+      view {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
       text {
         color: #999999;
       }
-      .icon-weizhi {
-        margin-right: 10rpx;
+      .iconf {
+        padding-left: 15rpx;
+        font-size: 16px;
+      }
+      .icon-fenxiang {
+        font-size: 40rpx;
+      }
+      .icon-xin {
+        color: red;
       }
     }
   }
-  .bottom {
-    display: flex;
-    justify-content: space-around;
-    padding: 40rpx 0;
-    align-items: center;
-    view {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    text {
-      color: #999999;
-    }
-    .iconf {
-      padding-left: 15rpx;
-      font-size: 16px;
-    }
-    .icon-fenxiang {
-      font-size: 40rpx;
-    }
-    .icon-xin {
-      color: red;
-    }
-  }
-}
 </style>

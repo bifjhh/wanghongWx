@@ -61,10 +61,7 @@ export default class Example extends wepy.page {
 </script>
 
 <style lang='scss'>
-.yin {
-  height: 3px;
-  box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
-}
+
 .list {
   padding: 0 28rpx;
   margin-top: 40rpx;
@@ -95,7 +92,7 @@ export default class Example extends wepy.page {
       display: flex;
       align-items: center;
       text {
-        padding: 30rpx 26rpx;
+        padding: 20rpx 26rpx;
         border-top-left-radius: 50%;
         font-style: 28rpx;
         color: #333;

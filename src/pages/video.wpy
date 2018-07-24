@@ -1,7 +1,7 @@
 <!-- 视频播放 -->
 <template>
   <view class='video_box'>
-    <video id="myVideo" src="{{src}}"  controls></video>
+    <video id="myVideo" src="{{src}}"  controls autoplay="{{true}}"></video>
   </view>
 </template>
 

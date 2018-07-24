@@ -1,6 +1,7 @@
 <!-- 动态页面 -->
 <template>
   <view class='dynamic'>
+    <view class="yin"></view>
     <view class="head">
       <view class="discuss" @tap="toPage('discuss')">
         <view>
@@ -18,7 +19,7 @@
       <view class="title" wx:if="{{lists.length!=0}}"><text class="msg">消息</text></view>
       <view class="state" wx:for="{{lists}}" wx:key="{{index}}" @tap="toPage('msgList',{{item.msg_owner_id}},{{item.msg_owner_type}})">
         <view class="portrait" style="background: url({{item.msg_owner_logo}}) center no-repeat; background-size: cover">
-          <view class="news_num">1</view>
+          <view class="news_num" wx:if="{{item.msg_noread_num>=1}}">{{item.msg_noread_num}}</view>
         </view>
         <view class="state_r">
           <view class="info">
@@ -97,7 +98,6 @@ page {
 .head {
   height: 220rpx;
   background-color: #fff;
-  margin-top: 4rpx;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -191,6 +191,8 @@ page {
       .intro {
         margin-top: 20rpx;
         margin-right: 124rpx;
+        font-size: 24rpx;
+        color: #999;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;

@@ -1,7 +1,8 @@
 <!--  -->
 <template>
   <view class='talk' style="display:{{display}}">
-    <view class="talk_list" wx:for="{{objs.lists}}" wx:key="{{item.say_id}}" data-sayid="{{item.say_id}}">
+    <view class="yin"></view>
+    <view class="talk_list" wx:for="{{lists}}" wx:key="{{item.say_id}}" data-sayid="{{item.say_id}}">
       <view class="thead"  @tap="toPage('talkInfo',{{item.say_id}})">
         <view class="names">
           <view class="name_img">
@@ -18,8 +19,11 @@
       <!-- <view hidden="{{!item.say_video_info.off}}" class="xxx" @tap="play({{index}})">xxx</view> -->
 
       <view class="music" wx:if="{{item.say_video_info.title}}" @tap="toPage('video')">
-        <view class="music_logo" @tap="play({{index}})">
-          <video src="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f660000bd273dcpg623e2usfp6g&line=0" controls poster="{{item.say_video_info.cover}}"></video>
+        <view class="music_logo" @tap="play({{index}})" style="background: url({{item.say_video_info.cover}}) top left no-repeat;background-size:cover;">
+          <view class="play">
+            <text class="iconfont icon-bofang"></text>
+          </view>
+          <!-- <video src="https://aweme.snssdk.com/aweme/v1/playwm/?video_id=v0200f660000bd273dcpg623e2usfp6g&line=0" controls poster="{{item.say_video_info.cover}}"></video> -->
           <!-- <image src="{{item.say_video_info.cover}}" /> -->
         </view>
         <view class="m_info">
@@ -77,6 +81,7 @@ import wepy from 'wepy';
 export default class TalkList extends wepy.page {
   data = {
     objs: {},
+    lists: [],
     display: 'none',
     star_id: ''
   };
@@ -85,10 +90,11 @@ export default class TalkList extends wepy.page {
   methods = {
     praise(index, e) {
       let that = this;
-      let objs = that.objs;
-      let type = objs.lists[index].is_dolike == 0 ? 'add' : 'del';
+      // let objs = that.objs;
+      let lists = that.lists;
+      let type = lists[index].is_dolike == 0 ? 'add' : 'del';
       console.log(type, index, e.currentTarget.dataset.sayid);
-      console.log('之前的', that.objs.lists[index].is_dolike);
+      console.log('之前的', that.lists[index].is_dolike);
       // return;
       wepy
         .request({
@@ -102,17 +108,18 @@ export default class TalkList extends wepy.page {
           console.log('status', res.data.status);
           if (res.data.status != '1') return;
           if (type == 'add') {
-            objs.lists[index].is_dolike = 1;
+            lists[index].is_dolike = 1;
             that.$apply();
           } else if (type == 'del') {
-            objs.lists[index].is_dolike = 0;
+            lists[index].is_dolike = 0;
             that.$apply();
           }
 
-          objs.lists[index].say_like = res.data.data.like;
-          that.setData({ objs });
-          console.log('现在的', that.objs.lists[index].is_dolike);
+          lists[index].say_like = res.data.data.like;
+          // that.setData({ objs });
+          that.lists = lists;
           that.$apply();
+          console.log('现在的', that.lists[index].is_dolike);
         });
     },
     toPage(url, param) {
@@ -180,6 +187,7 @@ export default class TalkList extends wepy.page {
       .then(res => {
         if (res.data.status != 1) return;
         that.objs = res.data.data;
+        that.lists = res.data.data.lists;
         wx.setNavigationBarTitle({
           title: res.data.data.lists[0].owner_name + '的说说'
         });
@@ -223,6 +231,7 @@ export default class TalkList extends wepy.page {
         margin-left: 12rpx;
         font-size: 30rpx;
         color: #333333;
+        font-weight: 600;
       }
     }
     .earlier {
@@ -235,6 +244,7 @@ export default class TalkList extends wepy.page {
     font-size: 30rpx;
     line-height: 48rpx;
     word-break: break-all;
+    color:#333;
   }
   .music {
     margin-top: 20rpx;
@@ -245,6 +255,23 @@ export default class TalkList extends wepy.page {
       width: 113rpx;
       height: 100%;
       background-color: #efe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .play {
+        width: 49rpx;
+        height: 49rpx;
+        border-radius: 50%;
+        background-color: rgba(255, 87, 80, 0.77);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        text {
+          font-size: 22rpx;
+          color: #fff;
+        }
+      }
     }
     .m_info {
       flex: 1;

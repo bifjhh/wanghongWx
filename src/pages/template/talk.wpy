@@ -8,7 +8,7 @@
         <text class="iconfont icon-jiantou"></text>
       </view>
     </view>
-    <view class="talk_list" wx:for="{{objs.lists}}" wx:key="{{item.say_id}}" data-sayid="{{item.say_id}}">
+    <view class="talk_list" wx:for="{{lists}}" wx:key="{{item.say_id}}" data-sayid="{{item.say_id}}">
       <view class="thead" @tap="toPage('talkInfo',{{item.say_id}})">
         <view class="names">
           <view class="name_img">
@@ -22,8 +22,11 @@
         {{item.say_content}}
       </view>
       <view class="music" wx:if="{{item.say_video_info.title}}">
-        <view class="music_logo">
-          <image src="{{item.say_video_info.cover}}" />
+        <view class="music_logo" @tap="toPage('video')" style="background: url({{item.say_video_info.cover}}) top left no-repeat;background-size:cover;">
+          <view class="play">
+            <text class="iconfont icon-bofang"></text>
+          </view>
+          <!-- <image src="{{item.say_video_info.cover}}" /> -->
         </view>
         <view class="m_info">
           <view class="m_title">{{item.say_video_info.title}}</view>
@@ -82,7 +85,12 @@ export default class Talk extends wepy.component {
   props = {
     objs: {
       type: Object,
-      default: '{}',
+      default: {},
+      twoWay: true
+    },
+    lists: {
+      type: Array,
+      default: [],
       twoWay: true
     }
   };
@@ -99,42 +107,38 @@ export default class Talk extends wepy.component {
       that.$parent.$navigate(url);
       // this.$emit('toPage', url);
     },
-    /*  praise(type, index, e) {
+    praise(index) {
       let that = this;
+      let lists = that.lists;
+      let type = lists[index].is_dolike == 0 ? 'add' : 'del';
+      let sayid = lists[index].say_id;
       // console.log(type, index, e.currentTarget.dataset.sayid);
-      console.log('type', type);
       console.log(that.$parent.starInfo.dynamic.say.lists[index].is_dolike);
       wepy
         .request({
           url: '/say/do_like',
           data: {
-            say_id: e.currentTarget.dataset.sayid,
+            say_id: sayid,
             dotype: type
           }
         })
         .then(res => {
-          console.log(res.data.status);
           if (res.data.status != '1') return;
           if (type == 'add') {
-            that.$parent.starInfo.dynamic.say.lists[index].is_dolike = 1;
-            // thatj.objs.lists[index].is_dolike = 1;
-            // that.$apply();
+            that.$parent.saysList[index].is_dolike = 1;
             that.$parent.$apply();
           } else if (type == 'del') {
-            that.$parent.starInfo.dynamic.say.lists[index].is_dolike = 0;
-            // thatj.objs.lists[index].is_dolike = 0;
-            // that.$apply();
+            that.$parent.saysList[index].is_dolike = 0;
             that.$parent.$apply();
           }
-          that.$parent.starInfo.dynamic.say.lists[index].say_like =
-            res.data.data.like;
+          that.$parent.saysList[index].say_like = res.data.data.like;
           that.$parent.$apply();
         });
-    }, */
-    praise(index) {
-      let that = this;
-      that.$emit('doLike', index)
     },
+    /* praise(index) {
+      let that = this;
+      that.$emit('doLike', index);
+    }, */
     showImgs(img, imgs) {
       wx.previewImage({
         current: img, // 当前显示图片的http链接
@@ -183,16 +187,17 @@ export default class Talk extends wepy.component {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 5rpx;
+  // padding-top: 5rpx;
   padding-top: 42rpx;
   text {
     font-size: 34rpx;
     color: #333333;
   }
   > view {
-    height: 100%;
+    // height: 100%;
     display: flex;
     align-items: center;
+    justify-content: center;
     text {
       font-size: 30rpx;
       color: #999999;
@@ -225,6 +230,7 @@ export default class Talk extends wepy.component {
         margin-left: 12rpx;
         font-size: 30rpx;
         color: #333333;
+        font-weight: 600;
       }
     }
     .earlier {
@@ -236,6 +242,7 @@ export default class Talk extends wepy.component {
     // margin-top: 20rpx;
     font-size: 30rpx;
     word-break: break-all;
+    color: #333;
   }
   .music {
     margin-top: 20rpx;
@@ -246,6 +253,23 @@ export default class Talk extends wepy.component {
       width: 113rpx;
       height: 100%;
       background-color: #efe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .play {
+        width: 49rpx;
+        height: 49rpx;
+        border-radius: 50%;
+        background-color: rgba(255, 87, 80, 0.77);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        text {
+          font-size: 22rpx;
+          color: #fff;
+        }
+      }
     }
     .m_info {
       flex: 1;
@@ -256,6 +280,11 @@ export default class Talk extends wepy.component {
       .m_title {
         font-size: 31rpx;
         color: #333333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
       }
       .m_name {
         font-size: 23rpx;

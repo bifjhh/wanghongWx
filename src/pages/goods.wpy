@@ -1,25 +1,28 @@
 <template lang="wxml">
-  <view class="shop" wx:for="{{lists}}" wx:key="{{index}}">
-    <view class="head">
-      <view class="h_l">
-        <view class="shop_logo">
-          <image src="{{item.logo}}" />
+  <view class="shop_box">
+    <view class="yin"></view>
+    <view class="shop" wx:for="{{lists}}" wx:key="{{index}}">
+      <view class="head">
+        <view class="h_l">
+          <view class="shop_logo">
+            <image src="{{item.logo}}" />
+          </view>
+          <view class="shop_info">
+            <text class="shop_name">{{item.name}}</text>
+            <text class="shop_site">{{item.country}}</text>
+          </view>
         </view>
-        <view class="shop_info">
-          <text class="shop_name">{{item.name}}</text>
-          <text class="shop_site">{{item.country}}</text>
-        </view>
+        <view class="to_shop" @tap="toWeb({{item.shop_link}},{{item.star_id}})">进入</view>
       </view>
-      <view class="to_shop" @tap="toWeb({{item.shop_link}},{{item.star_id}})">进入</view>
+      <view class="intro">{{item.desc_title}}</view>
+      <block wx:if="{{item.shop_goods.length!=0}}">
+        <view class="goods_list">
+          <view class="goods" wx:for="{{item.shop_goods}}" wx:for-index="one" wx:for-item="itemName" style="background: url({{itemName.thumbnail}}) center no-repeat; background-size: cover" @tap="toWeb({{itemName.goods_link}},{{itemName.id}})">
+            <view class="goods_num">RMB：{{itemName.price}}</view>
+          </view>
+        </view>
+      </block>
     </view>
-    <view class="intro">{{item.desc_title}}</view>
-    <block wx:if="{{item.shop_goods.length!=0}}">
-      <view class="goods_list">
-        <view class="goods" wx:for="{{item.shop_goods}}" wx:for-index="one" wx:for-item="itemName" style="background: url({{itemName.thumbnail}}) center no-repeat; background-size: cover" @tap="toWeb({{itemName.goods_link}},{{itemName.id}})">
-          <view class="goods_num">RMB：{{itemName.price}}</view>
-        </view>
-      </view>
-    </block>
   </view>
 </template>
 
@@ -66,9 +69,11 @@ export default class Goods extends wepy.page {
 page {
   background-color: #f5f5f5;
 }
+
 .shop {
-  height: 517rpx;
+  // height: 517rpx;
   padding: 0 45rpx;
+  padding-bottom: 57rpx;
   background-color: #fff;
   margin-bottom: 15rpx;
   .head {
@@ -95,6 +100,7 @@ page {
       margin-left: 32rpx;
       justify-content: center;
       .shop_name {
+        font-weight: 600;
         font-size: 36rpx;
         color: #333;
       }
@@ -117,9 +123,15 @@ page {
   }
   .intro {
     margin-top: 40rpx;
-    padding-left: 25rpx;
+    // padding-left: 25rpx;
     font-size: 24rpx;
     color: #666;
+    text-indent: 2em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
   }
   .goods_list {
     margin-top: 40rpx;
@@ -139,9 +151,9 @@ page {
         left: 0;
         width: 214rpx;
         height: 55rpx;
-        background: url(http://www.whxq.fenbot.com/WeChat/goods_num.png) center
-          no-repeat;
-        background-size: 100% 100%;
+        background-color: rgba(51, 51, 51, 0.37);
+        // background: url(http://www.whxq.fenbot.com/WeChat/goods_num.png) center no-repeat;
+        // background-size: 100% 100%;
         font-size: 26rpx;
         color: #ffffff;
         display: flex;

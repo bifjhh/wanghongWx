@@ -60,7 +60,7 @@
             <view class="head_img">
                <image src="{{item.owner_logo}}" />
             </view>
-            <text>{{item.owner_name}} - {{item.star_name}}</text>
+            <text class="head_name">{{item.owner_name}} - {{item.star_name}}</text>
           </view>
           <view class="c_info">{{item.star_say}}</view>
           <view class="base">
@@ -102,7 +102,6 @@
 
 <script>
 import wepy from 'wepy';
-
 export default class Planet extends wepy.page {
   config = {
     // disableScroll: true
@@ -142,7 +141,12 @@ export default class Planet extends wepy.page {
   };
 
   events = {};
-  onLoad() {}
+  onLoad() {
+    console.log(this.$parent.globalData.scene)
+    wx.showShareMenu({
+      withShareTicket: true
+    });
+  }
   onShow() {
     let that = this;
     that.pageW = wx.getSystemInfoSync().windowWidth / 2;
@@ -163,6 +167,7 @@ export default class Planet extends wepy.page {
         that.$apply();
       });
   }
+  onShareAppMessage(options) {}
   // Other properties
 }
 </script>
@@ -262,7 +267,9 @@ export default class Planet extends wepy.page {
         bottom: 28rpx;
         left: 27rpx;
         color: #fff;
-        font-size: 28rpx;
+        .star_name {
+          font-size: 28rpx;
+        }
         .star_attention {
           margin-top: 15rpx;
           font-size: 22rpx;
@@ -276,6 +283,7 @@ export default class Planet extends wepy.page {
             background-size: 100% 100%;
             margin-right: 5rpx;
           }
+          font-size: 22rpx;
         }
       }
       .new_star {
@@ -322,14 +330,26 @@ export default class Planet extends wepy.page {
   display: flex;
   flex-direction: column;
   padding: 24rpx 45rpx 26rpx 34rpx;
-  .head,
-  .base {
+  .head {
     height: 34rpx;
     display: flex;
     line-height: 34rpx;
     font-size: 30rpx;
     color: #333333;
     align-items: center;
+    .head_img {
+      width: 34rpx;
+      height: 34rpx;
+      overflow: hidden;
+      display: flex;
+      border-radius: 50%;
+      background-color: #ccc;
+      margin-right: 14rpx;
+    }
+    .head_name {
+      font-size: 30rpx;
+      color: #333333;
+    }
     > text {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -339,25 +359,21 @@ export default class Planet extends wepy.page {
     }
   }
   .base {
-     text:nth-of-type(2) {
-       margin-left: 9rpx;
+    display: flex;
+    font-size: 30rpx;
+    color: #333333;
+    align-items: center;
+    .base_imgs {
+      color: red;
+      font-size: 24rpx;
+    }
+    text:nth-of-type(2) {
+      margin-left: 9rpx;
       font-size: 22rpx;
       color: #999999;
     }
   }
-  .head_img {
-    width: 34rpx;
-    height: 34rpx;
-    overflow: hidden;
-    display: flex;
-    border-radius: 50%;
-    background-color: #ccc;
-    margin-right: 14rpx;
-  }
-  .base_imgs {
-    color: red;
-    font-size: 22rpx;
-  }
+
   .c_info {
     flex: 1;
     margin-top: 19rpx;

@@ -1,6 +1,7 @@
 <!-- 说说列表页面 -->
 <template>
   <view class='talkinfo' style="display:{{display}}">
+    <view class="yin"></view>
     <view class="talk">
       <view class="thead">
         <view class="names">
@@ -12,9 +13,13 @@
       <text class="talk_info">
         {{objs.content}}
       </text>
-      <view class="music" wx:if="{{objs.video_info.title}}">
-        <view class="music_logo">
-          <image src="{{objs.video_info.link}}" />
+      <view class="music" wx:if="{{objs.video_info.title}}" @tap="toPage('video')">
+        <view class="music_logo" style="background: url({{objs.video_info.cover}}) top left no-repeat;background-size:cover;">
+          <!-- <image src="{{objs.video_info.link}}" />
+           -->
+           <view class="play">
+            <text class="iconfont icon-bofang"></text>
+          </view>
         </view>
         <view class="m_info">
           <view class="m_title">{{objs.video_info.title}}</view>
@@ -98,7 +103,7 @@ export default class Example extends wepy.page {
   data = {
     display: 'none',
     isno: 'dsp_none',
-    liked:0,
+    liked: 0,
     showAdd: '',
     isfocus: false,
     list: [
@@ -223,6 +228,9 @@ export default class Example extends wepy.page {
           });
         }
       });
+    },
+    toPage(url) {
+      this.$navigate(url);
     }
   };
 
@@ -250,8 +258,8 @@ export default class Example extends wepy.page {
       .then(res => {
         if (res.data.status != 1) return;
         that.objs = res.data.data;
-        that.liked = res.data.data.liked*1;
-        console.log(res.data.data.liked*1)
+        that.liked = res.data.data.liked * 1;
+        console.log(res.data.data.liked * 1);
         wx.hideLoading();
         that.display = 'block';
         that.$apply();
@@ -323,6 +331,23 @@ page {
       width: 113rpx;
       height: 100%;
       background-color: #efe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .play {
+        width: 49rpx;
+        height: 49rpx;
+        border-radius: 50%;
+        background-color: rgba(255, 87, 80, 0.77);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        text {
+          font-size: 22rpx;
+          color: #fff;
+        }
+      }
     }
     .m_info {
       flex: 1;

@@ -12,8 +12,8 @@
       <scroll-view class="scroll-view_H" scroll-x style="width: 100%">
         <view class="store_list">
           <view class="store_one" wx:for="{{objs}}" wx:key="{{item.id}}" @tap="toPage({{item.goods_link}})">
-            <view class="store_img">
-              <image src="{{item.thumbnail}}" />
+            <view class="store_img" style="background: url({{item.thumbnail}}) center center no-repeat;background-size:cover;" >
+              <!-- <image src="{{item.thumbnail}}" /> -->
               <view class="jingxuan">
                 <text class="iconfont icon-zuanshi"></text>
                 <text class="txt">精选</text>
@@ -127,22 +127,23 @@ export default class Store extends wepy.component {
       .jingxuan {
         position: absolute;
         height: 29rpx;
+
         display: flex;
         align-items: center;
         justify-content: center;
         top: 15rpx;
         left: 15rpx;
-        padding: 0 10rpx;
+        padding:0 10rpx;
+        // padding: 6rpx 10rpx 5rpx;
         background-color: rgba(255, 255, 255, 0.42);
         border-radius: 5px;
         text {
-          // font-size: 20rpx;
-          font-size: 10px;
+          font-size: 20rpx;
           color: #ff5750;
         }
         .icon-zuanshi {
-          // font-size: 28rpx;
-          font-size: 14px;
+          font-size: 24rpx;
+          padding-top: 1px;
         }
         .txt {
           padding-left: 10rpx;

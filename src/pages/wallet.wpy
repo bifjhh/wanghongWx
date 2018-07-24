@@ -1,6 +1,7 @@
 <!-- 我的钱包 -->
 <template>
   <view class='wallet_box'>
+    <view class="yin"></view>
     <view class="num">
       <text>金额（元）</text>
       <view class="money">

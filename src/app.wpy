@@ -32,6 +32,7 @@ export default class extends wepy.app {
       'pages/notice',
       'pages/msgList',
       'pages/video',
+      'pages/password',
       'pages/webview'
     ],
     tabBar: {
@@ -74,10 +75,19 @@ export default class extends wepy.app {
       navigationBarTextStyle: 'black',
       backgroundColor: '#fff'
     }
+    /*  navigationBarTextStyle: 'black',
+          navigationBarBackgroundColor: '#fff',
+          enablePullDownRefresh: true,
+          backgroundColor: '#fff',
+          backgroundTextStyle: '#333',
+          onReachBottomDistance: 15,
+          navigationStyle: 'custom' */
   };
   globalData = {
     userInfo: null,
-    expired: ''
+    token: '',
+    expired: '',
+    scene: ''
   };
   constructor() {
     super();
@@ -88,7 +98,7 @@ export default class extends wepy.app {
       config(p) {
         // console.log(p);
         let that = this;
-        // console.log('之前的时间--', that.globalData.expired);
+        console.log('之前的时间--', that.globalData.expired);
         // console.log('之前的token--', that.globalData.token);
         // console.log('现在的时间--', Date.parse(new Date()) / 1000);
         let istm = Date.parse(new Date()) / 1000;
@@ -123,7 +133,11 @@ export default class extends wepy.app {
             });
         }
         p.method = 'POST';
-        p.url = uri + p.url;
+        if (p.url == '/common/get_sms_auth_code') {
+          p.url='https://www.whxq.fenbot.com/api/common/get_sms_auth_code';
+        } else {
+          p.url = uri + p.url;
+        }
         p.header = {
           'content-type': 'application/json',
           Authorization: 'Bearer ' + this.globalData.token
@@ -183,8 +197,9 @@ export default class extends wepy.app {
       }
     });
   }
-  onLaunch() {
+  onLaunch(options) {
     let that = this;
+    that.globalData.scene = options.scene;
     this.testAsync();
     // this.login(that);
     wx.getStorage({
@@ -249,10 +264,12 @@ page {
 }
 view {
   box-sizing: border-box;
+  word-break: break-all;
 }
 view,
 text {
   font-size: 24rpx;
+  // font-size: inherit;
 }
 image {
   width: 100%;
@@ -288,6 +305,14 @@ image {
   border: 1px solid RGBA(194, 179, 135, 1);
   border-radius: 50%;
   box-sizing: border-box;
+}
+.yin {
+  height: 2px;
+  box-shadow: 0 3rpx 6rpx 0 rgba(0, 6, 13, 0.08);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
 }
 .clearfix:before,
 .clearfix:after {
