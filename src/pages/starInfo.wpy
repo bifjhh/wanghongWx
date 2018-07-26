@@ -3,6 +3,7 @@
   <view style="display:{{display}}">
     <scroll-view scroll-into-view="{{toView}}" scroll-y="{{true}}" scroll-with-animation="true" class="scr">
       <view class="head" style="background: url({{starInfo.head.star_logo}}) center no-repeat;background-size:cover;">
+        <view wx:if="{{starInfo.head.can_manage==1}}" class="shezhi iconfont icon-shezhi" @tap="showMd(0)"></view>
         <view class="introduce">
           <view class="head_img">
             <image src="{{starInfo.head.owner_logo}}" />
@@ -17,9 +18,9 @@
               {{starInfo.head.star_description}}
               <text class="get_all iconfont icon-jiantou9"></text>
             </view>
-            <view class="attention">
-              <view  wx:if="{{isFollow=='false'}}" class="add" @tap="follow('add')">+关注</view>
-              <view  wx:else class="iconfont icon-yiguanzhu" @tap="follow('del')">
+            <view class="attention" wx:if="{{starInfo.head.can_manage==0}}">
+              <view wx:if="{{isFollow=='false'}}" class="add" @tap="follow('add')">+关注</view>
+              <view wx:else class="iconfont icon-yiguanzhu" @tap="follow('del')">
                 <!-- <text class="iconfont icon-yiguanzhu"></text> -->
               </view>
             </view>
@@ -60,16 +61,31 @@
         </view>
         <view class="body_info">
           <!-- <repeat for="{{nav_list}}" key="{{item.id}}"  item="item">
-              <talk wx:if="{{item.id=='talk'}}" :objs.sync="starInfo.dynamic.say" />
-              <issue wx:if="{{item.id=='issue'}}" :objs.sync="item" />
-              <photo wx:if="{{item.id=='photo'}}" :objs.sync="item" />
-              <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
-            </repeat> -->
+                <talk wx:if="{{item.id=='talk'}}" :objs.sync="starInfo.dynamic.say" />
+                <issue wx:if="{{item.id=='issue'}}" :objs.sync="item" />
+                <photo wx:if="{{item.id=='photo'}}" :objs.sync="item" />
+                <store wx:if="{{item.id=='store'}}" :objs.sync="item" />
+              </repeat> -->
           <repeat>
-            <talk wx:if="{{starInfo.dynamic.say.total!=0}}" :objs.sync="starInfo.dynamic.say" :lists.sync="saysList" @toPage.user="toPage"/>
+            <talk wx:if="{{starInfo.dynamic.say.total!=0}}" :objs.sync="starInfo.dynamic.say" :lists.sync="saysList" @toPage.user="toPage" />
             <photo wx:if="{{starInfo.dynamic.photos.total!=0}}" :objs.sync="starInfo.dynamic.photos" />
             <store wx:if="{{starInfo.dynamic.goods.length}}" :objs.sync="starInfo.dynamic.goods" />
           </repeat>
+          <view class="null" wx:if="{{starInfo.dynamic.say.lists==0&&starInfo.dynamic.photos.total==0&&starInfo.dynamic.goods.length==0}}">
+            暂时没有更多内容了
+          </view>
+        </view>
+      </view>
+      <view class="layer" wx:if="{{isModal}}">
+        <view class="modal">
+          <view class="m_img">
+            <image src="/images/modal.png" />
+          </view>
+          <view class="m_txt">请至网红星球App进行操作管理</view>
+          <view class="m_btn" @tap="showMd(1)">
+            <view>取消</view>
+            <view>确认</view>
+          </view>
         </view>
       </view>
     </scroll-view>
@@ -92,11 +108,12 @@ export default class starInfo extends wepy.page {
     store
   };
   data = {
+    isModal: false,
     display: 'none',
     starInfo: {},
     isFollow: '',
     says: {},
-    saysList:[],
+    saysList: [],
     nav_list: [
       {
         name: '说说',
@@ -126,40 +143,47 @@ export default class starInfo extends wepy.page {
     showInfo() {
       this.isInfo = false;
     },
+    showMd(is) {
+      console.log(is);
+      if (is == 0) {
+        this.isModal = true;
+      } else {
+        this.isModal = false;
+      }
+    },
     /* doLike(index) {
-      //@doLike.user="doLike"
-      console.log(index);
-      let that = this;
-      let lists = that.saysList;
-      let sayid = that.saysList[index].say_id;
-      let type = lists[index].is_dolike == 0 ? 'add' : 'del';
-      console.log(type, index, sayid);
-      console.log('之前的1', that.saysList[index].is_dolike);
-      // return;
-      wepy
-        .request({
-          url: '/say/do_like',
-          data: {
-            say_id: sayid,
-            dotype: type
-          }
-        })
-        .then(res => {
-          if (res.data.status != '1') return;
-          if (type == 'add') {
-            lists[index].is_dolike = 1;
+        //@doLike.user="doLike"
+        console.log(index);
+        let that = this;
+        let lists = that.saysList;
+        let sayid = that.saysList[index].say_id;
+        let type = lists[index].is_dolike == 0 ? 'add' : 'del';
+        console.log(type, index, sayid);
+        console.log('之前的1', that.saysList[index].is_dolike);
+        // return;
+        wepy
+          .request({
+            url: '/say/do_like',
+            data: {
+              say_id: sayid,
+              dotype: type
+            }
+          })
+          .then(res => {
+            if (res.data.status != '1') return;
+            if (type == 'add') {
+              lists[index].is_dolike = 1;
+              that.$apply();
+            } else if (type == 'del') {
+              lists[index].is_dolike = 0;
+              that.$apply();
+            }
+            lists[index].say_like = res.data.data.like;
+            that.saysList = lists;
             that.$apply();
-          } else if (type == 'del') {
-            lists[index].is_dolike = 0;
-            that.$apply();
-          }
-
-          lists[index].say_like = res.data.data.like;
-          that.saysList = lists;
-          that.$apply();
-          console.log('现在的', that.saysList[index].is_dolike);
-        });
-    }, */
+            console.log('现在的', that.saysList[index].is_dolike);
+          });
+      }, */
     /* 跳转星球详情 */
     toPage(url, param) {
       let that = this;
@@ -240,6 +264,20 @@ export default class starInfo extends wepy.page {
     that.starId = options.star_id;
     that.$apply();
   }
+  onShareAppMessage(res) {
+    console.log(res);
+    let that = this;
+    if (res.from === 'button') {
+      // 来自页面内转发按钮
+      console.log(res.target.id);
+      console.log('来自页面内转发按钮');
+    }
+    return {
+      title: that.saysList[0].owner_name + '的说说',
+      path: '/pages/talkInfo?id=' + res.target.dataset.id,
+      imageUrl: that.saysList[0].owner_img
+    };
+  }
 }
 </script>
 
@@ -262,6 +300,13 @@ page {
   background: url(http://www.whxq.fenbot.com/WeChat/star_top.png) center
     no-repeat;
   background-size: 100% 100%;
+  .shezhi {
+    position: absolute;
+    right: 30rpx;
+    top: 30rpx;
+    font-size: 42rpx;
+    color: #fff;
+  }
   .head_img {
     width: 119rpx;
     height: 119rpx;
@@ -477,6 +522,66 @@ page {
       .active {
         border-bottom: 1px solid #f00;
         color: #333;
+      }
+    }
+  }
+  .null {
+    text-align: center;
+    padding-top: 100rpx;
+    color: #999;
+    font-size: 24rpx;
+  }
+}
+.layer {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  // opacity: 0.3;
+  background-color: RGBA(0, 0, 0, 0.3);
+  z-index: 999;
+  .modal {
+    // position: fixed;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    width: 610rpx; // height: 550rpx;
+    .m_img {
+      width: 610rpx;
+      height: 285rpx;
+      position: relative;
+      image {
+        height: 326rpx;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+      }
+    }
+    .m_txt {
+      margin-top: 72rpx;
+      color: #666666;
+      font-size: 16px;
+      text-align: center;
+    }
+    .m_btn {
+      width: 100%;
+      height: 88rpx;
+      margin-top: 70rpx;
+      border-top: 1px solid rgb(224, 224, 224);
+      display: flex;
+      view {
+        flex: auto;
+        height: 100%;
+        line-height: 88rpx;
+        text-align: center;
+        color: #999;
+        font-size: 34rpx;
+      }
+      view:nth-of-type(1) {
+        border-right: 1px solid rgb(224, 224, 224);
       }
     }
   }

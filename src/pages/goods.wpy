@@ -1,28 +1,31 @@
 <template lang="wxml">
   <view class="shop_box">
     <view class="yin"></view>
-    <view class="shop" wx:for="{{lists}}" wx:key="{{index}}">
-      <view class="head">
-        <view class="h_l">
-          <view class="shop_logo">
-            <image src="{{item.logo}}" />
+    <block wx:if="{{lists.length>0}}">
+      <view class="shop" wx:for="{{lists}}" wx:key="{{index}}">
+        <view class="head">
+          <view class="h_l">
+            <view class="shop_logo">
+              <image src="{{item.logo}}" />
+            </view>
+            <view class="shop_info">
+              <text class="shop_name">{{item.name}}</text>
+              <text class="shop_site">{{item.country}}</text>
+            </view>
           </view>
-          <view class="shop_info">
-            <text class="shop_name">{{item.name}}</text>
-            <text class="shop_site">{{item.country}}</text>
-          </view>
+          <view class="to_shop" @tap="toWeb({{item.shop_link}},{{item.star_id}})">进入</view>
         </view>
-        <view class="to_shop" @tap="toWeb({{item.shop_link}},{{item.star_id}})">进入</view>
+        <view class="intro">{{item.desc_title}}</view>
+        <block wx:if="{{item.shop_goods.length!=0}}">
+          <view class="goods_list">
+            <view class="goods" wx:for="{{item.shop_goods}}" wx:for-index="one" wx:for-item="itemName" style="background: url({{itemName.thumbnail}}) center no-repeat; background-size: cover" @tap="toWeb({{itemName.goods_link}},{{itemName.id}})">
+              <view class="goods_num">RMB：{{itemName.price}}</view>
+            </view>
+          </view>
+        </block>
       </view>
-      <view class="intro">{{item.desc_title}}</view>
-      <block wx:if="{{item.shop_goods.length!=0}}">
-        <view class="goods_list">
-          <view class="goods" wx:for="{{item.shop_goods}}" wx:for-index="one" wx:for-item="itemName" style="background: url({{itemName.thumbnail}}) center no-repeat; background-size: cover" @tap="toWeb({{itemName.goods_link}},{{itemName.id}})">
-            <view class="goods_num">RMB：{{itemName.price}}</view>
-          </view>
-        </view>
-      </block>
-    </view>
+    </block>
+    <view wx:else>暂无数据</view>
   </view>
 </template>
 

@@ -1,6 +1,6 @@
 <!-- 说说列表页面 -->
 <template>
-  <view class='talkinfo' style="display:{{display}}">
+  <view class='talkinfo' style="display:{{objs.content?'block':'none'}}">
     <view class="yin"></view>
     <view class="talk">
       <view class="thead">
@@ -24,6 +24,13 @@
         <view class="m_info">
           <view class="m_title">{{objs.video_info.title}}</view>
           <view class="m_name">{{objs.video_info.author}}</view>
+        </view>
+      </view>
+      <view class="music sy_goods" wx:if="{{objs.goods_info.thumbnail}}" @tap="toWeb({{objs.goods_info.link}},{{objs.goods_info.id}})">
+        <view class="music_logo" @tap="play({{index}})" style="background: url({{objs.goods_info.thumbnail}}) top left no-repeat;background-size:cover;"></view>
+        <view class="m_info">
+          <view class="m_title">{{objs.goods_info.title}}</view>
+          <view class="m_name">RMB：<text>{{objs.goods_info.price}}</text></view>
         </view>
       </view>
       <view class="img_list {{objs.photo_list.length>2?'img_list2':''}}" wx:if="{{objs.photo_list.length!=0}}">
@@ -54,7 +61,7 @@
       <view class="di_tit">
         评论({{objs.comment}})
       </view>
-      <view class="discuss" wx:for="{{objs.comments.items}}" wx:key="{{item.id}}" wx:for-item="pl">
+      <view class="discuss" wx:for="{{comments}}" wx:key="{{item.id}}" wx:for-item="pl">
         <view class="user_img">
           <image src="{{pl.user_info.headimgurl}}" />
         </view>
@@ -86,7 +93,9 @@
         <!-- <text class="iconfont icon-fenxiang"></text> -->
         <view @tap="toInput('1')" style="width:40rpx;height:38rpx;background: url(https://www.whxq.fenbot.com/WeChat/pinglun.png) center no-repeat; background-size: cover"></view>
         <view class="{{liked==1?'cdel':'cadd'}}" @tap="praise"></view>
-        <view style="width:40rpx;height:38rpx;background: url(https://www.whxq.fenbot.com/WeChat/fenxiang.png) center no-repeat; background-size: cover"></view>
+        <view class="fenxiang" style="width:40rpx;height:38rpx;background: url(https://www.whxq.fenbot.com/WeChat/fenxiang.png) center no-repeat; background-size: cover">
+        <button type="default" open-type='share' class="share" data-id="{{item.say_id}}"></button>
+        </view>
 
         
       </view>
@@ -106,7 +115,8 @@ export default class Example extends wepy.page {
     liked: 0,
     showAdd: '',
     isfocus: false,
-    list: [
+    comments: [],
+    /* list: [
       {
         id: 0,
         reply: [{ id: 0 }, { id: 1 }]
@@ -123,9 +133,11 @@ export default class Example extends wepy.page {
         id: 3,
         reply: [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }]
       }
-    ],
+    ], */
     addMsg: '',
-    objs: {}
+    objs: {},
+    page: 1,
+    max: 1
   };
 
   components = {};
@@ -180,23 +192,37 @@ export default class Example extends wepy.page {
     },
     confirm(e) {
       let that = this;
-      console.log(that);
+      console.log('点击发送confirm');
       // console.log(e.detail.value)
+      // wepy
+      //   .request({
+      //     url: '/say/comment',
+      //     data: {
+      //       say_id: that.objs.id,
+      //       content: that.addMsg
+      //     }
+      //   })
+      //   .then(res => {
+      //     console.log('res', res);
+      //   });
+      // return;
+
       wepy
         .request({
           url: '/say/comment',
           data: {
-            sign: '',
             say_id: that.objs.id,
             content: that.addMsg
           }
         })
         .then(res => {
-          if (res.data.status == '1') {
-            console.log(res.data);
-            that.addMsg = '';
-            that.getInfo();
-          }
+          if (res.data.status != '1') return;
+          console.log('res成功', res);
+          that.addMsg = '';
+          that.getInfo(that);
+        })
+        .catch(err => {
+          console.log('err', err);
         });
     },
     showImgs(img, imgs) {
@@ -231,6 +257,15 @@ export default class Example extends wepy.page {
     },
     toPage(url) {
       this.$navigate(url);
+    },
+    toWeb(url, shopId) {
+      console.log(url);
+      let token = url.substr(url.search(/\?token=/) + 7);
+      url = url.substr(0, url.search(/\?token=/));
+      url = `webview?token=${token}&src=${url}&id=${shopId}`;
+      console.log('url', url);
+      // return;
+      this.$navigate(url);
     }
   };
 
@@ -241,40 +276,90 @@ export default class Example extends wepy.page {
   computed = {};
 
   onLoad(options) {
+    let that = this;
+
+    console.log('options', options);
+    console.log(options.id);
+    that.options = options;
+    that.getInfo(that);
+  }
+  getInfo(that) {
     wx.showLoading({
       title: ''
     });
-    console.log(options.id);
-    this.options = options;
-    this.getInfo();
-  }
-  getInfo() {
-    let that = this;
     wepy
       .request({
         url: '/say/detail',
-        data: { sign: '', id: that.options.id, page: 1 }
+        data: { id: that.options.id, page: 1 }
       })
       .then(res => {
         if (res.data.status != 1) return;
         that.objs = res.data.data;
+        that.comments = res.data.data.comments.items;
         that.liked = res.data.data.liked * 1;
-        console.log(res.data.data.liked * 1);
+        that.page += 1;
+        that.max = res.data.data.comments.total;
+
         wx.hideLoading();
-        that.display = 'block';
+        // that.display = 'block';
         that.$apply();
       });
   }
 
   onShow() {
     let that = this;
-    that.list.forEach(e => {
+    /* that.list.forEach(e => {
       if (e.reply.length > 2) {
         e.isshow = false;
       } else {
         e.isshow = true;
       }
+    }); */
+  }
+  onReachBottom() {
+    let that = this;
+    console.log('触发上拉刷新');
+    that.getList(that, that.page);
+  }
+  getList(that, page) {
+    if (that.comments.length >= that.max) {
+      wx.showToast({
+        title: '没有更多数据了',
+        icon: 'none',
+        duration: 1500
+      });
+      return false;
+    }
+    wx.showLoading({
+      title: ''
     });
+    wepy
+      .request({
+        url: '/say/detail',
+        data: { id: that.options.id, page: page }
+      })
+      .then(res => {
+        if (res.data.status != 1) return;
+        that.comments = that.comments.concat(res.data.data.comments.items);
+        wx.hideLoading();
+        that.page += 1;
+
+        that.$apply();
+      });
+  }
+  onShareAppMessage(res) {
+    console.log(res);
+    let that = this;
+    if (res.from === 'button') {
+      // 来自页面内转发按钮
+      console.log(res.target.id);
+      console.log('来自页面内转发按钮');
+    }
+    return {
+      title: that.objs.publisher.name + '的说说',
+      path: '/pages/talkInfo?id=' + that.objs.id,
+      imageUrl: that.objs.publisher.headimgurl
+    };
   }
 }
 </script>
@@ -325,7 +410,7 @@ page {
   .music {
     margin-top: 20rpx;
     height: 120rpx;
-    background-color: #ccc;
+    background-color: #f2f2f2;
     display: flex;
     .music_logo {
       width: 113rpx;
@@ -367,6 +452,10 @@ page {
       .m_name {
         font-size: 23rpx;
         color: #999999;
+        text {
+          font-size: 30rpx;
+          color: #999999;
+        }
       }
     }
   }
@@ -388,7 +477,7 @@ page {
     }
     .picw1 {
       width: 100%;
-      height: auto;
+      // height: auto;
       margin-right: 0;
       height: 400rpx;
 
@@ -399,7 +488,7 @@ page {
     }
     .picw2 {
       width: 48%;
-      height: auto;
+      // height: auto;
       height: 330rpx;
       margin-right: 0;
       image {
@@ -556,6 +645,19 @@ page {
     background: url(https://www.whxq.fenbot.com/WeChat/guanzhu.png) center
       no-repeat;
     background-size: cover;
+  }
+  .fenxiang {
+    position: relative;
+    .share {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-color: transparent;
+      opacity: 0;
+      &::after {
+        border: none;
+      }
+    }
   }
 }
 </style>

@@ -52,8 +52,8 @@
     <view class="title">我关注的星球</view>
     <view class="attention_list">
       <view wx:for="{{follows}}" wx:key="index" wx:item="item" class="att_info" @tap="toPage('starInfo',{{item.star_id}})" data-starid="{{item.star_id}}">
-        <view class="info_img">
-				  <image src="{{item.star_logo}}" />
+        <view class="info_img" style="background: url({{item.star_logo}}) center no-repeat; background-size: cover">
+				  <!-- <image src="{{item.star_logo}}" /> -->
         </view>
         <view class="content">
           <view class="head">
@@ -74,11 +74,12 @@
   <view class="null" wx:else>
     <view class="title">我关注的星球</view>
       <view class="null_img">
-       <image src="/images/no_xingqiu.png" />
+       <image src="/images/no_xingqiu2.png" />
       </view>
-      <text class="null_info">
-       搜索你喜欢的星球 \n 快去关注哦
-      </text>
+      <view class="null_info">
+       <view>搜索你喜欢的星球</view>
+       <view>快去关注哦</view>
+      </view>
   </view>
   <view class="to_app">
     打开App
@@ -166,6 +167,9 @@ export default class Planet extends wepy.page {
         that.display = 'block';
         that.$apply();
       });
+  }
+  onReachBottom() {
+    console.log('触发上拉刷新');
   }
   onShareAppMessage(options) {}
   // Other properties
@@ -399,22 +403,26 @@ export default class Planet extends wepy.page {
 .null {
   display: flex;
   flex-direction: column;
-  padding-bottom: 90rpx;
+  // padding-bottom: 70rpx;
   .title {
     padding-bottom: 58rpx;
   }
   .null_img {
     margin: 0 auto;
     width: 306rpx;
-    height: 306rpx;
+    height: 147rpx;
+    // width: 306rpx;
+    // height: 306rpx;
   }
   .null_info {
     margin: 0 auto;
     margin-top: 33rpx;
-    text-align: center;
-    line-height: 44rpx;
-    color: #999;
-    font-size: 30rpx;
+    view {
+      text-align: center;
+      line-height: 44rpx;
+      color: #999;
+      font-size: 30rpx;
+    }
   }
 }
 .to_app {
@@ -444,7 +452,7 @@ export default class Planet extends wepy.page {
 .modal {
   position: fixed;
   left: 50%;
-  top: 40%;
+  top: 50%;
   transform: translate(-50%, -50%);
   background-color: #fff;
   width: 610rpx;
@@ -453,6 +461,13 @@ export default class Planet extends wepy.page {
   .m_img {
     width: 610rpx;
     height: 285rpx;
+    position: relative;
+    image{
+      height: 326rpx;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }    
   }
   .m_txt {
     margin-top: 72rpx;
@@ -471,8 +486,8 @@ export default class Planet extends wepy.page {
       height: 100%;
       line-height: 88rpx;
       text-align: center;
-      color: #ff5750;
-      font-size: 17px;
+      color: #999;
+      font-size: 34rpx;
     }
     view:nth-of-type(1) {
       border-right: 1px solid rgb(224, 224, 224);

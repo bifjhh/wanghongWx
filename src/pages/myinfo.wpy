@@ -27,7 +27,7 @@
         <view class="info">
           <text>个人介绍</text>
           <view class="state">
-            <text>{{user.introduce||'未设置'}}</text>
+            <text class="msg">{{user.introduce||'未设置'}}</text>
             <text class="iconfont icon-jiantou"></text>
           </view>
         </view>
@@ -212,7 +212,9 @@ page {
         justify-content: flex-end;
         height: 100%;
         text-align: right;
-
+        .msg{
+          flex:1;
+        }
         .picker {
           display: flex;
           align-items: center;
@@ -238,6 +240,7 @@ page {
 
         .icon-jiantou {
           margin-left: 15rpx;
+          font-size: 24rpx;
         }
       }
     }

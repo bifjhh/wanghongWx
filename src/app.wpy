@@ -73,6 +73,7 @@ export default class extends wepy.app {
       enablePullDownRefresh: false,
       backgroundTextStyle: '#333',
       navigationBarTextStyle: 'black',
+      onReachBottomDistance: -15,
       backgroundColor: '#fff'
     }
     /*  navigationBarTextStyle: 'black',
@@ -134,7 +135,7 @@ export default class extends wepy.app {
         }
         p.method = 'POST';
         if (p.url == '/common/get_sms_auth_code') {
-          p.url='https://www.whxq.fenbot.com/api/common/get_sms_auth_code';
+          p.url = 'https://www.whxq.fenbot.com/api/common/get_sms_auth_code';
         } else {
           p.url = uri + p.url;
         }
@@ -327,12 +328,12 @@ image {
 /* 字体图标 */
 @font-face {
   font-family: 'iconfont'; /* project id 716449 */
-  src: url('//at.alicdn.com/t/font_716449_wiy0oakzipj.eot');
-  src: url('//at.alicdn.com/t/font_716449_wiy0oakzipj.eot?#iefix')
+  src: url('//at.alicdn.com/t/font_716449_uo2hgc8gsvo.eot');
+  src: url('//at.alicdn.com/t/font_716449_uo2hgc8gsvo.eot?#iefix')
       format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_716449_wiy0oakzipj.woff') format('woff'),
-    url('//at.alicdn.com/t/font_716449_wiy0oakzipj.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_716449_wiy0oakzipj.svg#iconfont') format('svg');
+    url('//at.alicdn.com/t/font_716449_uo2hgc8gsvo.woff') format('woff'),
+    url('//at.alicdn.com/t/font_716449_uo2hgc8gsvo.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_716449_uo2hgc8gsvo.svg#iconfont') format('svg');
 }
 
 .iconfont {
@@ -411,6 +412,9 @@ image {
   content: '\e9bd';
 }
 
+.icon-shezhi:before {
+  content: '\e61c';
+}
 .icon-jiantou:before {
   content: '\e60c';
 }

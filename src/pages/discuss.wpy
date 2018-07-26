@@ -2,9 +2,9 @@
 <template>
   <view class='discuss_box'>
     <view class="yin"></view>
-    <view class="lists" wx:if="{{lists}}">
+    <view class="lists" wx:if="{{lists.length>0}}">
       <view class="list" wx:for="{{lists}}" wx:key="{{index}}">
-        <view class="talk_list">
+        <view class="talk_list" wx:if="{{item.comment.length>0}}">
           <view class="thead" @tap="toPage('talkInfo',{{item.say_id}})">
             <view class="names">
               <view class="name_img">
@@ -26,6 +26,13 @@
             <view class="m_info">
               <view class="m_title">{{item.say_video_info.title}}</view>
               <view class="m_name">{{item.say_video_info.author}}</view>
+            </view>
+          </view>
+          <view class="music sy_goods" wx:if="{{item.say_goods_info.thumbnail}}" @tap="toWeb({{item.say_goods_info.link}},{{item.say_goods_info.id}})">
+            <view class="music_logo" @tap="play({{index}})" style="background: url({{item.say_goods_info.thumbnail}}) top left no-repeat;background-size:cover;"></view>
+            <view class="m_info">
+              <view class="m_title">{{item.say_goods_info.title}}</view>
+              <view class="m_name">RMB：<text>{{item.say_goods_info.price}}</text></view>
             </view>
           </view>
           <view class="img_list {{item.say_photos_path.length>2?'img_list2':''}}" wx:if="{{item.say_photos_path.length!=0}}">
@@ -52,7 +59,7 @@
             </view>
           </view>
         </view>
-        <view class="discuss" wx:if="{{item.comment}}">
+        <view class="discuss" wx:if="{{item.comment.length>0}}">
           <view class="portrait">
             <image src="{{item.comment[0].comment_owner_logo}}" />
           </view>
@@ -68,6 +75,11 @@
           </view>
         </view>
       </view>
+      <view class="limit">
+        <view></view>
+        <text wx:if="{{page>max}}">我是有底限的</text>
+        <view></view>
+      </view>
     </view>
     <view wx:else class="null">
       <view class="img">
@@ -79,359 +91,416 @@
 </template>
 
 <script>
-import wepy from 'wepy';
-export default class Example extends wepy.page {
-  config = {
-    navigationBarTitleText: '评论'
-  };
-  data = {
-    lists: []
-  };
-  components = {};
-  methods = {
-    del(id, index, idx) {
+  import wepy from 'wepy';
+  export default class Example extends wepy.page {
+    config = {
+      navigationBarTitleText: '评论'
+    };
+    data = {
+      lists: [],
+      page: 1,
+      max: 1
+    };
+    components = {};
+    methods = {
+      del(id, index, idx) {
+        let that = this;
+        console.log(index, idx);
+        wepy
+          .request({
+            url: '/say/del_comment',
+            data: {
+              comment_id: id
+            }
+          })
+          .then(res => {
+            if (res.data.status != 1) return;
+            that.lists[index].comment.splice(idx, 1);
+            that.$apply();
+            console.log(res.data);
+          });
+      },
+      amap(lng, lat, address) {
+        console.log(lng, lat, address);
+        wx.getSetting({
+          success(res) {
+            if (!res.authSetting['scope.userLocation']) {
+              wx.authorize({
+                scope: 'scope.userLocation',
+                success() {
+                  wx.openLocation({
+                    longitude: lng,
+                    latitude: lat,
+                    address: address
+                  });
+                }
+              });
+            }
+            wx.openLocation({
+              longitude: lng,
+              latitude: lat,
+              address: address
+            });
+          }
+        });
+      },
+      toPage(url, src) {
+        if (url == 'talkInfo' && src) {
+          url += '?id=' + src;
+        } else if (url == 'video' && src) {
+          url += '?src=' + src;
+        }
+        this.$navigate(url);
+      },
+      showImgs(img, imgs) {
+        wx.previewImage({
+          current: img, // 当前显示图片的http链接
+          urls: imgs // 需要预览的图片http链接列表
+        });
+      },
+      toWeb(url, shopId) {
+        console.log(url);
+        let token = url.substr(url.search(/\?token=/) + 7);
+        url = url.substr(0, url.search(/\?token=/));
+        url = `webview?token=${token}&src=${url}&id=${shopId}`;
+        console.log('url', url);
+        // return;
+        this.$navigate(url);
+      }
+    };
+    events = {};
+    watch = {};
+    computed = {};
+    onLoad() {}
+    onShow() {
       let that = this;
-      console.log(index, idx);
+      that.getList(that, that.page)
+    }
+    onReachBottom() {
+      let that = this;
+      console.log('触发上拉刷新');
+      that.getList(that, that.page);
+    }
+    getList(that, page) {
+      if (page > that.max) {
+        wx.showToast({
+          title: '没有更多数据了',
+          icon: 'none',
+          duration: 1500
+        });
+        return false;
+      }
+      wx.showLoading({
+        title: ''
+      });
       wepy
         .request({
-          url: '/say/del_comment',
-          data: {
-            comment_id: id
-          }
+          url: '/dynamic/comment_list',data:{page:page}
         })
         .then(res => {
           if (res.data.status != 1) return;
-          that.lists[index].comment.splice(idx, 1);
-          that.$apply();
-          console.log(res.data);
+          wx.hideLoading();
+          that.lists = that.lists.concat(res.data.data.items);
+          that.max = res.data.data.last_page;
+          that.page += 1;
+          this.$apply();
         });
-    },
-    amap(lng, lat, address) {
-      console.log(lng, lat, address);
-      wx.getSetting({
-        success(res) {
-          if (!res.authSetting['scope.userLocation']) {
-            wx.authorize({
-              scope: 'scope.userLocation',
-              success() {
-                wx.openLocation({
-                  longitude: lng,
-                  latitude: lat,
-                  address: address
-                });
-              }
-            });
-          }
-          wx.openLocation({
-            longitude: lng,
-            latitude: lat,
-            address: address
-          });
-        }
-      });
-    },
-    toPage(url, src) {
-      if (url == 'talkInfo') {
-        url += '?id=' + src;
-      } else if (url == 'video') {
-        url += '?src=' + src;
-      }
-      this.$navigate(url);
     }
-  };
-  events = {};
-  watch = {};
-  computed = {};
-  onLoad() {}
-  onShow() {
-    let that = this;
-    wepy
-      .request({
-        url: '/dynamic/comment_list'
-      })
-      .then(res => {
-        // console.log(res.data);
-        that.lists = res.data.data.items;
-        that.$apply();
-      });
   }
-}
 </script>
 
 <style lang='scss'>
-page {
-  background-color: #f5f5f5;
-}
-.list {
-  background-color: #fff;
-  margin-bottom: 20rpx;
-  .wanghong {
-    padding: 0 30rpx;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 45rpx;
-    .title {
-      display: flex;
-      height: 120rpx;
-      align-items: center;
-      justify-content: space-between;
-      .t_l {
-        display: flex;
-        .portrait {
-          width: 76rpx;
-          height: 76rpx;
-          background-color: #f3f;
-          border-radius: 50%;
-          overflow: hidden;
-        }
-        .name {
-          color: #000;
-          font-size: 30rpx;
-          display: flex;
-          align-items: center;
-          margin-left: 14rpx;
-        }
-      }
-      .time {
-        font-size: 26rpx;
-        color: #999999;
-      }
-    }
-    .msg {
-      font-size: 30rpx;
-      color: #333333;
-      line-height: 48rpx;
-    }
+  page {
+    background-color: #f5f5f5;
   }
-  .discuss {
-    padding: 0 26rpx;
-    padding-top: 43rpx;
-    display: flex;
-    .portrait {
-      width: 60rpx;
-      height: 60rpx;
-      border-radius: 50%;
-      background-color: #efc;
-      overflow: hidden;
-    }
-    .discuss_r {
-      flex: 1;
-      margin-left: 18rpx;
-      .name {
-        font-size: 28rpx;
-        color: #999999;
-      }
-      .discuss_li {
-        &.discuss_li:nth-last-child(1) {
-          border-bottom: 0;
-        }
-        flex: 1;
+  .list {
+    background-color: #fff;
+    margin-bottom: 20rpx;
+    .wanghong {
+      padding: 0 30rpx;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 45rpx;
+      .title {
         display: flex;
-        flex-direction: column;
-        padding-top: 24rpx;
-        padding-bottom: 27rpx;
-        border-bottom: 1px solid #e5e5e5;
-        .info {
-          flex: 1;
+        height: 120rpx;
+        align-items: center;
+        justify-content: space-between;
+        .t_l {
+          display: flex;
+          .portrait {
+            width: 76rpx;
+            height: 76rpx;
+            background-color: #f3f;
+            border-radius: 50%;
+            overflow: hidden;
+          }
+          .name {
+            color: #000;
+            font-size: 30rpx;
+            display: flex;
+            align-items: center;
+            margin-left: 14rpx;
+          }
+        }
+        .time {
           font-size: 26rpx;
-          line-height: 42rpx;
-          color: #333333;
-          word-break: break-all;
-        }
-        .footer {
-          flex: 1;
-          display: flex;
-          margin-top: 30rpx;
-          justify-content: space-between;
-          .time {
-            font-size: 24rpx;
-            color: #999999;
-          }
-          .del {
-            font-size: 24rpx;
-            color: #4d7aad;
-          }
+          color: #999999;
         }
       }
-    }
-  }
-}
-.null {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  .img {
-    margin-top: 399rpx;
-    width: 286rpx;
-    height: 188rpx;
-  }
-  text {
-    margin-top: 40rpx;
-    font-size: 24rpx;
-    color: #999999;
-  }
-}
-.talk_list {
-  border-bottom: 1px solid #e5e5e5;
-  padding: 0 30rpx;
-  padding-bottom: 20rpx;
-  .thead {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-top: 37rpx;
-    padding-bottom: 20rpx;
-    .names {
-      display: flex;
-      align-items: center;
-      .name_img {
-        width: 53rpx;
-        height: 53rpx;
-        border-radius: 50%;
-        overflow: hidden;
-        background-color: #eff;
-      }
-      .name {
-        margin-left: 12rpx;
+      .msg {
         font-size: 30rpx;
         color: #333333;
+        line-height: 48rpx;
       }
     }
-    .earlier {
+    .discuss {
+      padding: 0 26rpx;
+      padding-top: 43rpx;
+      display: flex;
+      .portrait {
+        width: 60rpx;
+        height: 60rpx;
+        border-radius: 50%;
+        background-color: #efc;
+        overflow: hidden;
+      }
+      .discuss_r {
+        flex: 1;
+        margin-left: 18rpx;
+        .name {
+          font-size: 28rpx;
+          color: #999999;
+        }
+        .discuss_li {
+          &.discuss_li:nth-last-child(1) {
+            border-bottom: 0;
+          }
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          padding-top: 24rpx;
+          padding-bottom: 27rpx;
+          border-bottom: 1px solid #e5e5e5;
+          .info {
+            flex: 1;
+            font-size: 26rpx;
+            line-height: 42rpx;
+            color: #333333;
+            word-break: break-all;
+          }
+          .footer {
+            flex: 1;
+            display: flex;
+            margin-top: 30rpx;
+            justify-content: space-between;
+            .time {
+              font-size: 24rpx;
+              color: #999999;
+            }
+            .del {
+              font-size: 24rpx;
+              color: #4d7aad;
+            }
+          }
+        }
+      }
+    }
+  }
+  .null {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .img {
+      margin-top: 399rpx;
+      width: 286rpx;
+      height: 188rpx;
+    }
+    text {
+      margin-top: 40rpx;
       font-size: 24rpx;
       color: #999999;
     }
   }
-  .talk_info {
-    // margin-top: 20rpx;
-    font-size: 30rpx;
-    line-height: 48rpx;
-    word-break: break-all;
-  }
-  .music {
-    margin-top: 20rpx;
-    height: 120rpx;
-    background-color: #ccc;
-    display: flex;
-    .music_logo {
-      width: 113rpx;
-      height: 100%;
-      background-color: #efe;
+  .talk_list {
+    border-bottom: 1px solid #e5e5e5;
+    padding: 0 30rpx;
+    padding-bottom: 20rpx;
+    .thead {
       display: flex;
       align-items: center;
-      justify-content: center;
-      .play {
-        width: 49rpx;
-        height: 49rpx;
-        border-radius: 50%;
-        background-color: rgba(255, 87, 80, 0.77);
+      justify-content: space-between;
+      padding-top: 37rpx;
+      padding-bottom: 20rpx;
+      .names {
+        display: flex;
+        align-items: center;
+        .name_img {
+          width: 53rpx;
+          height: 53rpx;
+          border-radius: 50%;
+          overflow: hidden;
+          background-color: #eff;
+        }
+        .name {
+          margin-left: 12rpx;
+          font-size: 30rpx;
+          color: #333333;
+        }
+      }
+      .earlier {
+        font-size: 24rpx;
+        color: #999999;
+      }
+    }
+    .talk_info {
+      // margin-top: 20rpx;
+      font-size: 30rpx;
+      line-height: 48rpx;
+      word-break: break-all;
+    }
+    .music {
+      margin-top: 20rpx;
+      height: 120rpx;
+      background-color: #ccc;
+      display: flex;
+      .music_logo {
+        width: 113rpx;
+        height: 100%;
+        background-color: #efe;
         display: flex;
         align-items: center;
         justify-content: center;
-
-        text {
-          font-size: 22rpx;
-          color: #fff;
+        .play {
+          width: 49rpx;
+          height: 49rpx;
+          border-radius: 50%;
+          background-color: rgba(255, 87, 80, 0.77);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text {
+            font-size: 22rpx;
+            color: #fff;
+          }
+        }
+      }
+      .m_info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 23rpx;
+        .m_title {
+          font-size: 31rpx;
+          color: #333333;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
+        .m_name {
+          font-size: 23rpx;
+          color: #999999;
         }
       }
     }
-    .m_info {
-      flex: 1;
+    .img_list {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
-      margin-left: 23rpx;
-      .m_title {
-        font-size: 31rpx;
-        color: #333333;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      margin-top: 34rpx;
+      &.img_list2 {
+        justify-content: initial;
+      }
+      .pic {
+        width: calc(33% - 15rpx);
+        height: 218rpx;
+        margin-bottom: 10rpx;
+        border-radius: 5px;
         overflow: hidden;
-        text-overflow: ellipsis;
-        display: -webkit-box;
-        -webkit-line-clamp: 1;
-        -webkit-box-orient: vertical;
+        margin-right: 15rpx;
       }
-      .m_name {
-        font-size: 23rpx;
-        color: #999999;
-      }
-    }
-  }
-  .img_list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    margin-top: 34rpx;
-    &.img_list2 {
-      justify-content: initial;
-    }
-    .pic {
-      width: 218rpx;
-      height: 218rpx;
-      margin-bottom: 10rpx;
-      border-radius: 5px;
-      overflow: hidden;
-      margin-right: 15rpx;
-    }
-    .picw1 {
-      width: 100%;
-      height: auto;
-      margin-right: 0;
-      height: 400rpx;
-      image {
+      .picw1 {
+        width: 100%;
+        height: auto;
+        margin-right: 0;
         height: 400rpx;
-        display: block;
+        image {
+          height: 400rpx;
+          display: block;
+        }
       }
-    }
-    .picw2 {
-      width: 48%;
-      height: auto;
-      height: 330rpx;
-      margin-right: 0;
-      image {
+      .picw2 {
+        width: 48%;
+        height: auto;
         height: 330rpx;
-        display: block;
+        margin-right: 0;
+        image {
+          height: 330rpx;
+          display: block;
+        }
       }
     }
-  }
-  .location {
-    margin-top: 18rpx;
-    view {
-      background-color: #ededed;
-      border-radius: 5rpx;
-      display: inline-flex;
+    .location {
+      margin-top: 18rpx;
+      view {
+        background-color: #ededed;
+        border-radius: 5rpx;
+        display: inline-flex;
+        align-items: center;
+        padding: 7rpx 10rpx;
+        text {
+          color: #999999;
+        }
+        .icon-weizhi {
+          margin-right: 10rpx;
+        }
+      }
+    }
+    .bottom {
+      display: flex;
+      justify-content: space-around;
+      padding: 40rpx 0;
       align-items: center;
-      padding: 7rpx 10rpx;
+      view {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
       text {
         color: #999999;
       }
-      .icon-weizhi {
-        margin-right: 10rpx;
+      .iconf {
+        padding-left: 15rpx;
+        font-size: 16px;
+      }
+      .icon-fenxiang {
+        font-size: 40rpx;
+      }
+      .icon-xin {
+        color: red;
       }
     }
   }
-  .bottom {
+  .limit {
+    width: 356rpx;
+    height: 70rpx;
+    margin: 0 auto; // margin-top: 288rpx;
+    margin-top: 30rpx;
     display: flex;
-    justify-content: space-around;
-    padding: 40rpx 0;
+    justify-content: center;
     align-items: center;
     view {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      width: 96rpx;
+      height: 2rpx;
+      background-color: #e5e5e5;
     }
     text {
+      margin: 0 12rpx;
+      font-size: 23rpx;
       color: #999999;
     }
-    .iconf {
-      padding-left: 15rpx;
-      font-size: 16px;
-    }
-    .icon-fenxiang {
-      font-size: 40rpx;
-    }
-    .icon-xin {
-      color: red;
-    }
   }
-}
 </style>

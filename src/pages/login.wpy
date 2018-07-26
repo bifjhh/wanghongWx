@@ -23,8 +23,9 @@ export default class Example extends wepy.page {
   components = {};
   methods = {
     getuserinfo(res) {
+      let that = this;
       console.log(res);
-      this.login(this.app);
+      that.login(that.app);
       // this.$switch('planet');
       // wx.navigateBack({
       //   delta: 1

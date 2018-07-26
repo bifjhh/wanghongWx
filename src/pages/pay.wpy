@@ -8,7 +8,7 @@
 import wepy from 'wepy';
 export default class Example extends wepy.page {
   config = {
-    navigationBarTitleText: '支付测试'
+    navigationBarTitleText: '付款中...'
   };
   data = {
     info: {},
@@ -16,6 +16,7 @@ export default class Example extends wepy.page {
   };
   components = {};
   pay(obj) {
+    let that = this;
     let url = `webview?src=https://www.whxq.fenbot.com/store#/${obj.url}&sku_id=${
       obj.sku_id
     }&order_id=${obj.order_id}&id=${obj.id}&buy_num=${obj.buy_num}&goods_id=${
@@ -32,12 +33,13 @@ export default class Example extends wepy.page {
       .then(res => {
         console.log('支付成功');
         url += '&isPay=true';
-        this.$navigate(url);
+        that.$navigate(url);
       })
       .catch(res => {
-        console.log('失败');
+        console.log('支付失败');
         url += '&isPay=false';
-        this.$navigate(url);
+        console.log(url)
+        that.$navigate(url);
       });
   }
   methods = {

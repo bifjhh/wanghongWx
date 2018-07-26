@@ -31,6 +31,13 @@
           <view class="m_name">{{item.say_video_info.author}}</view>
         </view>
       </view>
+      <view class="music sy_goods" wx:if="{{item.say_goods_info.thumbnail}}" @tap="toWeb({{item.say_goods_info.link}},{{item.say_goods_info.id}})">
+        <view class="music_logo" @tap="play({{index}})" style="background: url({{item.say_goods_info.thumbnail}}) top left no-repeat;background-size:cover;"></view>
+        <view class="m_info">
+          <view class="m_title">{{item.say_goods_info.title}}</view>
+          <view class="m_name">RMB：<text>{{item.say_goods_info.price}}</text></view>
+        </view>
+      </view>
       <view class="img_list {{item.say_photos_path.length>2?'img_list2':''}}" wx:if="{{item.say_photos_path.length!=0}}">
         <block wx:if="{{item.say_photos_path.length==1}}">
           <view class="pic picw1" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) top left no-repeat;background-size:contain;" @tap="showImgs({{issrc}},{{item.say_photos_path}})">
@@ -57,6 +64,7 @@
       <view class="bottom">
         <view class="fenxiang">
           <!-- <text class="iconfont icon-fenxiang"></text> -->
+          <button type="default" open-type='share' class="share" data-id="{{item.say_id}}"></button>
           <view style="width:31rpx;height:29rpx;background: url(https://www.whxq.fenbot.com/WeChat/fenxiang.png) center no-repeat; background-size: cover"></view>
           <text class="iconf">分享</text>
         </view>
@@ -72,7 +80,7 @@
         </view>
       </view>
     </view>
-    <view class=""></view>
+    <view class="max" wx:if="{{page>max}}">暂无更多数据了</view>
   </view>
 </template>
 
@@ -80,6 +88,8 @@
 import wepy from 'wepy';
 export default class TalkList extends wepy.page {
   data = {
+    page: 1,
+    max: 1,
     objs: {},
     lists: [],
     display: 'none',
@@ -167,6 +177,15 @@ export default class TalkList extends wepy.page {
         .say_video_info.off;
       that.$apply();
       console.log(that.objs.lists[index].say_video_info);
+    },
+    toWeb(url, shopId) {
+      console.log(url);
+      let token = url.substr(url.search(/\?token=/) + 7);
+      url = url.substr(0, url.search(/\?token=/));
+      url = `webview?token=${token}&src=${url}&id=${shopId}`;
+      console.log('url', url);
+      // return;
+      this.$navigate(url);
     }
   };
   events = {};
@@ -174,6 +193,18 @@ export default class TalkList extends wepy.page {
   computed = {};
   onShow() {
     let that = this;
+    that.getList(that);
+  }
+  getList(that, page) {
+    console.log(page);
+    if (page > that.max) {
+      wx.showToast({
+        title: '没有更多数据了',
+        icon: 'none',
+        duration: 1500
+      });
+      return false;
+    }
     wx.showLoading({
       title: ''
     });
@@ -181,18 +212,21 @@ export default class TalkList extends wepy.page {
       .request({
         url: '/say/list',
         data: {
-          star_id: that.star_id
+          star_id: that.star_id,
+          page: page
         }
       })
       .then(res => {
         if (res.data.status != 1) return;
         that.objs = res.data.data;
-        that.lists = res.data.data.lists;
+        that.max = res.data.data.last_page;
+        that.lists = that.lists.concat(res.data.data.lists);
         wx.setNavigationBarTitle({
           title: res.data.data.lists[0].owner_name + '的说说'
         });
         wx.hideLoading();
         that.display = 'block';
+        that.page += 1;
         that.$apply();
       });
   }
@@ -200,6 +234,25 @@ export default class TalkList extends wepy.page {
     let that = this;
     that.star_id = options.star_id;
     that.$apply();
+  }
+  onReachBottom() {
+    let that = this;
+    console.log('触发上拉刷新');
+    that.getList(that, that.page);
+  }
+  onShareAppMessage(res) {
+    console.log(res);
+    let that = this;
+    if (res.from === 'button') {
+      // 来自页面内转发按钮
+      console.log(res.target.id);
+      console.log('来自页面内转发按钮');
+    }
+    return {
+      title: that.lists[0].owner_name + '的说说',
+      path: '/pages/talkInfo?id=' + res.target.dataset.id,
+      imageUrl: that.lists[0].owner_img
+    };
   }
 }
 </script>
@@ -244,12 +297,12 @@ export default class TalkList extends wepy.page {
     font-size: 30rpx;
     line-height: 48rpx;
     word-break: break-all;
-    color:#333;
+    color: #333;
   }
   .music {
     margin-top: 20rpx;
     height: 120rpx;
-    background-color: #ccc;
+    background-color: #f2f2f2;
     display: flex;
     .music_logo {
       width: 113rpx;
@@ -291,6 +344,10 @@ export default class TalkList extends wepy.page {
       .m_name {
         font-size: 23rpx;
         color: #999999;
+        text {
+          font-size: 30rpx;
+          color: #999999;
+        }
       }
     }
   }
@@ -312,7 +369,7 @@ export default class TalkList extends wepy.page {
     }
     .picw1 {
       width: 100%;
-      height: auto;
+      // height: auto;
       margin-right: 0;
       height: 400rpx;
       image {
@@ -322,7 +379,7 @@ export default class TalkList extends wepy.page {
     }
     .picw2 {
       width: 48%;
-      height: auto;
+      // height: auto;
       height: 330rpx;
       margin-right: 0;
       image {
@@ -375,6 +432,19 @@ export default class TalkList extends wepy.page {
         background-size: cover;
       }
     }
+    .fenxiang {
+      position: relative;
+      .share {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+        opacity: 0;
+        &::after {
+          border: none;
+        }
+      }
+    }
     text {
       color: #999999;
       padding-left: 15rpx;
@@ -385,19 +455,11 @@ export default class TalkList extends wepy.page {
 .talk_list:nth-last-of-type(2) {
   border: none;
 }
-video {
-  width: 100%;
-  height: 100%;
-  // position: fixed;
-  // top: 0;
-  // left: 0;
-}
-.xxx {
-  position: fixed;
-  top: 10rpx;
-  right: 10rpx;
-  background-color: #fff;
-  z-index: 9;
+.max {
+  border-top: 1px solid #e5e5e5;
+  text-align: center;
+  line-height: 100rpx;
+  color: #999999;
 }
 </style>
 	

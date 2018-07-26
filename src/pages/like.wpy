@@ -2,7 +2,7 @@
 <template>
   <view class='interest'>
     <view class="yin"></view>
-    <view class="lists" wx:if="{{lists}}">
+    <view class="lists" wx:if="{{lists.length>0}}">
       <view class="list" wx:for="{{lists}}" wx:key="index" @tap="toPage('talkInfo',{{item.say_id}})">
         <view class="user">
           <view class="portrait">
@@ -15,8 +15,8 @@
           </view>
         </view>
         <view class="list_r">
-          <image wx:if="{{item.say_type!=4}}" src="{{item.say_picture}}" />
-          <text wx:else>{{item.say_content}}</text>
+          <image wx:if="{{item.say_type==1}}" src="{{item.say_picture}}" />
+          <text >{{item.say_content}}</text>
         </view>
       </view>
     </view>
@@ -35,12 +35,12 @@ export default class Example extends wepy.page {
   config = {
     navigationBarTitleText: '喜欢和赞'
   };
-  data = { lists: [] };
+  data = { lists: [], page: 1, max: 1 };
   components = {};
   methods = {
-    toPage(url,parameter) {
-      url+=('?id='+parameter)
-      console.log(url)
+    toPage(url, parameter) {
+      url += '?id=' + parameter;
+      console.log(url);
       // return;
       this.$navigate(url);
     }
@@ -51,21 +51,42 @@ export default class Example extends wepy.page {
   onLoad() {}
   onShow() {
     let that = this;
+    that.getList(that, that.page);
+  }
+  onReachBottom() {
+    let that = this;
+    console.log('触发上拉刷新');
+    that.getList(that, that.page);
+  }
+  getList(that, page) {
+    if (page > that.max) {
+      wx.showToast({
+        title: '没有更多数据了',
+        icon: 'none',
+        duration: 1500
+      });
+      return false;
+    }
+    wx.showLoading({
+      title: ''
+    });
     wepy
       .request({
-        url: '/dynamic/like_list'
+        url: '/dynamic/like_list',data:{page:page}
       })
       .then(res => {
-        console.log(res.data.data.items);
-        that.lists = res.data.data.items;
-        that.$apply();
+        if (res.data.status != 1) return;
+        wx.hideLoading();
+        that.lists = that.lists.concat(res.data.data.items);
+        that.max = res.data.data.last_page;
+        that.page += 1;
+        this.$apply();
       });
   }
 }
 </script>
 
 <style lang='scss'>
-
 .lists {
   padding: 0 28rpx;
 }

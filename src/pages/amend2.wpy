@@ -3,7 +3,7 @@
   <view class='amend_box'>
     <view class="yin"></view>
     <view class="inp">
-      <input placeholder="{{introduce||'介绍一下你自己'}}" auto-focus @input="bindinput"/>
+      <input class="text" placeholder="介绍一下你自己" value="{{introduce}}" auto-focus @input="bindinput" />
     </view>
     <view class="btn" @tap="userSet">
       保存
@@ -70,10 +70,14 @@ page {
   height: 100rpx;
   background-color: #ffffff;
   box-shadow: 0px 3px 6px 0px rgba(0, 6, 13, 0.08);
-  padding-left: 26rpx;
-  input {
-    height: 100%;
-    line-height: 100rpx;
+  padding:0 26rpx;
+  display: flex;
+  align-items: center;
+  .text {
+    flex:1;
+    // height: 100%;
+    // width: 100%;
+    // line-height: 100rpx;
     font-size: 32rpx;
     color: #999999;
   }

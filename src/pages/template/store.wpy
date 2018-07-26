@@ -95,7 +95,7 @@ export default class Store extends wepy.component {
     justify-content: space-between;
     padding: 48rpx 29rpx 40rpx;
     color: #333333;
-    text:nth-of-type(1) {
+    >text:nth-of-type(1) {
       font-size: 34rpx;
     }
     > view {
@@ -103,12 +103,12 @@ export default class Store extends wepy.component {
       display: flex;
       align-items: center;
       text {
-        font-size: 30rpx;
+        font-size: 30rpx!important;
         color: #999999;
       }
       .icon-jiantou {
         margin-left: 5rpx;
-        font-size: 24rpx;
+        font-size: 24rpx!important;
       }
     }
   }

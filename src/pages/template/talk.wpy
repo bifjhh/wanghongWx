@@ -33,6 +33,13 @@
           <view class="m_name">{{item.say_video_info.author}}</view>
         </view>
       </view>
+      <view class="music sy_goods" wx:if="{{item.say_goods_info.thumbnail}}" @tap="toWeb({{item.say_goods_info.link}},{{item.say_goods_info.id}})">
+        <view class="music_logo" @tap="play({{index}})" style="background: url({{item.say_goods_info.thumbnail}}) top left no-repeat;background-size:cover;"></view>
+        <view class="m_info">
+          <view class="m_title">{{item.say_goods_info.title}}</view>
+          <view class="m_name">RMB：<text>{{item.say_goods_info.price}}</text></view>
+        </view>
+      </view>
       <view class="img_list {{item.say_photos_path.length>2?'img_list2':''}}" wx:if="{{item.say_photos_path.length!=0}}">
         <block wx:if="{{item.say_photos_path.length==1}}">
           <view class="pic picw1" wx:for="{{item.say_photos_path}}" wx:key="{{index}}" wx:for-item="issrc" style="background: url({{issrc}}) top left no-repeat;background-size:contain;" @tap="showImgs({{issrc}},{{item.say_photos_path}})">
@@ -58,6 +65,7 @@
       </view>
       <view class="bottom">
         <view class="fenxiang">
+          <button type="default" open-type='share' class="share" data-id="{{item.say_id}}"></button>
           <view style="width:31rpx;height:29rpx;background: url(https://www.whxq.fenbot.com/WeChat/fenxiang.png) center no-repeat; background-size: cover"></view>
           <!-- <text class="iconfont icon-fenxiang"></text> -->
           <text class="iconf">分享</text>
@@ -168,6 +176,16 @@ export default class Talk extends wepy.component {
           });
         }
       });
+    },
+    toWeb(url, shopId) {
+
+      console.log(url);
+      let token = url.substr(url.search(/\?token=/) + 7);
+      url = url.substr(0, url.search(/\?token=/));
+      url = `webview?token=${token}&src=${url}&id=${shopId}`;
+      console.log('url', url);
+      // return;
+      this.$parent.$navigate(url);
     }
   };
   events = {};
@@ -247,7 +265,7 @@ export default class Talk extends wepy.component {
   .music {
     margin-top: 20rpx;
     height: 120rpx;
-    background-color: #ccc;
+    background-color: #f2f2f2;
     display: flex;
     .music_logo {
       width: 113rpx;
@@ -289,6 +307,10 @@ export default class Talk extends wepy.component {
       .m_name {
         font-size: 23rpx;
         color: #999999;
+        text {
+          font-size: 30rpx;
+          color: #999999;
+        }
       }
     }
   }
@@ -311,8 +333,9 @@ export default class Talk extends wepy.component {
     }
     .picw1 {
       width: 100%;
-      height: auto;
+      // height: auto;
       margin-right: 0;
+      height: 400rpx;
       image {
         height: 400rpx;
         display: block;
@@ -320,7 +343,7 @@ export default class Talk extends wepy.component {
     }
     .picw2 {
       width: 48%;
-      height: auto;
+      // height: auto;
       margin-right: 0;
       image {
         height: 330rpx;
@@ -370,6 +393,19 @@ export default class Talk extends wepy.component {
         background: url(https://www.whxq.fenbot.com/WeChat/guanzhu.png) center
           no-repeat;
         background-size: cover;
+      }
+    }
+    .fenxiang {
+      position: relative;
+      .share {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: transparent;
+        opacity: 0;
+        &::after {
+          border: none;
+        }
       }
     }
     text {

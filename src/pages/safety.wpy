@@ -16,7 +16,7 @@
       <view class="info">
         <text>登录密码</text>
         <view class="state" @tap="toPage('password')">
-          <text>{{user.ispwd!=1?'未设置':'已设置'}}</text>
+          <text>{{user.ispwd==0?'未设置':'已设置'}}</text>
           <text class="iconfont icon-jiantou"></text>
         </view>
       </view>
@@ -37,7 +37,20 @@ export default class Example extends wepy.page {
 
   methods = {
     getPhoneNumber(e) {
-      console.log(e);
+      wepy.login({}).then(res => {
+        wepy
+          .request({
+            url: '/user/get_wechat_mobile',
+            data: {
+              code: res.code,
+              iv: e.detail.iv,
+              encryptedData: e.detail.encryptedData
+            }
+          })
+          .then(res => {
+            console.log(res);
+          });
+      });
     },
     toPage(url) {
       if (!!this.user.mobile) {
