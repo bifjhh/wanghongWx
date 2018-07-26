@@ -38,6 +38,7 @@ export default class Example extends wepy.page {
   methods = {
     getPhoneNumber(e) {
       wepy.login({}).then(res => {
+        console.log(res);
         wepy
           .request({
             url: '/user/get_wechat_mobile',
@@ -48,7 +49,16 @@ export default class Example extends wepy.page {
             }
           })
           .then(res => {
-            console.log(res);
+            console.log(res.data.data.purePhoneNumber);
+            return
+            wepy.request({
+              url: '/user/get_wechat_mobile',
+              data: {
+                mobile: res.data.data.purePhoneNumber
+              }
+            }).then(res=>{
+              console.log()
+            });
           });
       });
     },
